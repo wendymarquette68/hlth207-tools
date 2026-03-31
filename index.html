@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HLTH 207 — Course Tools</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: #f5f6f8;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────── */
+  header {
+    background: #1B6F74;
+    padding: 36px 24px 32px;
+    text-align: center;
+    color: white;
+  }
+  header .course-tag {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: clamp(26px, 5vw, 40px);
+    font-weight: 800;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  header p {
+    font-size: 16px;
+    opacity: .82;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── Week badge ──────────────────────────────────────────────── */
+  .week-label {
+    padding: 20px 20px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* ── Tool grid ───────────────────────────────────────────────── */
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    padding: 0 20px 28px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* ── Tool card ───────────────────────────────────────────────── */
+  .tool-card {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid #e8eaed;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform .12s, border-color .12s;
+    cursor: pointer;
+  }
+  .tool-card:hover { transform: translateY(-2px); border-color: #1B6F74; }
+  .tool-card:active { transform: scale(.98); }
+
+  .card-top {
+    padding: 18px 18px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .card-text {}
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .card-footer {
+    padding: 10px 18px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #f2f3f5;
+  }
+  .card-tag {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .card-arrow {
+    font-size: 16px;
+    color: #bbb;
+  }
+
+  /* Tag color variants */
+  .tag-sim  { background: #e8f4f5; color: #0F5E63; }
+  .tag-game { background: #e8f0fe; color: #1849A9; }
+  .tag-print{ background: #fdf4dc; color: #7A4500; }
+  .tag-proj { background: #ffe9e9; color: #8B1A1A; }
+
+  /* Card accent bar */
+  .accent-bar { height: 4px; }
+
+  /* ── Coming soon card ────────────────────────────────────────── */
+  .tool-card.coming-soon {
+    opacity: .55;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ── Info strip ──────────────────────────────────────────────── */
+  .info-strip {
+    background: white;
+    border-top: 1px solid #e8eaed;
+    padding: 20px 20px;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    border-radius: 0 0 14px 14px;
+  }
+  .info-strip p {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+  }
+  .info-strip strong { color: #555; }
+
+  /* ── Footer ──────────────────────────────────────────────────── */
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: #bbb;
+    border-top: 1px solid #e8eaed;
+  }
+  footer a { color: #1B6F74; text-decoration: none; }
+
+  /* ── Mobile ──────────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    header { padding: 28px 20px 24px; }
+    .tool-grid { grid-template-columns: 1fr; padding: 0 14px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="course-tag">Towson University</div>
+  <h1>HLTH 207 — Health Care USA</h1>
+  <p>Interactive course tools. Open on your phone, tablet, or laptop. No login required.</p>
+</header>
+
+<!-- ══ WEEK 10 ═══════════════════════════════════════════════════════════ -->
+<div class="week-label">Week 10 · Long-Term Care &amp; Specialized Services</div>
+
+<div class="tool-grid">
+
+  <!-- Student simulation -->
+  <a class="tool-card" href="week10/student-app.html">
+    <div class="accent-bar" style="background:#1B6F74"></div>
+    <div class="card-top">
+      <div class="card-icon" style="background:#e8f4f5">🎂</div>
+      <div class="card-text">
+        <div class="card-title">You Just Turned 65</div>
+        <div class="card-desc">Life simulation — make real LTC decisions, watch your savings change, and find out who pays when the money runs out.</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="card-tag tag-sim">Student simulation</span>
+      <span class="card-arrow">→</span>
+    </div>
+  </a>
+
+  <!-- Jeopardy -->
+  <a class="tool-card" href="week10/jeopardy.html">
+    <div class="accent-bar" style="background:#2C3E50"></div>
+    <div class="card-top">
+      <div class="card-icon" style="background:#eaf0f6">🏆</div>
+      <div class="card-text">
+        <div class="card-title">LTC Jeopardy</div>
+        <div class="card-desc">Two-team quiz game covering care settings, financing, key terms, and the 2025 One Big Beautiful Bill. Pass the device between teams.</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="card-tag tag-game">Pass-and-play game</span>
+      <span class="card-arrow">→</span>
+    </div>
+  </a>
+
+  <!-- Instructor projector -->
+  <a class="tool-card" href="week10/projector.html">
+    <div class="accent-bar" style="background:#8B1A1A"></div>
+    <div class="card-top">
+      <div class="card-icon" style="background:#fbeaea">📽️</div>
+      <div class="card-text">
+        <div class="card-title">Instructor Projector</div>
+        <div class="card-desc">Scenario slides for You Just Turned 65 — dark background, large text, built-in countdown timers, and private instructor notes.</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="card-tag tag-proj">Instructor only</span>
+      <span class="card-arrow">→</span>
+    </div>
+  </a>
+
+  <!-- Printable cards -->
+  <a class="tool-card" href="week10/life-cards.html">
+    <div class="accent-bar" style="background:#6B4700"></div>
+    <div class="card-top">
+      <div class="card-icon" style="background:#fdf4dc">🃏</div>
+      <div class="card-text">
+        <div class="card-title">Life Cards — Print &amp; Cut</div>
+        <div class="card-desc">Printable HTML version of all 6 life cards for distributing in class. Open in browser and print.</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="card-tag tag-print">Print-ready</span>
+      <span class="card-arrow">→</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- ══ COMING SOON WEEKS ════════════════════════════════════════════════ -->
+<div class="week-label">Week 11 · Behavioral Health Services</div>
+<div class="tool-grid">
+  <div class="tool-card coming-soon">
+    <div class="accent-bar" style="background:#ccc"></div>
+    <div class="card-top">
+      <div class="card-icon" style="background:#f4f6f7">🧩</div>
+      <div class="card-text">
+        <div class="card-title">Coming soon</div>
+        <div class="card-desc">Activities for Chapter 9 will appear here when published.</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="card-tag" style="background:#f4f6f7;color:#999">Not yet available</span>
+    </div>
+  </div>
+</div>
+
+<div class="week-label">Week 12 · Public and Population Health</div>
+<div class="tool-grid">
+  <div class="tool-card coming-soon">
+    <div class="accent-bar" style="background:#ccc"></div>
+    <div class="card-top">
+      <div class="card-icon" style="background:#f4f6f7">🌍</div>
+      <div class="card-text">
+        <div class="card-title">Coming soon</div>
+        <div class="card-desc">Activities for Chapter 10 will appear here when published.</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="card-tag" style="background:#f4f6f7;color:#999">Not yet available</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INFO STRIP ════════════════════════════════════════════════════════ -->
+<div style="max-width:700px;margin:0 auto;padding:0 20px">
+  <div class="info-strip">
+    <p>
+      <strong>All tools work offline.</strong> Once this page loads, everything works without internet.<br>
+      Bookmark this page and share the link with your students — it works on any device.
+    </p>
+  </div>
+</div>
+
+<footer>
+  <p>HLTH 207 · Health Care USA · Towson University &nbsp;|&nbsp; Built with <a href="https://claude.ai" target="_blank">Claude</a></p>
+</footer>
+
+</body>
+</html>

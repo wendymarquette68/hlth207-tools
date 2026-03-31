@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LTC Jeopardy — HLTH 207</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f0f2f5;min-height:100vh;color:#1a1a1a}
+
+  /* ── Screens ───────────────────────────────────────────── */
+  .screen{display:none;animation:fadeIn .2s ease}
+  .screen.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ── Setup ─────────────────────────────────────────────── */
+  #s-setup{max-width:420px;margin:0 auto;padding:2rem 1.5rem}
+  .logo-box{width:64px;height:64px;background:#1B6F74;border-radius:14px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center}
+  .setup-title{text-align:center;margin-bottom:1.75rem}
+  .setup-title h1{font-size:26px;font-weight:700;color:#1B6F74;margin-bottom:4px}
+  .setup-title p{font-size:14px;color:#666}
+  .field{margin-bottom:1rem}
+  .field label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+  .field input{width:100%;padding:13px 15px;border:1.5px solid #d0d5dd;border-radius:10px;font-size:16px;background:white;color:#1a1a1a;outline:none;transition:border-color .15s}
+  .field input:focus{border-color:#1B6F74}
+  .hint{text-align:center;font-size:12px;color:#999;margin-top:.75rem}
+
+  /* ── Buttons ───────────────────────────────────────────── */
+  .btn{width:100%;padding:15px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;font-family:inherit}
+  .btn:active{transform:scale(.98)}
+  .btn-primary{background:#1B6F74;color:white;margin-bottom:.5rem}
+  .btn-secondary{background:white;color:#555;border:1.5px solid #d0d5dd}
+  .btn-correct{background:#155724;color:white;flex:1;padding:14px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn-wrong{background:#8B1A1A;color:white;padding:14px 16px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn-ghost{background:white;color:#555;border:1.5px solid #d0d5dd;padding:12px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;width:100%;font-family:inherit;margin-top:.5rem}
+
+  /* ── Score bar ─────────────────────────────────────────── */
+  #scorebar{background:#1B6F74;padding:12px 16px;display:flex;gap:4px}
+  .team-score{flex:1;text-align:center}
+  .team-score .tname{font-size:12px;color:rgba(255,255,255,.7);font-weight:500}
+  .team-score .tname.active-team{color:#FFD700;font-weight:700}
+  .team-score .tname.active-team::before{content:"▶ "}
+  .team-score .tscore{font-size:24px;font-weight:700;color:#FFD700}
+
+  /* ── Turn bar ──────────────────────────────────────────── */
+  #turnbar{background:#2C3E50;padding:8px 16px;text-align:center;font-size:13px;color:#FFD700;font-weight:600}
+
+  /* ── Board ─────────────────────────────────────────────── */
+  #game-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:8px;background:#e5e7eb}
+  .cat-header{border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 4px;min-height:54px;font-size:11px;font-weight:700;color:white;line-height:1.3;text-transform:uppercase;letter-spacing:.03em}
+  .q-cell{border-radius:6px;display:flex;align-items:center;justify-content:center;min-height:56px;font-size:18px;font-weight:700;color:#D4A017;background:rgba(212,160,23,.1);border:1.5px solid rgba(212,160,23,.35);cursor:pointer;transition:transform .1s,opacity .15s}
+  .q-cell:active{transform:scale(.96)}
+  .q-cell.done{background:#f4f6f7;border-color:#e0e0e0;color:#ccc;cursor:default;font-size:20px}
+  .q-cell:not(.done):hover{background:rgba(212,160,23,.18)}
+  #board-footer{display:flex;align-items:center;justify-content:space-between;padding:4px 12px 10px}
+  #progress{font-size:12px;color:#888}
+  .end-btn-small{border:1.5px solid #d0d5dd;background:white;color:#888;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit}
+
+  /* ── Question screen ───────────────────────────────────── */
+  #s-question .q-header{padding:22px 20px 18px;text-align:center}
+  .q-cat-label{font-size:12px;color:rgba(255,255,255,.75);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+  .q-value{font-size:42px;font-weight:800;color:#FFD700}
+  .q-body{padding:20px}
+  .clue-text{font-size:18px;line-height:1.7;margin-bottom:2rem;color:#1a1a1a}
+
+  /* ── Answer screen ─────────────────────────────────────── */
+  #s-answer .a-header{padding:16px 20px;text-align:center}
+  .clue-recap{background:#f8f9fa;border-radius:10px;padding:12px 14px;margin-bottom:12px;border:1px solid #e5e7eb}
+  .clue-recap .recap-label{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:.04em;font-weight:600;margin-bottom:5px}
+  .clue-recap p{font-size:13px;color:#444;line-height:1.5}
+  .answer-box{border-radius:10px;padding:14px;margin-bottom:18px;border:1.5px solid #1B6F74;background:#e8f4f5}
+  .answer-box .ans-label{font-size:11px;color:#1B6F74;text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:6px}
+  .answer-box .ans-text{font-size:16px;font-weight:600;color:#1a1a1a;line-height:1.5}
+  .score-prompt{font-size:13px;color:#666;margin-bottom:10px}
+  .score-row{display:flex;gap:6px;margin-bottom:6px}
+
+  /* ── End screen ────────────────────────────────────────── */
+  #s-end{max-width:400px;margin:0 auto;padding:2.5rem 1.5rem;text-align:center}
+  .trophy-box{width:72px;height:72px;background:#D4A017;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center}
+  .final-card{background:white;border-radius:12px;padding:14px 18px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .final-card.winner{border:2px solid #1B6F74}
+  .final-rank{font-size:13px;color:#888;font-weight:500}
+  .final-name{font-size:15px;font-weight:600;color:#1a1a1a}
+  .final-score{font-size:18px;font-weight:700;color:#1B6F74}
+</style>
+</head>
+<body>
+
+<!-- ═══ SETUP ══════════════════════════════════════════════ -->
+<div id="s-setup" class="screen active">
+  <div style="padding-top:2.5rem"></div>
+  <div class="logo-box">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 8a5 5 0 0 1-10 0V3H4v5a8 8 0 0 0 16 0V3h-3v5z"/></svg>
+  </div>
+  <div class="setup-title">
+    <h1>LTC Jeopardy</h1>
+    <p>HLTH 207 — Long-Term Care Edition</p>
+  </div>
+  <div class="field">
+    <label>Team 1 Name</label>
+    <input type="text" id="t1" value="Team 1" maxlength="20">
+  </div>
+  <div class="field">
+    <label>Team 2 Name</label>
+    <input type="text" id="t2" value="Team 2" maxlength="20">
+  </div>
+  <div style="margin-top:1.5rem">
+    <button class="btn btn-primary" onclick="startGame()">Start Game</button>
+  </div>
+  <p class="hint">Pass the device between teams on each turn</p>
+</div>
+
+<!-- ═══ BOARD ═══════════════════════════════════════════════ -->
+<div id="s-board" class="screen">
+  <div id="scorebar"></div>
+  <div id="turnbar"></div>
+  <div id="game-grid"></div>
+  <div id="board-footer">
+    <span id="progress"></span>
+    <button class="end-btn-small" onclick="showEnd()">End game early</button>
+  </div>
+</div>
+
+<!-- ═══ QUESTION ════════════════════════════════════════════ -->
+<div id="s-question" class="screen">
+  <div class="q-header" id="qheader">
+    <div class="q-cat-label" id="qcat"></div>
+    <div class="q-value" id="qval"></div>
+  </div>
+  <div class="q-body">
+    <p class="clue-text" id="qclue"></p>
+    <button class="btn btn-primary" onclick="showAnswer()">Reveal Answer</button>
+    <button class="btn-ghost" onclick="skipQ()">Skip — no one answers</button>
+  </div>
+</div>
+
+<!-- ═══ ANSWER ══════════════════════════════════════════════ -->
+<div id="s-answer" class="screen">
+  <div class="a-header" id="aheader">
+    <div class="q-cat-label" id="acat"></div>
+    <div class="q-value" id="aval"></div>
+  </div>
+  <div style="padding:16px 20px">
+    <div class="clue-recap">
+      <div class="recap-label">The clue</div>
+      <p id="aclue"></p>
+    </div>
+    <div class="answer-box">
+      <div class="ans-label">Correct Answer</div>
+      <div class="ans-text" id="aans"></div>
+    </div>
+    <p class="score-prompt">Award or deduct points:</p>
+    <div id="teambtns"></div>
+    <button class="btn-ghost" onclick="noScore()">No one scored — next question</button>
+  </div>
+</div>
+
+<!-- ═══ END ══════════════════════════════════════════════════ -->
+<div id="s-end" class="screen">
+  <div class="trophy-box">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M17 8a5 5 0 0 1-10 0V3H4v5a8 8 0 0 0 16 0V3h-3v5z"/></svg>
+  </div>
+  <h2 style="font-size:26px;font-weight:700;margin-bottom:.35rem">Game Over</h2>
+  <p id="wintext" style="color:#666;margin-bottom:1.5rem;font-size:15px"></p>
+  <div id="finalscores" style="margin-bottom:1.5rem"></div>
+  <button class="btn btn-primary" onclick="resetGame()">Play Again</button>
+</div>
+
+<script>
+const CATS = ["Care Settings","Who Pays?","Key Terms","Political Moment","True or False?"];
+const CAT_COLORS = ["#1B6F74","#2C3E50","#155724","#8B1A1A","#4A235A"];
+const VALS = [100,200,300,400,500];
+
+const Q = [
+  // Care Settings
+  [
+    {v:100, c:"This is the LEAST restrictive LTC setting — skilled nursing, therapy, and personal assistance delivered in the patient's own home.", a:"What is home health care?"},
+    {v:200, c:"This daytime community-based program serves TWO populations at once: the care recipient who gets health monitoring and activities, AND the family caregiver who gets a break during the day.", a:"What is adult day services?"},
+    {v:300, c:"This type of facility is for individuals who need ADL assistance but do NOT require 24-hour skilled nursing — residents have their own private room or apartment, with meals and housekeeping included.", a:"What is an assisted living facility (ALF)?"},
+    {v:400, c:"This Medicare and Medicaid-funded program manages ALL medical and LTC needs for SNF-eligible individuals who choose to stay in the community. Its prototype — meaning 'peaceful and happy abode' in Cantonese — opened in San Francisco in 1972.", a:"What is PACE (Programs of All-Inclusive Care for the Elderly)?"},
+    {v:500, c:"This is the ONLY healthcare provider category whose Medicare certification requires that at least 5% of all patient care hours be contributed by volunteers.", a:"What is hospice?"}
+  ],
+  // Who Pays?
+  [
+    {v:100, c:"This government program is the PRIMARY payer for long-term care in the United States, covering 61% of all LTC spending in 2023.", a:"What is Medicaid?"},
+    {v:200, c:"Medicare covers skilled nursing facility care for up to this many days — but ONLY following a qualifying hospital stay of at least 3 consecutive days.", a:"What is 100 days?"},
+    {v:300, c:"The 2024 national MEDIAN monthly cost for an assisted living facility — a figure that more than half of Americans significantly underestimate.", a:"What is $5,350 per month?"},
+    {v:400, c:"The estimated annual market value of unpaid care provided by family members and friends — nearly DOUBLE the combined expenditures for nursing homes and formal home care.", a:"What is more than $470 billion per year?"},
+    {v:500, c:"To qualify for Medicaid LTC coverage, individuals must reduce their countable assets to this threshold — triggering the 'spend-down' process that can wipe out a lifetime of savings.", a:"What is $2,000?"}
+  ],
+  // Key Terms
+  [
+    {v:100, c:"The six fundamental self-care tasks — bathing, dressing, toileting, transferring, maintaining continence, and eating — that define functional independence and determine LTC need.", a:"What are Activities of Daily Living (ADLs)?"},
+    {v:200, c:"This 1999 Supreme Court decision upheld the right of citizens with disabilities to receive care in the community rather than in institutions — the legal foundation of 'aging in place' as a civil right.", a:"What is the Olmstead Decision?"},
+    {v:300, c:"Coined in the 1980s, this term describes neighborhoods or apartment complexes where residents have aged in place organically over time — not because anyone planned a senior community.", a:"What is a Naturally Occurring Retirement Community (NORC)?"},
+    {v:400, c:"This type of care provides temporary surrogate care to a patient when their primary family caregiver must be absent — designed to prevent caregiver burnout and delay institutionalization.", a:"What is respite care?"},
+    {v:500, c:"The 1987 federal law that established the nursing home Resident Bill of Rights, restricted physical and chemical restraints, mandated quality assurance standards, and set training requirements for nursing home aides.", a:"What is OBRA (Omnibus Budget Reconciliation Act)?"}
+  ],
+  // Political Moment
+  [
+    {v:100, c:"Signed into law on July 4th, 2025, this legislation — known by its informal patriotic nickname — represents the LARGEST single cut to Medicaid in the program's 60-year history.", a:"What is the One Big Beautiful Bill Act (Budget Reconciliation Act of 2025)?"},
+    {v:200, c:"The approximate total Medicaid reduction over 10 years in the 2025 Budget Reconciliation Act — projected to cause 15 million Americans to lose health insurance.", a:"What is $940 billion?"},
+    {v:300, c:"The number of years that federal nursing home minimum staffing standards — including an RN on-site 24/7 — were blocked from implementation by the 2025 law.", a:"What is 10 years?"},
+    {v:400, c:"Experts estimate that blocking the minimum nursing home staffing rule will result in approximately this many PREVENTABLE DEATHS per year among nursing home residents.", a:"What is 13,000?"},
+    {v:500, c:"These Medicaid-funded services — home health aides, personal care, adult day, PACE — are classified as 'optional' under federal Medicaid law, making them the FIRST to be cut when states face funding shortfalls from Medicaid cuts.", a:"What are Home and Community-Based Services (HCBS)?"}
+  ],
+  // True or False?
+  [
+    {v:100, c:"TRUE or FALSE: Medicare is the primary payer for nursing home care in the United States.", a:"FALSE — Medicaid is the primary payer, covering 61% of all LTC spending. Four in ten Americans get this wrong!"},
+    {v:200, c:"TRUE or FALSE: 70% of people turning 65 today will need some form of long-term care before they die.", a:"TRUE — And nearly 1 in 5 will face lifetime LTC costs exceeding $200,000."},
+    {v:300, c:"TRUE or FALSE: The average assisted living facility costs less than $4,000 per month nationally.", a:"FALSE — The 2024 national median is $5,350 per month. More than half of Americans underestimate this."},
+    {v:400, c:"TRUE or FALSE: PACE participants — all certified as nursing-home-eligible — mostly end up in nursing homes anyway.", a:"FALSE — In early PACE programs, only 6% required nursing home placement. The rest stayed in their communities."},
+    {v:500, c:"TRUE or FALSE: Only about 3 to 4% of Americans age 50 and older carry private long-term care insurance.", a:"TRUE — The private LTC insurance market has largely failed: premiums skyrocketed and many companies exited."}
+  ]
+];
+
+let teams = [{n:"Team 1", s:0}, {n:"Team 2", s:0}];
+let done = new Set();
+let curQ = null;
+let curTeam = 0;
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(e => e.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startGame() {
+  const n1 = document.getElementById('t1').value.trim() || 'Team 1';
+  const n2 = document.getElementById('t2').value.trim() || 'Team 2';
+  teams = [{n:n1, s:0}, {n:n2, s:0}];
+  done = new Set();
+  curQ = null;
+  curTeam = 0;
+  buildBoard();
+  updateBar();
+  show('s-board');
+}
+
+function buildBoard() {
+  const g = document.getElementById('game-grid');
+  g.innerHTML = '';
+  // Category headers
+  CATS.forEach((cat, ci) => {
+    const el = document.createElement('div');
+    el.className = 'cat-header';
+    el.style.background = CAT_COLORS[ci];
+    el.textContent = cat;
+    g.appendChild(el);
+  });
+  // Question cells
+  VALS.forEach((val, vi) => {
+    CATS.forEach((cat, ci) => {
+      const key = `${ci}-${vi}`;
+      const isDone = done.has(key);
+      const el = document.createElement('div');
+      el.className = 'q-cell' + (isDone ? ' done' : '');
+      el.textContent = isDone ? '✓' : '$' + val;
+      if (!isDone) el.onclick = () => openQ(ci, vi);
+      g.appendChild(el);
+    });
+  });
+  document.getElementById('progress').textContent = done.size + ' of 25 answered';
+}
+
+function openQ(ci, vi) {
+  curQ = {ci, vi, key:`${ci}-${vi}`};
+  const q = Q[ci][vi];
+  const hdr = document.getElementById('qheader');
+  hdr.style.background = CAT_COLORS[ci];
+  document.getElementById('qcat').textContent = CATS[ci];
+  document.getElementById('qval').textContent = '$' + q.v;
+  document.getElementById('qclue').textContent = q.c;
+  show('s-question');
+}
+
+function showAnswer() {
+  const {ci, vi} = curQ;
+  const q = Q[ci][vi];
+  document.getElementById('aheader').style.background = CAT_COLORS[ci];
+  document.getElementById('acat').textContent = CATS[ci];
+  document.getElementById('aval').textContent = '$' + q.v;
+  document.getElementById('aclue').textContent = q.c;
+  document.getElementById('aans').textContent = q.a;
+  const btns = document.getElementById('teambtns');
+  btns.innerHTML = '';
+  teams.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    const cor = document.createElement('button');
+    cor.className = 'btn-correct';
+    cor.textContent = t.n + '  +$' + q.v;
+    cor.onclick = () => award(i, true);
+    const wr = document.createElement('button');
+    wr.className = 'btn-wrong';
+    wr.textContent = '−$' + q.v;
+    wr.onclick = () => award(i, false);
+    row.appendChild(cor);
+    row.appendChild(wr);
+    btns.appendChild(row);
+  });
+  show('s-answer');
+}
+
+function award(ti, correct) {
+  const q = Q[curQ.ci][curQ.vi];
+  teams[ti].s += correct ? q.v : -q.v;
+  finish();
+}
+
+function noScore() { finish(); }
+function skipQ()   { finish(); }
+
+function finish() {
+  done.add(curQ.key);
+  curTeam = (curTeam + 1) % teams.length;
+  curQ = null;
+  if (done.size >= 25) { showEnd(); return; }
+  buildBoard();
+  updateBar();
+  show('s-board');
+}
+
+function updateBar() {
+  document.getElementById('scorebar').innerHTML = teams.map((t, i) => `
+    <div class="team-score">
+      <div class="tname ${i === curTeam ? 'active-team' : ''}">${i === curTeam ? '' : ''}${t.n}</div>
+      <div class="tscore">$${t.s.toLocaleString()}</div>
+    </div>`).join('');
+  document.getElementById('turnbar').textContent = teams[curTeam].n + "'s turn — pick a question";
+}
+
+function showEnd() {
+  const sorted = [...teams].sort((a,b) => b.s - a.s);
+  const tied = sorted[0].s === sorted[1].s;
+  document.getElementById('wintext').textContent = tied
+    ? "It's a tie!"
+    : 'Winner: ' + sorted[0].n + ' with $' + sorted[0].s.toLocaleString() + '!';
+  document.getElementById('finalscores').innerHTML = sorted.map((t, i) => `
+    <div class="final-card ${i===0&&!tied?'winner':''}">
+      <div>
+        <div class="final-rank">${['1st Place','2nd Place','3rd Place'][i]||''}</div>
+        <div class="final-name">${t.n}</div>
+      </div>
+      <div class="final-score">$${t.s.toLocaleString()}</div>
+    </div>`).join('');
+  show('s-end');
+}
+
+function resetGame() {
+  teams = [{n:'Team 1',s:0},{n:'Team 2',s:0}];
+  done = new Set();
+  curQ = null;
+  curTeam = 0;
+  document.getElementById('t1').value = 'Team 1';
+  document.getElementById('t2').value = 'Team 2';
+  show('s-setup');
+}
+</script>
+</body>
+</html>

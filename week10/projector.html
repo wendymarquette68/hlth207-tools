@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instructor Projector — You Just Turned 65</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#1a1a2e;color:white;min-height:100vh;cursor:pointer;user-select:none}
+.slide{display:none;min-height:100vh;flex-direction:column;padding:40px 52px 32px;animation:fadeIn .25s ease}
+.slide.active{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── Top bar ── */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.slide-label{font-size:13px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em}
+.timer-ring{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);border-radius:24px;padding:8px 18px}
+.timer-ring .time{font-size:22px;font-weight:800;color:#FFD700;min-width:44px;text-align:center}
+.timer-ring .tlabel{font-size:12px;color:rgba(255,255,255,.6)}
+.timer-ring .tbtn{background:rgba(255,255,255,.15);border:none;color:white;padding:5px 12px;border-radius:12px;cursor:pointer;font-size:12px;font-family:inherit}
+.timer-ring .tbtn:hover{background:rgba(255,255,255,.25)}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;justify-content:center}
+.slide-icon{font-size:64px;margin-bottom:16px}
+.slide-num{font-size:14px;font-weight:700;color:#FFD700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.slide-title{font-size:44px;font-weight:900;line-height:1.15;margin-bottom:24px;color:white}
+.slide-body{font-size:20px;line-height:1.7;color:rgba(255,255,255,.88);max-width:800px;margin-bottom:28px}
+
+/* ── Instructor notes ── */
+.inotes{background:rgba(255,215,0,.1);border:1.5px solid rgba(255,215,0,.35);border-radius:12px;padding:16px 20px;margin-top:auto}
+.inotes .nl{font-size:12px;font-weight:700;color:#FFD700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.inotes p{font-size:15px;color:rgba(255,255,255,.85);line-height:1.6;margin:0}
+.answer-pill{display:inline-block;background:#FFD700;color:#1a1a2e;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;margin-bottom:8px}
+
+/* ── Correct answer reveal ── */
+.correct-box{background:rgba(27,111,116,.35);border:1.5px solid #1B6F74;border-radius:12px;padding:14px 18px;margin-bottom:14px}
+.correct-box .cl{font-size:12px;color:#7fdfe4;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:4px}
+.correct-box .cv{font-size:18px;font-weight:700;color:white}
+
+/* ── Navigation ── */
+.nav{display:flex;align-items:center;justify-content:space-between;padding-top:20px}
+.nav-btn{background:rgba(255,255,255,.12);border:none;color:white;padding:12px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.nav-btn:hover{background:rgba(255,255,255,.22)}
+.nav-hint{font-size:13px;color:rgba(255,255,255,.35)}
+
+/* ── Title slide ── */
+.title-slide{text-align:center;align-items:center;justify-content:center;background:linear-gradient(160deg,#1B6F74 0%,#2C3E50 100%)}
+.title-slide h1{font-size:58px;font-weight:900;margin-bottom:12px}
+.title-slide .sub{font-size:22px;opacity:.8}
+.title-slide .instructions{background:rgba(255,255,255,.12);border-radius:16px;padding:20px 32px;margin-top:32px;max-width:640px}
+.title-slide .instructions p{font-size:16px;line-height:1.7;color:rgba(255,255,255,.9);margin:0}
+
+/* ── End slide ── */
+.end-slide{text-align:center;align-items:center;justify-content:center;background:linear-gradient(160deg,#4A235A 0%,#1a1a2e 100%)}
+
+/* ── Progress bar ── */
+.pbar{height:4px;background:rgba(255,255,255,.1);position:fixed;bottom:0;left:0;right:0}
+.pbar-fill{height:100%;background:#1B6F74;transition:width .4s ease}
+
+/* ── Cost highlight ── */
+.cost-hl{display:inline-block;background:rgba(255,215,0,.2);border:1px solid rgba(255,215,0,.4);border-radius:8px;padding:2px 10px;font-weight:700;color:#FFD700}
+</style>
+</head>
+<body>
+
+<!-- ══ SLIDE 0: TITLE ══════════════════════════════════════════════════════ -->
+<div class="slide title-slide active" data-idx="0">
+  <div style="font-size:72px;margin-bottom:16px">🎂</div>
+  <h1>You Just Turned 65</h1>
+  <p class="sub">HLTH 207 · Week 10 · Long-Term Care Simulation</p>
+  <div class="instructions">
+    <p><strong>Students:</strong> Open the Student App on your device now.<br>
+    Select your Life Card to match the printed card you received.<br><br>
+    You will make care decisions on your phone as I reveal each scenario.<br>
+    <strong>Tap anywhere or press Spacebar to advance.</strong></p>
+  </div>
+</div>
+
+<!-- ══ SLIDE 1: SCENARIO 1 ══════════════════════════════════════════════════ -->
+<div class="slide" data-idx="1">
+  <div class="topbar">
+    <span class="slide-label">Scenario 1 of 6</span>
+    <div class="timer-ring">
+      <span class="tlabel">Time</span>
+      <span class="time" id="t1">4:00</span>
+      <button class="tbtn" onclick="startTimer('t1',240,event)">▶ Start</button>
+      <button class="tbtn" onclick="resetTimer('t1',240,event)">↺</button>
+    </div>
+  </div>
+  <div class="main">
+    <span class="slide-icon">🏥</span>
+    <div class="slide-num">Scenario 1</div>
+    <div class="slide-title">The Fall</div>
+    <p class="slide-body">You fall at home and break your hip. Surgery goes well. After <strong>5 days in the hospital</strong>, your doctor orders daily physical therapy and wound care for at least 3 weeks before you can return home safely.</p>
+    <div style="font-size:20px;font-weight:700;color:#FFD700;margin-bottom:16px">Students: What would you do? Make your selection in the app.</div>
+    <div class="inotes">
+      <div class="nl">📋 Instructor Note</div>
+      <div class="answer-pill">Correct: Skilled Nursing Facility</div>
+      <p>Medicare covers this because of the qualifying 5-day hospital stay. Days 1–20: fully covered. Days 21–100: ~$204/day co-pay. After day 100: $0 from Medicare. <br><br>
+      <strong>Key teaching moment:</strong> This is one of the few times Medicare genuinely helps with LTC — but only because a hospital stay preceded it. Without that stay, even skilled PT at home would be out of pocket.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="prev()">← Back</button>
+    <span class="nav-hint">Tap anywhere or press Space to advance</span>
+    <button class="nav-btn" onclick="next()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 2: SCENARIO 2 ══════════════════════════════════════════════════ -->
+<div class="slide" data-idx="2">
+  <div class="topbar">
+    <span class="slide-label">Scenario 2 of 6</span>
+    <div class="timer-ring">
+      <span class="tlabel">Time</span>
+      <span class="time" id="t2">4:00</span>
+      <button class="tbtn" onclick="startTimer('t2',240,event)">▶ Start</button>
+      <button class="tbtn" onclick="resetTimer('t2',240,event)">↺</button>
+    </div>
+  </div>
+  <div class="main">
+    <span class="slide-icon">🚪</span>
+    <div class="slide-num">Scenario 2</div>
+    <div class="slide-title">Your Caregiver Is Gone</div>
+    <p class="slide-body">The person helping you at home is no longer available. You now need help with bathing and dressing <strong>every single day</strong>. You cannot safely manage alone.</p>
+    <div style="font-size:20px;font-weight:700;color:#FFD700;margin-bottom:16px">Students: What would you do? Make your selection in the app.</div>
+    <div class="inotes">
+      <div class="nl">📋 Instructor Note — THE KEY LESSON</div>
+      <div class="answer-pill">Correct: Home Health or ALF — YOU pay</div>
+      <p><strong>Medicare does NOT cover custodial care.</strong> Bathing and dressing is not a "skilled" service. This catches families completely off guard.<br><br>
+      Cost to students: ~<span class="cost-hl">$19,449</span> out of pocket for 3 months. Card C ($12,000 savings) is already in trouble. Ask: "Who had Medicare cover this? Who was surprised?"<br><br>
+      4 in 10 Americans believe Medicare is the main nursing home payer. It is not. This is the moment that misconception dies.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="prev()">← Back</button>
+    <span class="nav-hint">Tap anywhere or press Space to advance</span>
+    <button class="nav-btn" onclick="next()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 3: SCENARIO 3 ══════════════════════════════════════════════════ -->
+<div class="slide" data-idx="3">
+  <div class="topbar">
+    <span class="slide-label">Scenario 3 of 6</span>
+    <div class="timer-ring">
+      <span class="tlabel">Time</span>
+      <span class="time" id="t3">4:00</span>
+      <button class="tbtn" onclick="startTimer('t3',240,event)">▶ Start</button>
+      <button class="tbtn" onclick="resetTimer('t3',240,event)">↺</button>
+    </div>
+  </div>
+  <div class="main">
+    <span class="slide-icon">🏘️</span>
+    <div class="slide-num">Scenario 3</div>
+    <div class="slide-title">Moving to Assisted Living</div>
+    <p class="slide-body">Your doctor says it is no longer safe to live with minimal support. You need a residential care environment with daily ADL help — but <strong>not 24-hour skilled nursing</strong>.</p>
+    <div style="font-size:20px;font-weight:700;color:#FFD700;margin-bottom:16px">Students: What would you do? Make your selection in the app.</div>
+    <div class="inotes">
+      <div class="nl">📋 Instructor Note</div>
+      <div class="answer-pill">Correct: Assisted Living — YOU pay</div>
+      <p>ALF is clinically appropriate — not SNF. But <strong>Medicaid does NOT consistently cover ALF</strong>. States must cover nursing home care; ALF coverage is optional and patchy.<br><br>
+      Cost: <span class="cost-hl">$64,200/year</span> out of pocket. At this point, Card A ($85K) is nearly depleted. Card C may have already hit Medicaid. Card F is barely affected.<br><br>
+      Discussion: "How long can YOUR Life Card afford $5,350/month?" Let students do the math aloud.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="prev()">← Back</button>
+    <span class="nav-hint">Tap anywhere or press Space to advance</span>
+    <button class="nav-btn" onclick="next()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 4: SCENARIO 4 ══════════════════════════════════════════════════ -->
+<div class="slide" data-idx="4">
+  <div class="topbar">
+    <span class="slide-label">Scenario 4 of 6</span>
+    <div class="timer-ring">
+      <span class="tlabel">Time</span>
+      <span class="time" id="t4">4:00</span>
+      <button class="tbtn" onclick="startTimer('t4',240,event)">▶ Start</button>
+      <button class="tbtn" onclick="resetTimer('t4',240,event)">↺</button>
+    </div>
+  </div>
+  <div class="main">
+    <span class="slide-icon">🧠</span>
+    <div class="slide-num">Scenario 4</div>
+    <div class="slide-title">Memory Care</div>
+    <p class="slide-body">Your cognitive function has declined significantly. You have been diagnosed with <strong>moderate-to-severe dementia</strong> and are wandering at night. Your family can no longer safely keep you at home.</p>
+    <div style="font-size:20px;font-weight:700;color:#FFD700;margin-bottom:16px">Students: What would you do? Make your selection in the app.</div>
+    <div class="inotes">
+      <div class="nl">📋 Instructor Note</div>
+      <div class="answer-pill">Correct: Memory Care Unit — YOU pay</div>
+      <p>Standard ALF is not safe — no secured environment, no dementia-trained staff. Memory care averages <span class="cost-hl">$7,500/month</span> nationally ($90,000/year).<br><br>
+      As of 2025, <strong>44% of all ALF residents</strong> have Alzheimer's or dementia — this is the largest single population in LTC.<br><br>
+      By this point, most cards are at or near Medicaid eligibility except D and F. Ask: "Who got the Medicaid alert on their phone?" This is a powerful class moment.</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="prev()">← Back</button>
+    <span class="nav-hint">Tap anywhere or press Space to advance</span>
+    <button class="nav-btn" onclick="next()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 5: SCENARIO 5 ══════════════════════════════════════════════════ -->
+<div class="slide" data-idx="5">
+  <div class="topbar">
+    <span class="slide-label">Scenario 5 of 6</span>
+    <div class="timer-ring">
+      <span class="tlabel">Time</span>
+      <span class="time" id="t5">4:00</span>
+      <button class="tbtn" onclick="startTimer('t5',240,event)">▶ Start</button>
+      <button class="tbtn" onclick="resetTimer('t5',240,event)">↺</button>
+    </div>
+  </div>
+  <div class="main">
+    <span class="slide-icon">🕊️</span>
+    <div class="slide-num">Scenario 5</div>
+    <div class="slide-title">A Terminal Diagnosis</div>
+    <p class="slide-body">Your condition has progressed and curative treatment is no longer feasible. Your prognosis is <strong>4 to 6 months</strong>. Your family asks about end-of-life care focused on comfort and dignity — not aggressive treatment.</p>
+    <div style="font-size:20px;font-weight:700;color:#FFD700;margin-bottom:16px">Students: What would you do? Make your selection in the app.</div>
+    <div class="inotes">
+      <div class="nl">📋 Instructor Note</div>
+      <div class="answer-pill">Correct: Hospice — Medicare covers fully</div>
+      <p>Medicare fully covers ALL hospice services once a physician certifies ≤6-month prognosis and patient chooses comfort over cure. Nursing, medications, social work, chaplains, bereavement support for family for a year after death — all covered.<br><br>
+      Hospice can be at home, in ALF, SNF, or dedicated hospice facility. This is the most comprehensive Medicare benefit most people never know about. Ask: "How does this change how you think about end-of-life planning?"</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="prev()">← Back</button>
+    <span class="nav-hint">Tap anywhere or press Space to advance</span>
+    <button class="nav-btn" onclick="next()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 6: SCENARIO 6 — POLICY CARD ═══════════════════════════════════ -->
+<div class="slide" data-idx="6" style="background:linear-gradient(160deg,#3d0000 0%,#1a1a2e 100%)">
+  <div class="topbar">
+    <span class="slide-label" style="color:rgba(255,150,150,.7)">Scenario 6 of 6 — The Policy Card</span>
+    <div class="timer-ring" style="background:rgba(255,80,80,.15);border:1px solid rgba(255,80,80,.3)">
+      <span class="tlabel">Time</span>
+      <span class="time" id="t6">5:00</span>
+      <button class="tbtn" onclick="startTimer('t6',300,event)">▶ Start</button>
+      <button class="tbtn" onclick="resetTimer('t6',300,event)">↺</button>
+    </div>
+  </div>
+  <div class="main">
+    <span class="slide-icon">🏛️</span>
+    <div class="slide-num" style="color:#ff8080">Scenario 6 — Current Events</div>
+    <div class="slide-title">The 2025 Policy Card</div>
+    <p class="slide-body">It is <strong>July 2025</strong>. The One Big Beautiful Bill Act has cut Medicaid by $940 billion. Your state is eliminating Home and Community-Based Services (HCBS) to close a budget gap. Federal law requires nursing home coverage to continue. <strong>Home care is being cut.</strong></p>
+    <div style="font-size:20px;font-weight:700;color:#FFD700;margin-bottom:16px">Students: How does this affect YOUR situation? Make your selection.</div>
+    <div class="inotes" style="border-color:rgba(255,215,0,.4)">
+      <div class="nl">📋 Instructor Note — THE EQUITY MOMENT</div>
+      <p>The correct answer is "depends on savings." <strong>HCBS are OPTIONAL under federal law</strong> — states cut them first when money is short. Nursing homes are mandatory.<br><br>
+      Ask the class: "Stand up if your Life Card had savings above $50,000 when you reached this scenario. Those are the people who still have a choice. Everyone else — your only option may now be a nursing home."<br><br>
+      <strong>Bridge to advocacy:</strong> "This is exactly why your Senator letter matters. The answer to 'who has options?' should not be 'whoever has money.'"</p>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="prev()">← Back</button>
+    <span class="nav-hint">Tap anywhere or press Space to advance</span>
+    <button class="nav-btn" onclick="next()">Debrief →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 7: DEBRIEF ══════════════════════════════════════════════════════ -->
+<div class="slide end-slide" data-idx="7">
+  <div style="text-align:center;max-width:820px">
+    <div style="font-size:64px;margin-bottom:16px">💬</div>
+    <div style="font-size:44px;font-weight:900;margin-bottom:24px">Class Debrief</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left;margin-bottom:32px">
+      <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:18px">
+        <div style="font-size:13px;font-weight:700;color:#FFD700;margin-bottom:8px;text-transform:uppercase">Round 1</div>
+        <p style="font-size:16px;color:rgba(255,255,255,.85);line-height:1.6;margin:0">Show of hands: Who reached the Medicaid alert? How did it feel to watch your savings disappear?</p>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:18px">
+        <div style="font-size:13px;font-weight:700;color:#FFD700;margin-bottom:8px;text-transform:uppercase">Round 2</div>
+        <p style="font-size:16px;color:rgba(255,255,255,.85);line-height:1.6;margin:0">Which scenario surprised you most? Which cost surprised you? Which Life Card had the hardest journey?</p>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:18px">
+        <div style="font-size:13px;font-weight:700;color:#FFD700;margin-bottom:8px;text-transform:uppercase">Round 3</div>
+        <p style="font-size:16px;color:rgba(255,255,255,.85);line-height:1.6;margin:0">Scenario 6: Who still had options? Who didn't? What made the difference? Is that fair?</p>
+      </div>
+      <div style="background:rgba(27,111,116,.35);border:1.5px solid #1B6F74;border-radius:12px;padding:18px">
+        <div style="font-size:13px;font-weight:700;color:#7fdfe4;margin-bottom:8px;text-transform:uppercase">Advocacy Bridge</div>
+        <p style="font-size:16px;color:rgba(255,255,255,.85);line-height:1.6;margin:0">Write one sentence: "Based on today's simulation, the LTC policy I would advocate for in my Senator letter is..." Connect it to your specific health topic.</p>
+      </div>
+    </div>
+    <p style="font-size:15px;color:rgba(255,255,255,.5)">Students: Screenshot your results screen and be ready to share your journey</p>
+  </div>
+</div>
+
+<!-- ── Progress bar ──────────────────────────────────────────────────────── -->
+<div class="pbar"><div class="pbar-fill" id="pbar-fill" style="width:0%"></div></div>
+
+<script>
+const TOTAL=7;
+let current=0;
+const timers={};
+
+function updateProgress(){
+  document.getElementById('pbar-fill').style.width=((current/TOTAL)*100)+'%';
+}
+
+function showSlide(idx){
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+  const slides=document.querySelectorAll('.slide');
+  if(slides[idx])slides[idx].classList.add('active');
+  current=idx;
+  updateProgress();
+  window.scrollTo(0,0);
+}
+
+function next(){if(current<TOTAL)showSlide(current+1);}
+function prev(){if(current>0)showSlide(current-1);}
+
+// Click anywhere to advance (except buttons)
+document.addEventListener('click',e=>{
+  if(e.target.tagName==='BUTTON')return;
+  next();
+});
+
+// Spacebar to advance
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();next();}
+  if(e.code==='ArrowRight')next();
+  if(e.code==='ArrowLeft')prev();
+});
+
+// Timers
+function startTimer(id,seconds,e){
+  e.stopPropagation();
+  if(timers[id])clearInterval(timers[id]);
+  let remaining=seconds;
+  const el=document.getElementById(id);
+  timers[id]=setInterval(()=>{
+    remaining--;
+    if(remaining<=0){clearInterval(timers[id]);el.textContent='0:00';el.style.color='#ff6b6b';return;}
+    const m=Math.floor(remaining/60);
+    const s=remaining%60;
+    el.textContent=m+':'+(s<10?'0':'')+s;
+    el.style.color=remaining<=30?'#ff6b6b':remaining<=60?'#ffaa00':'#FFD700';
+  },1000);
+}
+
+function resetTimer(id,seconds,e){
+  e.stopPropagation();
+  if(timers[id])clearInterval(timers[id]);
+  const m=Math.floor(seconds/60);
+  const s=seconds%60;
+  document.getElementById(id).textContent=m+':'+(s<10?'0':'')+s;
+  document.getElementById(id).style.color='#FFD700';
+}
+</script>
+</body>
+</html>

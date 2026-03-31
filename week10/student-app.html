@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>You Just Turned 65 — HLTH 207</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f5f5f7;color:#1a1a1a;min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;animation:fadeIn .2s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── Savings bar ── */
+.sbar{position:sticky;top:0;z-index:99;display:flex;justify-content:space-between;align-items:center;padding:10px 16px;transition:background .4s}
+.sbar-left .lbl,.sbar-right .lbl{font-size:11px;font-weight:700;opacity:.75;text-transform:uppercase;letter-spacing:.05em}
+.sbar-left .amt,.sbar-right .amt{font-size:20px;font-weight:800}
+.sbar-right{text-align:right}
+.sbar.green{background:#1B6F74;color:white}
+.sbar.yellow{background:#c88d00;color:white}
+.sbar.orange{background:#b54a00;color:white}
+.sbar.red{background:#8B1A1A;color:white}
+@keyframes bump{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.bump{animation:bump .35s ease}
+
+/* ── Progress ── */
+.pdots{display:flex;gap:5px;justify-content:center;padding:9px;background:rgba(0,0,0,.06)}
+.dot{width:9px;height:9px;border-radius:50%;background:#ccc;transition:background .2s,width .2s}
+.dot.done{background:#1B6F74}
+.dot.cur{background:#c88d00;width:22px;border-radius:5px}
+
+/* ── Buttons ── */
+.btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .12s,transform .1s;margin-bottom:8px;display:block}
+.btn:active{transform:scale(.97);opacity:.85}
+.btn-primary{background:#1B6F74;color:white}
+.btn-ghost{background:white;color:#555;border:1.5px solid #d0d5dd}
+.btn-opt{background:white;border:1.5px solid #d0d5dd;border-radius:12px;padding:14px 16px;text-align:left;width:100%;cursor:pointer;margin-bottom:10px;font-family:inherit;transition:border-color .15s,background .15s}
+.btn-opt:active{transform:scale(.98)}
+.btn-opt .ol{font-size:16px;font-weight:600;color:#1a1a1a;display:block;margin-bottom:3px}
+.btn-opt .od{font-size:13px;color:#777;display:block}
+.btn-opt.correct{border-color:#155724;background:#e8f5e9}
+.btn-opt.wrong{border-color:#8B1A1A;background:#fdeaea}
+.btn-opt.show-correct{border-color:#155724;background:#e8f5e9;opacity:.7}
+
+/* ── Content ── */
+.pad{padding:16px}
+.pad h1{font-size:22px;font-weight:700;margin-bottom:8px;color:#1a1a1a}
+.pad h2{font-size:18px;font-weight:700;margin-bottom:8px;color:#1a1a1a}
+.pad p{font-size:15px;line-height:1.65;color:#333;margin-bottom:12px}
+.muted{font-size:13px;color:#888}
+.snum{font-size:12px;font-weight:700;color:#1B6F74;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.sicon{font-size:38px;display:block;margin-bottom:8px}
+
+/* ── Reveal ── */
+.reveal-card{border-radius:12px;padding:16px;margin-bottom:12px;border:1.5px solid}
+.reveal-card.good{background:#e8f5e9;border-color:#155724}
+.reveal-card.warn{background:#fff3cd;border-color:#c88d00}
+.reveal-card.info{background:#e8f0fe;border-color:#1B6F74}
+.reveal-card .rt{font-size:16px;font-weight:700;margin-bottom:8px;color:#1a1a1a}
+.reveal-card .rb{font-size:14px;line-height:1.65;color:#333}
+.tip-box{background:#e8f4f5;border-left:3px solid #1B6F74;padding:11px 13px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.55;color:#333;margin-bottom:16px}
+
+/* ── Cost cards ── */
+.costrow{display:flex;gap:8px;margin-bottom:14px}
+.cc{flex:1;background:white;border-radius:10px;padding:11px;text-align:center;border:1px solid #e5e7eb}
+.cc .cl{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.cc .cv{font-size:14px;font-weight:700;color:#1a1a1a}
+.cc .cv.green{color:#155724}
+.cc .cv.red{color:#8B1A1A}
+
+/* ── Life card grid ── */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+.lc{border:none;border-radius:14px;padding:18px 14px;text-align:left;cursor:pointer;font-family:inherit;color:white;transition:transform .12s}
+.lc:active{transform:scale(.95)}
+.lc .lid{font-size:32px;font-weight:900;line-height:1}
+.lc .lsub{font-size:11px;font-weight:600;opacity:.9;margin-top:5px;line-height:1.3}
+
+/* ── Detail rows ── */
+.drow{padding:11px 0;border-bottom:1px solid #f0f0f0}
+.drow .dl{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.drow .dv{font-size:14px;color:#333;line-height:1.4}
+
+/* ── Summary ── */
+.srow{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.srow .sl{font-size:14px;color:#666}
+.srow .sv{font-size:14px;font-weight:700;text-align:right;max-width:55%}
+
+/* ── Savings box ── */
+.savbox{border-radius:12px;padding:16px;margin:14px 0;text-align:center;border:2px solid #1B6F74;background:#e8f4f5}
+.savbox .sbl{font-size:12px;color:#1B6F74;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.savbox .sba{font-size:34px;font-weight:900;color:#1B6F74}
+.savbox .sbn{font-size:12px;color:#555;margin-top:3px}
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME ══════════════════════════════════════════════════════════ -->
+<div id="s-welcome" class="screen active">
+  <div style="background:#1B6F74;padding:44px 24px 36px;text-align:center;color:white">
+    <div style="font-size:56px;margin-bottom:14px">🎂</div>
+    <h1 style="font-size:28px;font-weight:900;color:white;margin-bottom:8px">You Just Turned 65</h1>
+    <p style="font-size:15px;opacity:.85;line-height:1.5;margin:0">A long-term care life simulation<br>HLTH 207 — Week 10</p>
+  </div>
+  <div class="pad" style="padding-top:22px">
+    <p>You are about to experience the long-term care system as if it were happening to <em>you</em>. You will face real health events, make care decisions, and watch your savings change in real time.</p>
+    <p>Your instructor will reveal each scenario on the screen at the front of the room. Make your decisions here on your device.</p>
+    <div style="background:#fff3cd;border-radius:10px;padding:14px;margin-bottom:22px;border-left:3px solid #c88d00">
+      <p style="margin:0;font-size:14px;color:#5a3e00;line-height:1.5"><strong>The question that drives everything:</strong> When your savings run out and you need long-term care — who pays?</p>
+    </div>
+    <button class="btn btn-primary" onclick="go('s-cards')">Choose My Life Card →</button>
+  </div>
+</div>
+
+<!-- ══ CARD SELECT ══════════════════════════════════════════════════════ -->
+<div id="s-cards" class="screen">
+  <div class="pad" style="padding-bottom:8px">
+    <h1>Pick Your Life Card</h1>
+    <p class="muted">Your instructor is distributing printed cards. Find your letter and tap it below to load your situation.</p>
+  </div>
+  <div class="cgrid" id="card-grid"></div>
+</div>
+
+<!-- ══ CARD DETAIL ══════════════════════════════════════════════════════ -->
+<div id="s-detail" class="screen">
+  <div id="dheader" style="padding:24px 20px;color:white">
+    <div id="dcardid" style="font-size:13px;font-weight:700;opacity:.8;margin-bottom:4px"></div>
+    <div id="dsubtitle" style="font-size:22px;font-weight:800"></div>
+  </div>
+  <div class="pad">
+    <div id="drows"></div>
+    <div class="savbox">
+      <div class="sbl">Your Starting Savings</div>
+      <div class="sba" id="dsavings"></div>
+      <div class="sbn">This is everything you have set aside for retirement and care.</div>
+    </div>
+    <button class="btn btn-primary" onclick="startSim()">Start Simulation →</button>
+    <button class="btn btn-ghost" onclick="go('s-cards')">← Change Card</button>
+  </div>
+</div>
+
+<!-- ══ SCENARIO ══════════════════════════════════════════════════════════ -->
+<div id="s-scenario" class="screen">
+  <div id="sc-sbar" class="sbar green">
+    <div class="sbar-left"><div class="lbl">Your Savings</div><div class="amt" id="sc-savings"></div></div>
+    <div class="sbar-right"><div class="lbl">Scenario</div><div class="amt" id="sc-num"></div></div>
+  </div>
+  <div class="pdots" id="pdots"></div>
+  <div class="pad">
+    <span class="sicon" id="sc-icon"></span>
+    <div class="snum" id="sc-snum"></div>
+    <h2 id="sc-title"></h2>
+    <p id="sc-situation"></p>
+    <p style="font-size:14px;font-weight:700;color:#1B6F74;margin-bottom:10px">What would you do?</p>
+    <div id="sc-opts"></div>
+  </div>
+</div>
+
+<!-- ══ REVEAL ════════════════════════════════════════════════════════════ -->
+<div id="s-reveal" class="screen">
+  <div id="rv-sbar" class="sbar green">
+    <div class="sbar-left"><div class="lbl">Your Savings</div><div class="amt" id="rv-savings"></div></div>
+    <div class="sbar-right"><div class="lbl" id="rv-change-lbl">Change</div><div class="amt" id="rv-change"></div></div>
+  </div>
+  <div class="pad" style="padding-top:14px">
+    <div class="costrow">
+      <div class="cc"><div class="cl">Correct care</div><div class="cv" id="rv-care" style="font-size:12px"></div></div>
+      <div class="cc"><div class="cl">Who pays</div><div class="cv" id="rv-payer" style="font-size:12px"></div></div>
+    </div>
+    <div id="rv-card" class="reveal-card good">
+      <div class="rt" id="rv-title"></div>
+      <div class="rb" id="rv-body"></div>
+    </div>
+    <div class="tip-box" id="rv-tip"></div>
+    <button class="btn btn-primary" id="rv-next" onclick="nextScene()"></button>
+  </div>
+</div>
+
+<!-- ══ MEDICAID ALERT ════════════════════════════════════════════════════ -->
+<div id="s-medicaid" class="screen">
+  <div style="background:#8B1A1A;padding:36px 24px;text-align:center;color:white">
+    <div style="font-size:52px;margin-bottom:14px">⚠️</div>
+    <h1 style="font-size:24px;font-weight:900;color:white;margin-bottom:8px">Your savings are nearly gone.</h1>
+    <p style="font-size:15px;opacity:.9;margin:0">You have reached the Medicaid spend-down threshold.</p>
+  </div>
+  <div class="pad" style="padding-top:18px">
+    <div style="background:#fdeaea;border-radius:10px;padding:14px;margin-bottom:14px;border:1.5px solid #8B1A1A">
+      <p style="font-size:15px;font-weight:700;color:#8B1A1A;margin-bottom:6px">What just happened?</p>
+      <p style="font-size:14px;color:#5a0000;margin:0;line-height:1.6">In most states, you must reduce your countable assets to <strong>$2,000 or less</strong> before Medicaid will pay for long-term care. You have spent down your savings to that threshold.</p>
+    </div>
+    <div style="background:#e8f5e9;border-radius:10px;padding:14px;margin-bottom:14px;border:1.5px solid #155724">
+      <p style="font-size:15px;font-weight:700;color:#155724;margin-bottom:6px">What Medicaid will cover from here:</p>
+      <p style="font-size:14px;color:#1a3c1a;margin:0;line-height:1.7">✓ Nursing home care — with no day limit<br>✓ Some home health services (varies by state)<br>✓ Some community services (at risk from 2025 cuts)</p>
+    </div>
+    <div style="background:#fff3cd;border-radius:10px;padding:14px;margin-bottom:20px;border-left:3px solid #c88d00">
+      <p style="font-size:14px;color:#5a3e00;margin:0;line-height:1.6"><strong>What you gave up to get here:</strong> Your retirement savings. Your emergency fund. Possibly your home equity. This is called <em>spend-down</em> — and it is the financial reality for most middle-class families who need long-term care.</p>
+    </div>
+    <button class="btn btn-primary" onclick="afterMedicaid()">I understand — continue the simulation</button>
+  </div>
+</div>
+
+<!-- ══ END SCREEN ════════════════════════════════════════════════════════ -->
+<div id="s-end" class="screen">
+  <div id="end-hdr" style="padding:28px 20px 22px;color:white;text-align:center">
+    <div style="font-size:44px;margin-bottom:10px">📋</div>
+    <div style="font-size:13px;font-weight:700;opacity:.8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">Simulation Complete</div>
+    <div style="font-size:24px;font-weight:800">Your LTC Journey</div>
+  </div>
+  <div class="pad">
+    <div style="background:white;border-radius:12px;padding:4px 16px;margin-bottom:16px;border:1px solid #e5e7eb" id="end-rows"></div>
+    <div style="background:#e8f4f5;border-radius:10px;padding:16px;margin-bottom:16px;border-left:3px solid #1B6F74">
+      <p style="font-size:12px;font-weight:700;color:#1B6F74;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">For Your Advocacy Letter</p>
+      <p id="end-insight" style="font-size:14px;line-height:1.65;color:#333;margin:0"></p>
+    </div>
+    <div style="background:#f8f9fa;border-radius:10px;padding:14px;margin-bottom:16px;text-align:center;border:1px solid #e5e7eb">
+      <p style="font-size:13px;color:#666;margin:0">📸 Screenshot this screen to share your results in class discussion</p>
+    </div>
+    <button class="btn btn-primary" onclick="playAgain()">Try a Different Life Card</button>
+  </div>
+</div>
+
+<script>
+/* ── DATA ──────────────────────────────────────────────────────────── */
+const CARDS=[
+  {id:'A',color:'#1B6F74',sub:'The Independent Retiree',
+   health:'Mild high blood pressure, well controlled with medication.',
+   savings:85000,income:1800,
+   family:'One adult daughter, lives 3 hours away, works full time.',
+   housing:'Own your home outright — fully paid off.'},
+  {id:'B',color:'#2C3E50',sub:'Managing Chronic Conditions',
+   health:'Type 2 diabetes and early-stage Parkinson\'s disease.',
+   savings:220000,income:2400,
+   family:'Spouse is healthy and lives with you.',
+   housing:'Own your home, mortgage paid off.'},
+  {id:'C',color:'#155724',sub:'Fixed Income, Limited Support',
+   health:'Have had two small strokes — memory somewhat affected.',
+   savings:12000,income:1400,
+   family:'No spouse or children. One niece lives nearby but works two jobs.',
+   housing:'Renting an apartment — $850/month.'},
+  {id:'D',color:'#6B4700',sub:"Alzheimer's Disease",
+   health:"Moderate Alzheimer's disease, diagnosed 18 months ago.",
+   savings:450000,income:2800,
+   family:'Three adult children — two live nearby, one is a nurse.',
+   housing:'Own your home, worth approximately $310,000.'},
+  {id:'E',color:'#8B1A1A',sub:'Cancer Diagnosis at 65',
+   health:'Stage 3 breast cancer — recently completed chemotherapy.',
+   savings:38000,income:1600,
+   family:'Spouse works full time. Two teenage children at home.',
+   housing:'Own your home, $180,000 remaining on mortgage.'},
+  {id:'F',color:'#4A235A',sub:'The Well-Prepared Couple',
+   health:'Excellent health — exercise daily, no chronic conditions.',
+   savings:1100000,income:5200,
+   family:'Spouse is also in excellent health.',
+   housing:'Own your home (paid off) in a Naturally Occurring Retirement Community.'}
+];
+
+const SCENES=[
+  {id:1,icon:'🏥',title:'The Fall',
+   situation:'You fall at home and break your hip. Surgery goes well. After 5 days in the hospital, your doctor orders daily physical therapy and wound care for at least 3 weeks before you can return home.',
+   opts:[
+     {l:'Skilled Nursing Facility',d:'Daily PT + nursing care'},
+     {l:'Home Health Care only',d:'Occasional nurse visits at home'},
+     {l:'Assisted Living Facility',d:'Residential support care'}],
+   correct:0,cost:0,payer:'medicare',
+   cl:'Skilled Nursing Facility',pl:'Medicare ✓ (fully covered)',
+   type:'good',
+   rt:'Medicare covers this — because of your hospital stay.',
+   rb:'A SNF is correct: you need daily skilled therapy and wound care that home health alone cannot provide. Because you had a 5-day qualifying hospital stay, Medicare covers days 1–20 completely. Days 21–100 require a ~$204/day co-pay. After day 100, Medicare pays nothing.',
+   tip:'This is one of the few moments Medicare genuinely helps with LTC — but only because a hospital stay preceded it. Without that stay, even this would be out of pocket.'},
+  {id:2,icon:'🚪',title:'Your Caregiver Is Gone',
+   situation:'The person helping you at home — spouse, daughter, or niece — is no longer available. You now need help with bathing and dressing every single day. You cannot safely manage alone.',
+   opts:[
+     {l:'Home Health Aide',d:'Daily personal care at home — $6,483/mo'},
+     {l:'Assisted Living Facility',d:'Residential care — $5,350/mo'},
+     {l:'Medicare will cover this',d:'Medicare pays for daily personal care'}],
+   correct:0,cost:19449,payer:'self',
+   cl:'Home Health or ALF',pl:'YOU pay out of pocket',
+   type:'warn',
+   rt:'Medicare will NOT pay for this. This is the most common misconception in all of LTC.',
+   rb:"Medicare only covers SKILLED care — procedures ordered by a physician. Helping you bathe and dress is 'custodial care' and Medicare pays exactly $0. A national poll found 4 in 10 Americans believe Medicare is the main payer for nursing home care. It is not. You pay out of pocket until savings run out, then Medicaid may step in.",
+   tip:'Three months of daily personal care just cost nearly $20,000 out of your savings. For Card C, this is more than their entire savings.'},
+  {id:3,icon:'🏘️',title:'Moving to Assisted Living',
+   situation:"Your doctor says it is no longer safe for you to live with minimal support. You need a structured residential care environment with daily ADL help — but NOT 24-hour skilled nursing.",
+   opts:[
+     {l:'Assisted Living Facility',d:'ADL support + residential care — $5,350/mo'},
+     {l:'Skilled Nursing Facility',d:'24-hour nursing care — $10,646/mo'},
+     {l:'Medicaid covers ALF costs',d:'Medicaid will pay for assisted living'}],
+   correct:0,cost:64200,payer:'self',
+   cl:'Assisted Living Facility',pl:'YOU pay out of pocket',
+   type:'warn',
+   rt:"ALF is correct — but Medicaid usually won't cover it.",
+   rb:"ALF is appropriate: you need ADL help, not skilled nursing. A SNF would be excessive and twice as expensive. But here is the critical catch: Medicaid does NOT consistently cover assisted living. States must cover nursing home care as a mandatory benefit, but ALF coverage is optional. You pay $5,350/month from your savings.",
+   tip:'At $5,350/month, someone with $85,000 can afford about 16 months before exhausting their savings. Card C would already be in crisis.'},
+  {id:4,icon:'🧠',title:'Memory Care',
+   situation:"Your cognitive function has declined significantly. You have been diagnosed with moderate-to-severe dementia and are wandering at night. Your family can no longer safely keep you at home.",
+   opts:[
+     {l:'Memory Care Unit',d:'Secured, dementia-specialized — $7,500/mo'},
+     {l:'Standard Assisted Living',d:'Regular ALF — not secured'},
+     {l:'24/7 home care aide',d:'Round-the-clock home care'}],
+   correct:0,cost:90000,payer:'self',
+   cl:'Memory Care Unit',pl:'YOU pay out of pocket',
+   type:'warn',
+   rt:'Memory care — specialized, essential, and expensive.',
+   rb:"Memory care is the safe choice. Standard ALF has no secured environment — a wandering resident is a serious safety emergency. Memory care averages $7,500/month nationally. As of 2025, 44% of all assisted living residents have Alzheimer's or dementia, making cognitive impairment the single largest driver of LTC need in America.",
+   tip:"Alzheimer's and dementia are the leading reason people enter LTC — and among the most costly to manage. This connects directly to many advocacy topics."},
+  {id:5,icon:'🕊️',title:'A Terminal Diagnosis',
+   situation:'Your condition has progressed and curative treatment is no longer feasible. Your prognosis is 4 to 6 months. Your family asks about end-of-life care focused on comfort and dignity — not aggressive treatment.',
+   opts:[
+     {l:'Hospice Care',d:'Comfort-focused, multidisciplinary team'},
+     {l:'Continue hospital treatment',d:'Aggressive curative care'},
+     {l:'Skilled Nursing Facility',d:'Ongoing nursing and monitoring'}],
+   correct:0,cost:0,payer:'medicare',
+   cl:'Hospice Care',pl:'Medicare ✓ (fully covered)',
+   type:'good',
+   rt:'Hospice — fully covered by Medicare.',
+   rb:'Once a physician certifies a prognosis of 6 months or less and the patient chooses comfort over cure, Medicare covers ALL hospice services — nursing, medications for the terminal condition, social work, chaplains, and bereavement support for the family for a year after death. Hospice can be delivered at home, in an ALF, SNF, or dedicated hospice facility.',
+   tip:'The hospice Medicare benefit is one of the most comprehensive in the program — and one of the most underused. Many families access it far too late.'},
+  {id:6,icon:'🏛️',title:'The 2025 Policy Card',
+   situation:"It is July 2025. The One Big Beautiful Bill Act has cut Medicaid by $940 billion over 10 years. Your state announces it is eliminating Home and Community-Based Services (HCBS) to close a budget shortfall. Federal law requires nursing home coverage to continue. Home care is being cut.",
+   opts:[
+     {l:'I may be forced into a nursing home',d:'Home care cut → only institution remains'},
+     {l:'Federal law protects my home care',d:'HCBS are federally mandated'},
+     {l:'Depends on my savings',d:'Private pay keeps my options open'}],
+   correct:2,cost:0,payer:'policy',
+   cl:'Depends on your Life Card',pl:'Depends on savings',
+   type:'info',
+   rt:'This depends entirely on how much money you have left.',
+   rb:"HCBS are classified as OPTIONAL under federal Medicaid law — when states face shortfalls, these are the first to go. If your savings are gone (Cards C, E), a nursing home may be your only remaining option — the most expensive, most institutional setting, against your wishes. Cards D and F can private-pay for home care and preserve their choice. This is the equity question: who has options, and who doesn't?",
+   tip:'This is why Medicaid policy IS long-term care policy — and why the 2025 law matters so much to every health advocacy topic in this class.'}
+];
+
+/* ── STATE ─────────────────────────────────────────────────────────── */
+let card=null,savings=0,startSav=0,sceneIdx=0,medicaidDone=false,spent=[];
+
+/* ── NAV ───────────────────────────────────────────────────────────── */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ── CARD GRID ─────────────────────────────────────────────────────── */
+(function buildGrid(){
+  const g=document.getElementById('card-grid');
+  CARDS.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='lc';
+    b.style.background=c.color;
+    b.innerHTML=`<div class="lid">${c.id}</div><div class="lsub">${c.sub}</div>`;
+    b.onclick=()=>pickCard(c.id);
+    g.appendChild(b);
+  });
+})();
+
+function pickCard(id){
+  card=CARDS.find(c=>c.id===id);
+  const hdr=document.getElementById('dheader');
+  hdr.style.background=card.color;
+  document.getElementById('dcardid').textContent='LIFE CARD '+card.id;
+  document.getElementById('dsubtitle').textContent=card.sub;
+  document.getElementById('dsavings').textContent='$'+card.savings.toLocaleString();
+  document.getElementById('drows').innerHTML=[
+    ['Your Health',card.health],
+    ['Your Family',card.family],
+    ['Your Housing',card.housing],
+    ['Monthly Income (SS)','$'+card.income.toLocaleString()]
+  ].map(([l,v])=>`<div class="drow"><div class="dl">${l}</div><div class="dv">${v}</div></div>`).join('');
+  go('s-detail');
+}
+
+/* ── SIMULATION START ──────────────────────────────────────────────── */
+function startSim(){
+  savings=card.savings;startSav=card.savings;
+  sceneIdx=0;medicaidDone=false;spent=[];
+  loadScene(0);
+}
+
+/* ── PROGRESS DOTS ─────────────────────────────────────────────────── */
+function buildDots(cur){
+  document.getElementById('pdots').innerHTML=SCENES.map((_,i)=>{
+    let c='dot';
+    if(i<cur)c+=' done';
+    else if(i===cur)c+=' cur';
+    return`<div class="${c}"></div>`;
+  }).join('');
+}
+
+/* ── SAVINGS BAR ───────────────────────────────────────────────────── */
+function sColor(v){return v>50000?'green':v>10000?'yellow':v>2000?'orange':'red'}
+function updateSBar(id,v){
+  const b=document.getElementById(id);
+  b.className='sbar '+sColor(v);
+}
+function animateSav(id){
+  const el=document.getElementById(id);
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+}
+
+/* ── LOAD SCENARIO ─────────────────────────────────────────────────── */
+function loadScene(idx){
+  if(idx>=SCENES.length){showEnd();return;}
+  const s=SCENES[idx];
+  document.getElementById('sc-savings').textContent='$'+savings.toLocaleString();
+  document.getElementById('sc-num').textContent=s.id+' / '+SCENES.length;
+  updateSBar('sc-sbar',savings);
+  buildDots(idx);
+  document.getElementById('sc-icon').textContent=s.icon;
+  document.getElementById('sc-snum').textContent='Scenario '+s.id+' of '+SCENES.length;
+  document.getElementById('sc-title').textContent=s.title;
+  document.getElementById('sc-situation').textContent=s.situation;
+  const opts=document.getElementById('sc-opts');
+  opts.innerHTML='';
+  let chosen=false;
+  s.opts.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='btn-opt';
+    b.innerHTML=`<span class="ol">${opt.l}</span><span class="od">${opt.d}</span>`;
+    b.onclick=()=>{
+      if(chosen)return;chosen=true;
+      const correct=i===s.correct;
+      document.querySelectorAll('.btn-opt').forEach((btn,bi)=>{
+        if(bi===i)btn.className='btn-opt '+(correct?'correct':'wrong');
+        else if(bi===s.correct&&!correct)btn.className='btn-opt show-correct';
+      });
+      setTimeout(()=>showReveal(s,correct),550);
+    };
+    opts.appendChild(b);
+  });
+  go('s-scenario');
+}
+
+/* ── REVEAL ────────────────────────────────────────────────────────── */
+function showReveal(s,wasCorrect){
+  const prev=savings;
+  let cost=s.cost||0;
+  if(medicaidDone&&cost>0){cost=0;}
+  if(cost>0){savings=Math.max(0,savings-cost);spent.push({t:s.title,c:cost});}
+  document.getElementById('rv-savings').textContent='$'+savings.toLocaleString();
+  updateSBar('rv-sbar',savings);
+  animateSav('rv-savings');
+  const chg=document.getElementById('rv-change');
+  const chl=document.getElementById('rv-change-lbl');
+  if(cost>0){chg.textContent='−$'+cost.toLocaleString();chl.textContent='Cost to you';}
+  else if(s.payer==='medicare'){chg.textContent='$0 (Medicare)';chl.textContent='Cost to you';}
+  else{chg.textContent='Varies';chl.textContent='See below';}
+  document.getElementById('rv-care').textContent=s.cl;
+  document.getElementById('rv-payer').textContent=s.pl;
+  const card2=document.getElementById('rv-card');
+  card2.className='reveal-card '+s.type;
+  document.getElementById('rv-title').textContent=s.rt;
+  document.getElementById('rv-body').textContent=s.rb;
+  document.getElementById('rv-tip').textContent='💡 '+s.tip;
+  const isLast=sceneIdx>=SCENES.length-1;
+  document.getElementById('rv-next').textContent=isLast?'See My Results →':'Next Scenario →';
+  go('s-reveal');
+}
+
+function nextScene(){
+  sceneIdx++;
+  if(!medicaidDone&&savings<=2000&&sceneIdx<SCENES.length){
+    medicaidDone=true;go('s-medicaid');return;
+  }
+  if(sceneIdx>=SCENES.length){showEnd();return;}
+  loadScene(sceneIdx);
+}
+
+function afterMedicaid(){
+  if(sceneIdx>=SCENES.length){showEnd();return;}
+  loadScene(sceneIdx);
+}
+
+/* ── END ───────────────────────────────────────────────────────────── */
+function showEnd(){
+  const totalSpent=startSav-savings;
+  const gotMedicaid=medicaidDone||savings<=2000;
+  const hdr=document.getElementById('end-hdr');
+  hdr.style.background=card.color;
+  const rows=[
+    ['Your Life Card','Card '+card.id+' — '+card.sub],
+    ['Starting Savings','$'+startSav.toLocaleString()],
+    ['Ending Savings','$'+savings.toLocaleString()],
+    ['Total Spent on LTC','$'+totalSpent.toLocaleString()],
+    ['Reached Medicaid?',gotMedicaid?'Yes — savings spent down to $2,000 or below':'Not yet — some savings remain'],
+    ['Scenarios Answered',SCENES.length+' of '+SCENES.length],
+  ];
+  document.getElementById('end-rows').innerHTML=rows.map(([l,v])=>`
+    <div class="srow"><span class="sl">${l}</span><span class="sv">${v}</span></div>`).join('');
+  const insights={
+    A:'Your $85,000 was exhausted within months of needing daily care. This is not a problem of poverty — it is a middle-class crisis. What single policy change would you advocate for in your Senator letter?',
+    B:'Your $220,000 lasted longer — but memory care and ALF can deplete even this in 3–4 years. Your spouse\'s wellbeing depends on the quality of your care. What caregiver support policy would you fight for?',
+    C:'With $12,000 in savings, you reached Medicaid quickly. But the 2025 HCBS cuts mean the home-based care you might have preferred is now in jeopardy. What does equity in LTC access mean — and how does it connect to your advocacy topic?',
+    D:'Your $450,000 gave you more options than most — but even that can be gone in 5 years of memory care. What about the millions of families with Alzheimer\'s who don\'t have this cushion?',
+    E:'With cancer at 65 and only $38,000 saved, every LTC cost was devastating. Hospice gave you one covered moment — but everything before it came out of your pocket. How does this connect to your health policy topic?',
+    F:'Your $1.1M protected your choices throughout — but you saw exactly how the system works: money buys options. What does this tell you about a system where quality of care is tied to wealth?'
+  };
+  document.getElementById('end-insight').textContent=insights[card.id]||'How does your LTC journey connect to your Health Policy Advocacy topic?';
+  go('s-end');
+}
+
+function playAgain(){card=null;go('s-cards');}
+</script>
+</body>
+</html>
