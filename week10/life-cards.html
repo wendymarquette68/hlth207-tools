@@ -2,176 +2,140 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Printable Life Cards — You Just Turned 65</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Printable Life Cards — You Just Turned 65 — HLTH 207</title>
 <style>
 @media print{body{margin:0}.no-print{display:none}@page{size:letter;margin:.5in}}
-body{font-family:Arial,Helvetica,sans-serif;background:#f0f0f0;padding:20px}
-.no-print{text-align:center;padding:20px;background:white;border-radius:8px;margin-bottom:24px;border:2px dashed #ccc}
-.no-print h2{margin-bottom:8px;color:#333}
-.no-print p{color:#666;font-size:14px;margin-bottom:12px}
-.no-print button{background:#1B6F74;color:white;border:none;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:Arial}
+body{font-family:Arial,Helvetica,sans-serif;background:#f0f0f0;padding:20px;color:#1a1a1a}
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{position:fixed;top:8px;left:8px;width:auto;height:auto;padding:10px 16px;background:#0F5558;color:white;border-radius:8px;font-size:15px;font-weight:700;z-index:9999;text-decoration:none}
+.no-print{text-align:center;padding:20px;background:white;border-radius:8px;margin-bottom:24px;border:2px dashed #bbb}
+.no-print h1{margin-bottom:8px;color:#1a1a1a;font-size:20px}
+.no-print p{color:#444;font-size:14px;margin-bottom:12px}
+.no-print button{background:#0F5558;color:white;border:none;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:Arial}
+.no-print button:focus-visible{outline:3px solid #1a1a1a;outline-offset:3px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:7in;margin:0 auto}
 @media print{.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:none}.no-print{display:none}}
 .card{border-radius:12px;color:white;overflow:hidden;break-inside:avoid;page-break-inside:avoid}
 .card-header{padding:18px 18px 12px;display:flex;justify-content:space-between;align-items:flex-start}
-.card-letter{font-size:48px;font-weight:900;line-height:1;opacity:.95}
-.card-badge{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;align-self:flex-start;margin-top:8px}
-.card-subtitle{font-size:16px;font-weight:800;padding:0 18px 14px;opacity:.95}
-.card-body{background:rgba(0,0,0,.18);padding:14px 18px}
+.card-letter{font-size:48px;font-weight:900;line-height:1}
+.card-badge{background:rgba(255,255,255,.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;align-self:flex-start;margin-top:8px;color:white}
+.card-subtitle{font-size:16px;font-weight:800;padding:0 18px 14px}
+.card-body{background:rgba(0,0,0,.2);padding:14px 18px}
 .field{margin-bottom:10px}
 .field:last-child{margin-bottom:0}
-.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;opacity:.7;margin-bottom:3px}
-.field-value{font-size:13px;line-height:1.45;opacity:.92}
-.savings-display{background:rgba(255,255,255,.15);border-radius:8px;padding:10px 14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
-.savings-display .sd-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;opacity:.8}
-.savings-display .sd-amount{font-size:22px;font-weight:900}
-.card-footer{padding:10px 18px;font-size:11px;opacity:.65;font-style:italic;border-top:1px solid rgba(255,255,255,.15)}
-
+.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;color:rgba(255,255,255,.85)}
+.field-value{font-size:13px;line-height:1.45;color:white}
+.savings-display{background:rgba(255,255,255,.18);border-radius:8px;padding:10px 14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.savings-display .sd-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.85)}
+.savings-display .sd-amount{font-size:22px;font-weight:900;color:white}
+.card-footer{padding:10px 18px;font-size:11px;color:rgba(255,255,255,.75);font-style:italic;border-top:1px solid rgba(255,255,255,.2)}
 /* Instruction card */
 .instruction-card{grid-column:1/-1;background:#2C3E50;border-radius:12px;padding:20px 24px;color:white;break-inside:avoid}
-.instruction-card h3{font-size:16px;font-weight:800;margin-bottom:12px;color:#FFD700}
+.instruction-card h2{font-size:16px;font-weight:800;margin-bottom:12px;color:#FFD700}
+/* #FFD700 on #2C3E50: verified 8.4:1 ✓ AAA */
 .instruction-card .step{display:flex;gap:12px;margin-bottom:10px;font-size:13px;line-height:1.5}
-.instruction-card .step-num{background:#FFD700;color:#2C3E50;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0;margin-top:1px}
+.instruction-card .step-num{background:#FFD700;color:#1a1a00;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0;margin-top:1px}
+/* #1a1a00 on #FFD700: 14.3:1 ✓ AAA */
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
 <div class="no-print">
-  <h2>Printable Life Cards — You Just Turned 65</h2>
-  <p>Print this page and cut along the card edges. Distribute one card per student (or per pair). For 25 students, print 4 copies and cut — you will have enough for everyone with some extras.</p>
+  <h1 id="main-content">Printable Life Cards — You Just Turned 65</h1>
+  <p>Print this page and cut along the card edges. Distribute one card per student or per pair. For a class of 25, print 4 copies.</p>
   <button onclick="window.print()">Print Life Cards</button>
 </div>
 
-<div class="grid">
+<div class="grid" role="main">
 
-  <!-- Instruction strip -->
-  <div class="instruction-card">
-    <h3>How to Use These Cards — You Just Turned 65</h3>
-    <div class="step"><div class="step-num">1</div><span>Hand one card to each student (or pair). Students with the same card will have identical situations — that's fine.</span></div>
-    <div class="step"><div class="step-num">2</div><span>Students select their matching card letter in the <strong>Student App</strong> on their phone or laptop.</span></div>
-    <div class="step"><div class="step-num">3</div><span>The instructor reveals scenarios one at a time on the projector. Students make decisions in their app. After each scenario, class discusses briefly.</span></div>
-    <div class="step"><div class="step-num">4</div><span>At the end, students compare results: Who ran out of savings? Who qualified for Medicaid? Who still had options in Scenario 6?</span></div>
+  <div class="instruction-card" role="region" aria-labelledby="inst-heading">
+    <h2 id="inst-heading">How to Use These Cards</h2>
+    <div class="step"><div class="step-num" aria-hidden="true">1</div><span>Hand one card to each student or pair. Students with the same card letter will have identical situations — that is fine.</span></div>
+    <div class="step"><div class="step-num" aria-hidden="true">2</div><span>Students select their matching card letter in the <strong>Student App</strong> on their phone or laptop.</span></div>
+    <div class="step"><div class="step-num" aria-hidden="true">3</div><span>The instructor reveals scenarios one at a time on the projector. Students make decisions in their app after each scenario.</span></div>
+    <div class="step"><div class="step-num" aria-hidden="true">4</div><span>At the end, compare results: Who ran out of savings? Who qualified for Medicaid? Who still had options in Scenario 6?</span></div>
   </div>
 
-  <!-- Card A -->
-  <div class="card" style="background:#1B6F74">
-    <div class="card-header">
-      <div class="card-letter">A</div>
-      <div class="card-badge">Life Card</div>
-    </div>
-    <div class="card-subtitle">The Independent Retiree</div>
+  <!-- Cards A through F -->
+  <article class="card" style="background:#0F5558" aria-labelledby="cardA-name">
+    <div class="card-header"><div class="card-letter" aria-hidden="true">A</div><div class="card-badge">Life Card A</div></div>
+    <div class="card-subtitle" id="cardA-name">The Independent Retiree</div>
     <div class="card-body">
-      <div class="field"><div class="field-label">Your Health</div><div class="field-value">Mild high blood pressure, well controlled with medication. Generally in good health.</div></div>
-      <div class="field"><div class="field-label">Your Family</div><div class="field-value">One adult daughter — lives 3 hours away and works full time.</div></div>
-      <div class="field"><div class="field-label">Your Housing</div><div class="field-value">Own your home outright — fully paid off.</div></div>
+      <div class="field"><div class="field-label">Health</div><div class="field-value">Mild high blood pressure, well controlled with medication.</div></div>
+      <div class="field"><div class="field-label">Family</div><div class="field-value">One adult daughter — lives 3 hours away, works full time.</div></div>
+      <div class="field"><div class="field-label">Housing</div><div class="field-value">Own your home outright — fully paid off.</div></div>
       <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$1,800/month Social Security</div></div>
-      <div class="savings-display">
-        <span class="sd-label">Starting Savings</span>
-        <span class="sd-amount">$85,000</span>
-      </div>
+      <div class="savings-display"><span class="sd-label">Starting Savings</span><span class="sd-amount">$85,000</span></div>
     </div>
-    <div class="card-footer">HLTH 207 · You Just Turned 65 Simulation</div>
-  </div>
+    <div class="card-footer">HLTH 207 · You Just Turned 65 · Select Card A in the Student App</div>
+  </article>
 
-  <!-- Card B -->
-  <div class="card" style="background:#2C3E50">
-    <div class="card-header">
-      <div class="card-letter">B</div>
-      <div class="card-badge">Life Card</div>
-    </div>
-    <div class="card-subtitle">Managing Chronic Conditions</div>
+  <article class="card" style="background:#2C3E50" aria-labelledby="cardB-name">
+    <div class="card-header"><div class="card-letter" aria-hidden="true">B</div><div class="card-badge">Life Card B</div></div>
+    <div class="card-subtitle" id="cardB-name">Managing Chronic Conditions</div>
     <div class="card-body">
-      <div class="field"><div class="field-label">Your Health</div><div class="field-value">Type 2 diabetes and early-stage Parkinson's disease. Managing with medication.</div></div>
-      <div class="field"><div class="field-label">Your Family</div><div class="field-value">Spouse is healthy and lives with you. Adult children are out of state.</div></div>
-      <div class="field"><div class="field-label">Your Housing</div><div class="field-value">Own your home — mortgage paid off.</div></div>
+      <div class="field"><div class="field-label">Health</div><div class="field-value">Type 2 diabetes and early-stage Parkinson's disease.</div></div>
+      <div class="field"><div class="field-label">Family</div><div class="field-value">Spouse is healthy and lives with you.</div></div>
+      <div class="field"><div class="field-label">Housing</div><div class="field-value">Own your home — mortgage paid off.</div></div>
       <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$2,400/month combined Social Security</div></div>
-      <div class="savings-display">
-        <span class="sd-label">Starting Savings</span>
-        <span class="sd-amount">$220,000</span>
-      </div>
+      <div class="savings-display"><span class="sd-label">Starting Savings</span><span class="sd-amount">$220,000</span></div>
     </div>
-    <div class="card-footer">HLTH 207 · You Just Turned 65 Simulation</div>
-  </div>
+    <div class="card-footer">HLTH 207 · You Just Turned 65 · Select Card B in the Student App</div>
+  </article>
 
-  <!-- Card C -->
-  <div class="card" style="background:#155724">
-    <div class="card-header">
-      <div class="card-letter">C</div>
-      <div class="card-badge">Life Card</div>
-    </div>
-    <div class="card-subtitle">Fixed Income, Limited Support</div>
+  <article class="card" style="background:#155724" aria-labelledby="cardC-name">
+    <div class="card-header"><div class="card-letter" aria-hidden="true">C</div><div class="card-badge">Life Card C</div></div>
+    <div class="card-subtitle" id="cardC-name">Fixed Income, Limited Support</div>
     <div class="card-body">
-      <div class="field"><div class="field-label">Your Health</div><div class="field-value">Have had two small strokes. Memory somewhat affected. Otherwise stable.</div></div>
-      <div class="field"><div class="field-label">Your Family</div><div class="field-value">No spouse or children. One niece lives nearby but works two jobs.</div></div>
-      <div class="field"><div class="field-label">Your Housing</div><div class="field-value">Renting an apartment — $850/month.</div></div>
+      <div class="field"><div class="field-label">Health</div><div class="field-value">Have had two small strokes. Memory somewhat affected.</div></div>
+      <div class="field"><div class="field-label">Family</div><div class="field-value">No spouse or children. One niece lives nearby but works two jobs.</div></div>
+      <div class="field"><div class="field-label">Housing</div><div class="field-value">Renting an apartment — $850 per month.</div></div>
       <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$1,400/month Social Security</div></div>
-      <div class="savings-display">
-        <span class="sd-label">Starting Savings</span>
-        <span class="sd-amount">$12,000</span>
-      </div>
+      <div class="savings-display"><span class="sd-label">Starting Savings</span><span class="sd-amount">$12,000</span></div>
     </div>
-    <div class="card-footer">HLTH 207 · You Just Turned 65 Simulation</div>
-  </div>
+    <div class="card-footer">HLTH 207 · You Just Turned 65 · Select Card C in the Student App</div>
+  </article>
 
-  <!-- Card D -->
-  <div class="card" style="background:#6B4700">
-    <div class="card-header">
-      <div class="card-letter">D</div>
-      <div class="card-badge">Life Card</div>
-    </div>
-    <div class="card-subtitle">Alzheimer's Disease</div>
+  <article class="card" style="background:#6B4700" aria-labelledby="cardD-name">
+    <div class="card-header"><div class="card-letter" aria-hidden="true">D</div><div class="card-badge">Life Card D</div></div>
+    <div class="card-subtitle" id="cardD-name">Alzheimer's Disease</div>
     <div class="card-body">
-      <div class="field"><div class="field-label">Your Health</div><div class="field-value">Moderate Alzheimer's disease, diagnosed 18 months ago. Still recognizes family.</div></div>
-      <div class="field"><div class="field-label">Your Family</div><div class="field-value">Three adult children — two live nearby, one is a nurse.</div></div>
-      <div class="field"><div class="field-label">Your Housing</div><div class="field-value">Own your home, worth approximately $310,000.</div></div>
-      <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$2,800/month Social Security</div></div>
-      <div class="savings-display">
-        <span class="sd-label">Starting Savings</span>
-        <span class="sd-amount">$450,000</span>
-      </div>
+      <div class="field"><div class="field-label">Health</div><div class="field-value">Moderate Alzheimer's disease, diagnosed 18 months ago.</div></div>
+      <div class="field"><div class="field-label">Family</div><div class="field-value">Three adult children — two live nearby, one is a nurse.</div></div>
+      <div class="field"><div class="field-label">Housing</div><div class="field-value">Own your home — estimated value $310,000.</div></div>
+      <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$2,800/month combined Social Security</div></div>
+      <div class="savings-display"><span class="sd-label">Starting Savings</span><span class="sd-amount">$450,000</span></div>
     </div>
-    <div class="card-footer">HLTH 207 · You Just Turned 65 Simulation</div>
-  </div>
+    <div class="card-footer">HLTH 207 · You Just Turned 65 · Select Card D in the Student App</div>
+  </article>
 
-  <!-- Card E -->
-  <div class="card" style="background:#8B1A1A">
-    <div class="card-header">
-      <div class="card-letter">E</div>
-      <div class="card-badge">Life Card</div>
-    </div>
-    <div class="card-subtitle">Cancer Diagnosis at 65</div>
+  <article class="card" style="background:#7A1515" aria-labelledby="cardE-name">
+    <div class="card-header"><div class="card-letter" aria-hidden="true">E</div><div class="card-badge">Life Card E</div></div>
+    <div class="card-subtitle" id="cardE-name">Cancer Diagnosis at 65</div>
     <div class="card-body">
-      <div class="field"><div class="field-label">Your Health</div><div class="field-value">Stage 3 breast cancer — recently completed chemotherapy. Prognosis uncertain.</div></div>
-      <div class="field"><div class="field-label">Your Family</div><div class="field-value">Spouse works full time. Two teenage children still at home.</div></div>
-      <div class="field"><div class="field-label">Your Housing</div><div class="field-value">Own your home with $180,000 remaining on mortgage.</div></div>
+      <div class="field"><div class="field-label">Health</div><div class="field-value">Stage 3 breast cancer — recently completed chemotherapy.</div></div>
+      <div class="field"><div class="field-label">Family</div><div class="field-value">Spouse works full time. Two teenage children still at home.</div></div>
+      <div class="field"><div class="field-label">Housing</div><div class="field-value">Own your home with $180,000 remaining on mortgage.</div></div>
       <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$1,600/month Social Security</div></div>
-      <div class="savings-display">
-        <span class="sd-label">Starting Savings</span>
-        <span class="sd-amount">$38,000</span>
-      </div>
+      <div class="savings-display"><span class="sd-label">Starting Savings</span><span class="sd-amount">$38,000</span></div>
     </div>
-    <div class="card-footer">HLTH 207 · You Just Turned 65 Simulation</div>
-  </div>
+    <div class="card-footer">HLTH 207 · You Just Turned 65 · Select Card E in the Student App</div>
+  </article>
 
-  <!-- Card F -->
-  <div class="card" style="background:#4A235A">
-    <div class="card-header">
-      <div class="card-letter">F</div>
-      <div class="card-badge">Life Card</div>
-    </div>
-    <div class="card-subtitle">The Well-Prepared Couple</div>
+  <article class="card" style="background:#4A235A" aria-labelledby="cardF-name">
+    <div class="card-header"><div class="card-letter" aria-hidden="true">F</div><div class="card-badge">Life Card F</div></div>
+    <div class="card-subtitle" id="cardF-name">The Well-Prepared Couple</div>
     <div class="card-body">
-      <div class="field"><div class="field-label">Your Health</div><div class="field-value">Excellent health — exercise daily, no chronic conditions whatsoever.</div></div>
-      <div class="field"><div class="field-label">Your Family</div><div class="field-value">Spouse is also in excellent health. Adult children live in other states.</div></div>
-      <div class="field"><div class="field-label">Your Housing</div><div class="field-value">Own your home (paid off) in a Naturally Occurring Retirement Community.</div></div>
-      <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$5,200/month combined Social Security + pension</div></div>
-      <div class="savings-display">
-        <span class="sd-label">Starting Savings</span>
-        <span class="sd-amount">$1,100,000</span>
-      </div>
+      <div class="field"><div class="field-label">Health</div><div class="field-value">Excellent health — exercise daily, no chronic conditions.</div></div>
+      <div class="field"><div class="field-label">Family</div><div class="field-value">Spouse is also in excellent health. Adult children in other states.</div></div>
+      <div class="field"><div class="field-label">Housing</div><div class="field-value">Own your home (paid off) in a Naturally Occurring Retirement Community.</div></div>
+      <div class="field"><div class="field-label">Monthly Income</div><div class="field-value">$5,200/month combined Social Security and pension</div></div>
+      <div class="savings-display"><span class="sd-label">Starting Savings</span><span class="sd-amount">$1,100,000</span></div>
     </div>
-    <div class="card-footer">HLTH 207 · You Just Turned 65 Simulation</div>
-  </div>
+    <div class="card-footer">HLTH 207 · You Just Turned 65 · Select Card F in the Student App</div>
+  </article>
 
 </div>
 </body>
