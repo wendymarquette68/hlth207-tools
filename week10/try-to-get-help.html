@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Try to Get Help — HLTH 207 Behavioral Health</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f5f6f8;color:#1a1a1a;min-height:100vh}
+.skip-link{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{position:fixed;top:8px;left:8px;width:auto;height:auto;padding:10px 16px;background:#0F5558;color:white;border-radius:8px;font-size:15px;font-weight:700;z-index:9999;text-decoration:none}
+.screen{display:none;min-height:100vh;animation:fadeIn .2s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* Persona cards */
+.persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.persona-card{border:none;border-radius:14px;padding:18px 14px;text-align:left;cursor:pointer;font-family:inherit;color:white;transition:transform .12s}
+.persona-card:active{transform:scale(.95)}
+.persona-card:focus-visible{outline:3px solid #1a1a1a;outline-offset:3px}
+.persona-icon{font-size:32px;display:block;margin-bottom:10px}
+.persona-name{font-size:16px;font-weight:700;display:block;margin-bottom:4px}
+.persona-desc{font-size:12px;opacity:.9;line-height:1.4}
+
+/* Header */
+.game-header{padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.header-title{font-size:14px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.05em}
+.barrier-count{font-size:13px;color:rgba(255,255,255,.75)}
+.progress-dots{display:flex;gap:6px;padding:8px 18px;justify-content:center}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .2s}
+.dot.hit{background:#E74C3C}
+.dot.cleared{background:#27AE60}
+.dot.current{background:white;width:24px;border-radius:5px}
+
+/* Barrier screen */
+.barrier-body{padding:20px;background:white;min-height:calc(100vh - 100px)}
+.barrier-label{font-size:12px;font-weight:700;color:#E74C3C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.barrier-title{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:14px;line-height:1.3}
+.persona-reminder{background:#EEE8F8;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:14px;line-height:1.5;color:#1a1a1a;border-left:4px solid #9B59B6}
+.barrier-situation{font-size:16px;line-height:1.7;color:#1a1a1a;margin-bottom:20px}
+.choice-label{font-size:14px;font-weight:700;color:#0F5558;margin-bottom:10px}
+.choice-btn{width:100%;background:white;border:2px solid #bbb;border-radius:12px;padding:14px 16px;text-align:left;cursor:pointer;margin-bottom:10px;font-family:inherit;transition:border-color .15s}
+.choice-btn:active{transform:scale(.98)}
+.choice-btn:focus-visible{outline:3px solid #1a1a1a;outline-offset:3px}
+.choice-btn .cl{font-size:15px;font-weight:600;color:#1a1a1a;display:block;margin-bottom:3px}
+.choice-btn .cd{font-size:13px;color:#555;display:block}
+
+/* Outcome screen */
+.outcome-box{border-radius:12px;padding:16px 18px;margin-bottom:14px;border:2px solid}
+.outcome-wall{background:#FDEAEA;border-color:#7A1515}
+.outcome-ok{background:#E8F5E9;border-color:#155724}
+.outcome-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.outcome-ok .outcome-label{color:#155724}
+.outcome-wall .outcome-label{color:#7A1515}
+.outcome-text{font-size:15px;line-height:1.65;color:#1a1a1a}
+.chapter-note{background:#E8F4F5;border-left:4px solid #0F5558;padding:12px 14px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;color:#1a1a1a;margin-bottom:16px}
+.advocacy-pill{background:#EEE8F8;border-left:4px solid #4A235A;padding:12px 14px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;color:#1a1a1a;margin-bottom:18px}
+.continue-btn{width:100%;padding:16px;background:#0F5558;color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit}
+.continue-btn:focus-visible{outline:3px solid #1a1a1a;outline-offset:3px}
+
+/* Summary screen */
+.summary-screen{min-height:100vh;background:#1a1a2e;padding:32px 20px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.summary-screen h2{font-size:26px;font-weight:900;color:white;margin-bottom:10px}
+.walls-count{font-size:56px;font-weight:900;margin:12px 0}
+.summary-msg{font-size:16px;color:rgba(255,255,255,.8);line-height:1.65;max-width:420px;margin-bottom:24px}
+.summary-reflect{background:rgba(255,255,255,.08);border-radius:12px;padding:18px;margin-bottom:20px;text-align:left;max-width:480px;width:100%}
+.summary-reflect h3{font-size:14px;font-weight:700;color:#9BE8DA;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.summary-reflect ul{padding-left:18px;color:rgba(255,255,255,.85);font-size:14px;line-height:1.8}
+.replay-btn{background:#9B59B6;color:white;border:none;padding:16px 32px;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+.try-other-btn{background:transparent;color:rgba(255,255,255,.7);border:2px solid rgba(255,255,255,.3);padding:12px 28px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div role="status" aria-live="polite" aria-atomic="true" id="live-msg" style="position:absolute;left:-9999px;height:1px;width:1px;overflow:hidden"></div>
+<div role="alert" aria-live="assertive" aria-atomic="true" id="live-alert" style="position:absolute;left:-9999px;height:1px;width:1px;overflow:hidden"></div>
+
+<!-- INTRO -->
+<main id="s-intro" class="screen active" aria-labelledby="intro-title">
+  <div style="background:#0F5558;padding:40px 24px 32px;text-align:center;color:white">
+    <a id="main-content" tabindex="-1" aria-hidden="true" style="display:block;height:0"></a>
+    <div style="font-size:52px;margin-bottom:14px" aria-hidden="true">🚪</div>
+    <h1 id="intro-title" style="font-size:26px;font-weight:900;color:white;margin-bottom:10px">Try to Get Help</h1>
+    <p style="font-size:15px;color:rgba(255,255,255,.85);line-height:1.5">Navigate the behavioral health system as someone who needs care — and hit every wall that real people hit.</p>
+  </div>
+  <div style="padding:20px">
+    <div style="background:#fff3cd;border-radius:10px;padding:14px;margin-bottom:16px;border-left:4px solid #6B4700">
+      <p style="font-size:15px;color:#3d2b00;line-height:1.55;margin:0"><strong>The central question:</strong> If you needed mental health care right now, how hard would it be to get it? You're about to find out.</p>
+    </div>
+    <p style="font-size:15px;color:#444;line-height:1.65;margin-bottom:20px">Choose a persona below. You will face six real barriers that people encounter when trying to access behavioral health services in the United States. At each barrier, you'll make a decision — then see what actually happens and why.</p>
+    <h2 style="font-size:18px;font-weight:700;color:#0F5558;margin-bottom:12px">Choose Your Persona</h2>
+    <div class="persona-grid" role="list" aria-label="Choose a persona to begin">
+      <button class="persona-card" style="background:#4A235A" onclick="choosePers(0)" role="listitem" aria-label="Persona: Marcus, 23-year-old college student with depression and anxiety">
+        <span class="persona-icon" aria-hidden="true">🎓</span>
+        <span class="persona-name">Marcus, 23</span>
+        <span class="persona-desc">College student with depression and anxiety. Has student health insurance. Lives in Baltimore.</span>
+      </button>
+      <button class="persona-card" style="background:#7A1515" onclick="choosePers(1)" role="listitem" aria-label="Persona: Darnell, 31-year-old veteran with PTSD">
+        <span class="persona-icon" aria-hidden="true">🎖️</span>
+        <span class="persona-name">Darnell, 31</span>
+        <span class="persona-desc">Veteran with PTSD and alcohol use. Recently separated. Has VA benefits but lives 45 miles from a VA facility.</span>
+      </button>
+      <button class="persona-card" style="background:#155724" onclick="choosePers(2)" role="listitem" aria-label="Persona: Sofia, 28-year-old with postpartum depression">
+        <span class="persona-icon" aria-hidden="true">👶</span>
+        <span class="persona-name">Sofia, 28</span>
+        <span class="persona-desc">New mother with postpartum depression. Has Medicaid. Works part-time. Two-month-old at home.</span>
+      </button>
+      <button class="persona-card" style="background:#6B4700" onclick="choosePers(3)" role="listitem" aria-label="Persona: James, 45-year-old with opioid use disorder">
+        <span class="persona-icon" aria-hidden="true">🏭</span>
+        <span class="persona-name">James, 45</span>
+        <span class="persona-desc">Factory worker with opioid use disorder after a workplace injury. Employer-sponsored insurance. Fears losing job.</span>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- BARRIER SCREEN -->
+<main id="s-barrier" class="screen" aria-labelledby="barrier-title">
+  <div id="b-header" class="game-header" style="background:#0F5558">
+    <span class="header-title" id="b-header-name"></span>
+    <span class="barrier-count" id="b-count"></span>
+  </div>
+  <div class="progress-dots" id="b-dots" role="progressbar" aria-label="Progress through barriers"></div>
+  <div class="barrier-body">
+    <div class="barrier-label" id="b-label">Barrier</div>
+    <h2 class="barrier-title" id="barrier-title"></h2>
+    <div class="persona-reminder" id="b-persona" role="note" aria-label="Your persona"></div>
+    <p class="barrier-situation" id="b-situation"></p>
+    <p class="choice-label" id="choice-prompt">What do you do?</p>
+    <div id="b-choices" role="group" aria-labelledby="choice-prompt"></div>
+  </div>
+</main>
+
+<!-- OUTCOME SCREEN -->
+<main id="s-outcome" class="screen" aria-labelledby="outcome-heading">
+  <div style="background:#0F5558;padding:14px 18px">
+    <h2 id="outcome-heading" style="font-size:15px;font-weight:700;color:white">What Happens</h2>
+  </div>
+  <div style="padding:20px;background:white;min-height:calc(100vh - 50px)">
+    <div class="outcome-box" id="outcome-box">
+      <div class="outcome-label" id="outcome-label"></div>
+      <div class="outcome-text" id="outcome-text"></div>
+    </div>
+    <div class="chapter-note" id="chapter-note" role="note" aria-label="Chapter 9 connection"></div>
+    <div class="advocacy-pill" id="advocacy-pill" role="note" aria-label="Advocacy connection"></div>
+    <button class="continue-btn" id="continue-btn" onclick="nextBarrier()">Continue →</button>
+  </div>
+</main>
+
+<!-- SUMMARY -->
+<main id="s-summary" class="screen summary-screen" aria-labelledby="summary-heading">
+  <div style="font-size:52px;margin-bottom:10px" aria-hidden="true">📋</div>
+  <h2 id="summary-heading">Your Journey Complete</h2>
+  <div class="walls-count" id="walls-display" aria-live="polite"></div>
+  <p class="summary-msg" id="summary-msg"></p>
+  <div class="summary-reflect">
+    <h3>Debrief Questions</h3>
+    <ul id="debrief-list"></ul>
+  </div>
+  <button class="replay-btn" onclick="replayPers()">Try Same Persona Again</button>
+  <button class="try-other-btn" onclick="goIntro()">Try a Different Persona</button>
+</main>
+
+<script>
+const PERSONAS = [
+  { name: "Marcus, 23", color: "#4A235A", tag: "College student · depression & anxiety · student insurance" },
+  { name: "Darnell, 31", color: "#7A1515", tag: "Veteran · PTSD & alcohol use · VA benefits · rural" },
+  { name: "Sofia, 28", color: "#155724", tag: "New mother · postpartum depression · Medicaid · part-time work" },
+  { name: "James, 45", color: "#6B4700", tag: "Factory worker · opioid use disorder · employer insurance · job fear" },
+];
+
+const BARRIERS = [
+  {
+    label: "Barrier 1: Recognizing the Need",
+    title: "You've been struggling for weeks — but is it really a mental health problem?",
+    situations: [
+      "You've been sleeping 11 hours a day, can't concentrate in class, and haven't responded to texts in two weeks. Your roommate says you seem 'off.' But you keep thinking: everyone is stressed. Maybe I just need to push through.",
+      "Since coming home, you wake up sweating at 3am, can't stop replaying one night in Kandahar, and have had five drinks every night for three months. You tell yourself: this is normal for veterans. Real soldiers don't need therapy.",
+      "Six weeks after giving birth, you feel nothing when you hold your baby. You cry daily and can't sleep even when she sleeps. But you think: this is just 'baby blues.' I should be grateful. Good mothers don't feel this way.",
+      "You've been taking more oxycodone than prescribed for eight months. You've started buying from a coworker. You tell yourself you'll stop when the back pain gets better. You feel shame every time you think about it.",
+    ],
+    choices: [
+      { label: "Push through — everyone struggles sometimes", desc: "Wait and see if it gets better on its own" },
+      { label: "Reach out to someone I trust", desc: "Talk to a friend, family member, or campus resource" },
+      { label: "Search for professional help", desc: "Look for a therapist, counselor, or hotline" },
+    ],
+    outcomes: [
+      { type: "wall", label: "Wall: Delayed Recognition", text: "Waiting and minimizing is the most common first response to mental health symptoms — and stigma drives it. Most people wait an average of 11 years between first symptoms and first treatment. The longer the delay, the harder recovery becomes.", chapter: "Chapter 9 identifies stigma as a primary structural barrier. The belief that mental illness reflects weakness or personal failure — not a medical condition — prevents recognition and help-seeking.", advocacy: "Stigma reduction is a policy issue. Anti-stigma campaigns, mental health literacy education in schools, and peer support programs are all evidence-based interventions your Senator letter could address." },
+      { type: "ok", label: "You take a step forward", text: "Reaching out to someone you trust is often the first step in the help-seeking process. Social support can reduce shame and open the door to professional care.", chapter: "Chapter 9 notes that peer support and social connection are components of Recovery-Oriented Systems of Care (ROSC). Informal support networks are often the bridge to formal services.", advocacy: "Peer support programs and community health workers are cost-effective policies for expanding behavioral health access. These are strong policy arguments for underserved communities." },
+      { type: "ok", label: "You recognize the need — now what?", text: "Recognizing that what you're experiencing is a medical condition — not a moral failure — is the critical first step. Now you'll find out how hard 'getting help' actually is.", chapter: "Chapter 9 opens with the shift from 'problem-based' to 'strength-based' care models. Recognition of need is the entry point to recovery.", advocacy: "Early intervention reduces long-term costs and improves outcomes. Policies that fund mental health literacy and screening programs make recognition more likely." },
+    ],
+    correct: 2,
+  },
+  {
+    label: "Barrier 2: Finding a Provider",
+    title: "You're ready to see someone. Now find a therapist who takes your insurance.",
+    situations: [
+      "You call your student health center. The next available appointment is 8 weeks out. Your insurance company's online directory lists 47 therapists in network — but after calling 12 of them, you find that 7 don't take new patients, 3 aren't accepting your specific student plan, and 2 have 6-week waits.",
+      "You try the VA Mental Health Clinic. The appointment line has a 40-minute hold. When you finally get through, the next available psychiatrist appointment is 9 weeks away. The clinic is 45 miles from your home and you don't have a car.",
+      "Your OB gave you a referral to a therapist specializing in postpartum depression. You call and find she doesn't take Medicaid. The Medicaid provider directory lists 8 therapists in your county — 5 don't answer, 2 have stopped taking Medicaid, and 1 has a 10-week wait.",
+      "You look up addiction treatment centers. The first one you find doesn't take your insurance. The second is 60 miles away. Your insurance requires a 'prior authorization' before covering any treatment — a process that can take 2–4 weeks.",
+    ],
+    choices: [
+      { label: "Keep calling — someone will be available", desc: "Work through the list until something opens up" },
+      { label: "Give up — it's too hard to access care", desc: "Stop looking and hope things improve on their own" },
+      { label: "Go to the emergency room", desc: "The ER will have to see me right now" },
+    ],
+    outcomes: [
+      { type: "wall", label: "Wall: Provider Shortage", text: "Even when you persist, you may wait 6–10 weeks before seeing anyone. Research shows that wait times of more than 2 weeks dramatically increase dropout from treatment-seeking. Many people give up before they get in the door.", chapter: "The national average wait time for behavioral health services is 48 days (HRSA, 2025). 6 in 10 psychologists do not accept new patients. More than one-third of the U.S. population lives in a mental health provider shortage area.", advocacy: "Provider shortage is the most concrete barrier to behavioral health access. Policy solutions include loan forgiveness for behavioral health providers in shortage areas, telehealth expansion, and integrated care models that embed behavioral health in primary care." },
+      { type: "wall", label: "Wall: System Failure → Delayed or No Care", text: "This is the most common outcome. When the system is too hard to navigate, people disengage — and their condition often worsens. This is a system design failure, not a personal one.", chapter: "Chapter 9 identifies access barriers — including provider shortages, cost, and geographic distance — as structural causes of the treatment gap. 48% of adults with mental illness received no treatment in 2024 (SAMHSA).", advocacy: "Your Senator letter can call for specific, measurable changes: expanding telehealth coverage, requiring Medicaid plans to maintain provider networks, or increasing funding for community mental health centers." },
+      { type: "wall", label: "Wall: Emergency Department Is Not Mental Health Care", text: "ERs are designed for medical crises, not ongoing mental health treatment. ER visits for mental health conditions have nearly doubled since 2009. ER staff are often not trained in behavioral health. This costs the system far more than preventive care would — and delivers far worse outcomes.", chapter: "Chapter 9 notes that reliance on emergency departments and law enforcement for mental health crises is a consequence of inadequate community care — and places additional strain on already-stretched systems.", advocacy: "The 988 Suicide and Crisis Lifeline was designed to redirect mental health crises away from ERs. Students can advocate for full funding of 988 infrastructure and mobile crisis teams as alternatives to ER-based care." },
+    ],
+    correct: 0,
+  },
+  {
+    label: "Barrier 3: The Insurance Fight",
+    title: "You finally have an appointment. Then your insurance company gets involved.",
+    situations: [
+      "Your insurance requires 'prior authorization' before covering therapy. Your therapist submits the request. The insurance company denies it, saying depression is not 'medically necessary' at this level of severity. Your therapist files an appeal.",
+      "Your VA referral for community mental health care (outside the VA) requires a form from your primary care doctor. Your primary care doctor is on a different system and doesn't have your records. The community provider can't see you without the form.",
+      "Your Medicaid plan technically covers postpartum depression therapy — but the copay is $0 and providers still won't take it because Medicaid reimbursement rates are too low to sustain their practice. 'Covered' doesn't mean 'accessible.'",
+      "Your prior authorization for opioid treatment was denied — insurance says you need to fail two other treatments first ('step therapy'). This is called a Nonquantitative Treatment Limitation (NQTL). Your doctor considers it medically inappropriate for your case.",
+    ],
+    choices: [
+      { label: "Appeal the denial", desc: "Follow the formal appeals process — may take 30–60 days" },
+      { label: "Pay out of pocket", desc: "Pay for care yourself — $150–$300 per session" },
+      { label: "Accept the denial and wait", desc: "Hope the insurance company changes its mind" },
+    ],
+    outcomes: [
+      { type: "wall", label: "Wall: Insurance Bureaucracy — Even Appeals Take Time", text: "Appeals take 30 to 60 days. During that time, you receive no care. Even when appeals succeed, the delay itself causes harm. Patients who wait more than 2 weeks between crisis and treatment are significantly more likely to disengage.", chapter: "Chapter 9 describes Nonquantitative Treatment Limitations (NQTLs) — prior authorization, step therapy, and network design rules — as key mechanisms insurers use to restrict behavioral health access in ways that violate the spirit of parity law.", advocacy: "Students can advocate for automatic approval timelines for behavioral health prior authorizations, elimination of step therapy for substance use disorders, and stronger enforcement of the Mental Health Parity and Addiction Equity Act of 2008." },
+      { type: "wall", label: "Wall: Out of Pocket Cost Is a Barrier", text: "At $150–$300 per session, therapy is unaffordable for most Americans without strong insurance coverage. Mental health conditions disproportionately affect people with lower incomes — who are least able to pay out of pocket.", chapter: "Chapter 9 identifies cost as one of the top barriers to behavioral health access, alongside stigma and provider shortage. Non-parity — treating mental illness differently than physical illness in insurance design — has plagued the system for decades.", advocacy: "Expanded Medicaid coverage, ACA marketplace subsidies, and sliding-scale fee requirements for community mental health centers are concrete policy interventions your letter can address." },
+      { type: "wall", label: "Wall: Denial Without Action Means No Care", text: "Accepting insurance denials without appeal is the path of least resistance — and the path most people take. Insurance companies count on it. This is why patient and provider advocacy matters: unused rights are no rights at all.", chapter: "Chapter 9 notes that financing mechanisms — carve-outs, prior authorization, capitation — have systematically restricted behavioral health access since the 1980s. The Parity Act improved this but did not eliminate it.", advocacy: "Policy advocacy includes not just new legislation but enforcement of existing law. Calling for stronger enforcement of parity law at the state and federal level is a concrete and evidence-based ask for your Senator letter." },
+    ],
+    correct: 0,
+  },
+  {
+    label: "Barrier 4: Stigma at Home or Work",
+    title: "People around you find out you're getting mental health treatment.",
+    situations: [
+      "Your parents find out you're seeing a therapist. Your father says: 'Mental health is for people who can't handle life. Our family doesn't do therapy.' Your mother worries about what the relatives will think. You start wondering if you should stop going.",
+      "Word gets around your unit that you're seeing a VA therapist for PTSD. A sergeant jokes that the 'therapy guys' are soft. You skip your next three appointments.",
+      "Your mother-in-law finds out you're getting treatment for postpartum depression. She says you just need to pray more and sleep less. Your husband doesn't know what to believe. You feel shame about needing help at what is supposed to be the happiest time of your life.",
+      "A coworker sees you at an addiction treatment center and mentions it to your supervisor. You're pulled into HR. You're terrified of losing your job, your health insurance, and your family's financial security.",
+    ],
+    choices: [
+      { label: "Stop treatment to avoid the stigma", desc: "Protect your relationships and job — drop out of care" },
+      { label: "Continue treatment — your health matters", desc: "Push through the stigma and keep your appointments" },
+      { label: "Confront the people making you feel ashamed", desc: "Educate them about mental health as a medical condition" },
+    ],
+    outcomes: [
+      { type: "wall", label: "Wall: Stigma Drives Dropout", text: "This is the most common outcome. Stigma is one of the top reasons people drop out of behavioral health treatment after starting it. The shame of being labeled 'mentally ill' — especially in cultures, workplaces, or families where this carries significant social consequences — overrides the benefits of care.", chapter: "Chapter 9 identifies stigma as both a barrier to initial help-seeking and a driver of dropout from care. The shift to 'recovery-oriented' models explicitly addresses the need to destigmatize mental health conditions and center consumer dignity.", advocacy: "Workplace mental health protections under the ADA, anti-stigma education campaigns, and training programs for employers and families are all evidence-based policy interventions that your Senator letter could support." },
+      { type: "ok", label: "You protect your health — and model something important", text: "Continuing treatment in the face of stigma is genuinely courageous — and it's also what the research shows leads to recovery. People who maintain treatment engagement have significantly better outcomes than those who drop out.", chapter: "Chapter 9's Recovery-Oriented Systems of Care (ROSC) model centers self-direction, empowerment, and consumer choice. The ability to continue treatment requires structural support — not just individual willpower.", advocacy: "Federal whistleblower protections, employer mental health parity requirements, and FMLA leave for mental health treatment are structural policies that make it possible to continue treatment without fear of job loss." },
+      { type: "ok", label: "Education is powerful — but structural change is necessary too", text: "Individual education can shift attitudes — but stigma is also structural. Laws, policies, and institutional practices either reinforce or reduce stigma. Personal advocacy matters AND policy advocacy matters.", chapter: "Chapter 9 emphasizes the shift from viewing mental illness as a character flaw to understanding it as a medical condition. This paradigm shift — from moral model to medical model — is both personal and policy-driven.", advocacy: "Anti-stigma legislation, mental health education in schools, and media literacy programs are all policy-level interventions that complement individual education. Both levels of change are necessary." },
+    ],
+    correct: 1,
+  },
+  {
+    label: "Barrier 5: The Geographic Gap",
+    title: "There are no providers near you who can help.",
+    situations: [
+      "Your campus counseling center can only offer 6 sessions per year — you've used all 6. The next closest provider who takes your insurance is 28 miles away without a car. You start looking at telehealth options.",
+      "The nearest VA facility with a PTSD specialist is in Washington D.C. — 52 miles away. You don't drive. The bus takes 3 hours each way. You have a telehealth appointment option but the VA system requires a visit for initial enrollment.",
+      "Your county has 2 Medicaid behavioral health providers. Both have 12-week wait lists. The next county has more providers, but you can't get there without missing a shift at work — which you can't afford.",
+      "The only addiction treatment center in your county doesn't offer medication-assisted treatment (MAT) with buprenorphine — the evidence-based treatment your doctor recommends. The nearest MAT provider is 40 miles away.",
+    ],
+    choices: [
+      { label: "Use telehealth — access care remotely", desc: "Try video or phone-based therapy" },
+      { label: "Go without care — the logistics are too hard", desc: "Distance and transportation make this impossible" },
+      { label: "Use an app or self-help resources", desc: "Mental health apps and online resources instead" },
+    ],
+    outcomes: [
+      { type: "ok", label: "Telehealth: A Real Option — With Real Limitations", text: "Telehealth expanded dramatically during COVID-19 and has helped millions of people access behavioral health care they couldn't reach in person. It is particularly valuable for rural communities, people with disabilities, and those with transportation barriers.", chapter: "Chapter 9 notes that rural counties are more likely than urban counties to lack behavioral health providers, and that residents of rural counties are more likely to receive behavioral health services from primary care providers.", advocacy: "Telehealth coverage parity — requiring insurers to cover telehealth at the same rate as in-person care — is one of the most concrete and bipartisan behavioral health policy arguments. The fight over telehealth policy is ongoing at the federal level." },
+      { type: "wall", label: "Wall: Geography Is Destiny in Behavioral Health", text: "Where you live determines whether you get care. Rural and low-income urban communities face the steepest access barriers. This is not a personal failing — it is a structural inequality that policy must address.", chapter: "65% of nonmetropolitan counties completely lack psychiatrists. From 2019 to 2023, the number of Americans in designated mental health shortage areas grew from 118 million to 169 million (HRSA, 2025).", advocacy: "The National Health Service Corps — which provides loan repayment for providers who work in shortage areas — is a proven policy tool. Students can advocate for expanding this program as a concrete solution to geographic access gaps." },
+      { type: "wall", label: "Wall: Apps Cannot Replace Treatment", text: "Mental health apps can support wellness but are not substitutes for clinical care. Research on most commercial mental health apps shows limited evidence of effectiveness for serious mental illness. They can widen the gap between those who get real care and those who get a digital substitute.", chapter: "Chapter 9 describes the continuum of behavioral health services — from prevention to intensive treatment. Apps and self-help resources are at the prevention/wellness end, not the treatment end. Serious mental illness requires professional clinical care.", advocacy: "Digital health equity is an emerging policy area — ensuring that telehealth, broadband access, and digital literacy are available to underserved populations. This is particularly relevant for rural and low-income advocacy topics." },
+    ],
+    correct: 0,
+  },
+  {
+    label: "Barrier 6: Sustaining Recovery",
+    title: "You got into treatment. Now you have to stay.",
+    situations: [
+      "After 8 weeks of therapy, you're feeling better — but your student insurance changes at graduation. You're uninsured for 3 months before starting your job. Your therapist doesn't take your new insurance. You start from scratch.",
+      "Your VA care is helping. But you've been offered a job in another city. The VA appointment system doesn't transfer easily. You'll need to re-enroll at a new VA and potentially wait months to restart care.",
+      "Your postpartum depression is improving with treatment. But childcare fell through. You can't bring a two-month-old to therapy, can't afford a sitter, and your husband's schedule doesn't allow flexibility. You miss three appointments.",
+      "Your MAT is working. But your employer just changed insurance providers. The new plan requires re-authorization for buprenorphine — a process that can take 3 weeks. During that gap, withdrawal begins and the temptation to relapse is overwhelming.",
+    ],
+    choices: [
+      { label: "Advocate for yourself — push through the system again", desc: "Fight for continuity of care despite the barriers" },
+      { label: "Accept the interruption and hope for the best", desc: "Wait and see if you can restart without losing too much ground" },
+      { label: "Tell your story to a policymaker", desc: "Use your experience to advocate for system change" },
+    ],
+    outcomes: [
+      { type: "ok", label: "Self-Advocacy Matters — But Shouldn't Be Required", text: "Many people do fight through these barriers — and the mental health system depends on them doing so. But requiring extraordinary self-advocacy as a condition for receiving care is itself a form of injustice. The system should not place this burden on people who are already ill.", chapter: "Chapter 9's Recovery Movement centers consumer empowerment and self-direction. But recovery requires structural support — not just individual willpower. The ROSC model explicitly calls for community and policy-level supports.", advocacy: "Insurance continuity protections — like the ACA's requirement to cover pre-existing conditions — protect people in coverage transitions. Students can advocate for mental health continuity of care provisions as a specific policy ask." },
+      { type: "wall", label: "Wall: Interrupted Care Often Means Relapse", text: "Continuity of care is one of the strongest predictors of behavioral health recovery. Insurance gaps, provider changes, and life transitions create interruptions that can undo months of progress — and in the case of opioid use disorder, can be fatal.", chapter: "Chapter 9 notes that community resources have historically been 'limited for a variety of reasons' for people with serious mental illness — and that these limitations result in relapse, homelessness, and incarceration. This has not changed.", advocacy: "Care coordination policies, insurance continuity provisions, and Medicaid continuous enrollment requirements are all concrete policy tools that address this barrier. The 2022 Consolidated Appropriations Act included some continuity protections — enforcement and expansion are ongoing issues." },
+      { type: "ok", label: "You Become the Evidence", text: "The most powerful health policy advocacy is grounded in lived experience. Your story — navigating this system, hitting these walls — is exactly what Senators need to hear. The goal of your advocacy letter is to turn individual experience into systemic change.", chapter: "Chapter 9 describes the role of advocacy groups in shaping behavioral health policy since the 1990s. Constant, rigorous advocacy led to the Parity Act of 2008, CHIP, and Medicaid expansion. Your voice is part of that tradition.", advocacy: "This is the direct bridge to your Health Policy Advocacy Project. Your Senator letter should combine evidence (the statistics you've learned) with narrative (the human experience of these barriers). This simulation just gave you both." },
+    ],
+    correct: 2,
+  },
+];
+
+let persIdx = 0;
+let barrierIdx = 0;
+let wallsHit = 0;
+
+function announce(msg, urgent=false) {
+  const el = document.getElementById(urgent ? 'live-alert' : 'live-msg');
+  el.textContent = '';
+  setTimeout(() => { el.textContent = msg; }, 60);
+}
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const scr = document.getElementById(id);
+  scr.classList.add('active');
+  window.scrollTo(0, 0);
+  setTimeout(() => {
+    const h = scr.querySelector('h1,h2,[tabindex="-1"]');
+    if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
+  }, 120);
+}
+
+function choosePers(idx) {
+  persIdx = idx;
+  barrierIdx = 0;
+  wallsHit = 0;
+  loadBarrier();
+  go('s-barrier');
+}
+
+function buildDots() {
+  const c = document.getElementById('b-dots');
+  c.innerHTML = '';
+  BARRIERS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < barrierIdx ? ' cleared' : i === barrierIdx ? ' current' : '');
+    d.setAttribute('aria-hidden', 'true');
+    c.appendChild(d);
+  });
+  c.setAttribute('aria-valuenow', barrierIdx + 1);
+  c.setAttribute('aria-valuemax', BARRIERS.length);
+  c.setAttribute('aria-valuetext', 'Barrier ' + (barrierIdx + 1) + ' of ' + BARRIERS.length);
+}
+
+function loadBarrier() {
+  const p = PERSONAS[persIdx];
+  const b = BARRIERS[barrierIdx];
+  document.getElementById('b-header').style.background = p.color;
+  document.getElementById('b-header-name').textContent = p.name;
+  document.getElementById('b-count').textContent = 'Barrier ' + (barrierIdx + 1) + ' of ' + BARRIERS.length;
+  buildDots();
+  document.getElementById('b-label').textContent = b.label;
+  document.getElementById('barrier-title').textContent = b.title;
+  document.getElementById('b-persona').textContent = p.tag;
+  document.getElementById('b-situation').textContent = b.situations[persIdx];
+  const choices = document.getElementById('b-choices');
+  choices.innerHTML = '';
+  b.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.setAttribute('aria-label', 'Choice ' + (i+1) + ': ' + c.label + '. ' + c.desc);
+    btn.innerHTML = '<span class="cl">' + c.label + '</span><span class="cd">' + c.desc + '</span>';
+    btn.onclick = () => makeChoice(i);
+    choices.appendChild(btn);
+  });
+  announce('Barrier ' + (barrierIdx + 1) + ': ' + b.title + '. ' + b.situations[persIdx]);
+}
+
+function makeChoice(choiceIdx) {
+  const b = BARRIERS[barrierIdx];
+  const outcome = b.outcomes[choiceIdx];
+  const isWall = outcome.type === 'wall';
+  if (isWall) wallsHit++;
+  const box = document.getElementById('outcome-box');
+  box.className = 'outcome-box ' + (isWall ? 'outcome-wall' : 'outcome-ok');
+  document.getElementById('outcome-label').textContent = outcome.label;
+  document.getElementById('outcome-text').textContent = outcome.text;
+  document.getElementById('chapter-note').textContent = '📖 Chapter 9: ' + outcome.chapter;
+  document.getElementById('advocacy-pill').textContent = '📋 Advocacy connection: ' + outcome.advocacy;
+  const isLast = barrierIdx >= BARRIERS.length - 1;
+  document.getElementById('continue-btn').textContent = isLast ? 'See My Summary →' : 'Next Barrier →';
+  announce((isWall ? 'You hit a wall. ' : 'You made progress. ') + outcome.text, isWall);
+  go('s-outcome');
+}
+
+function nextBarrier() {
+  barrierIdx++;
+  if (barrierIdx >= BARRIERS.length) {
+    showSummary();
+  } else {
+    loadBarrier();
+    go('s-barrier');
+  }
+}
+
+function showSummary() {
+  const p = PERSONAS[persIdx];
+  document.getElementById('walls-display').textContent = wallsHit + ' walls hit';
+  document.getElementById('walls-display').style.color = wallsHit >= 4 ? '#E74C3C' : wallsHit >= 2 ? '#F39C12' : '#27AE60';
+  let msg = '';
+  if (wallsHit >= 5) msg = p.name + ' hit nearly every barrier in the system. This is the experience of millions of Americans every year — not because they lack determination, but because the system is not designed for them.';
+  else if (wallsHit >= 3) msg = p.name + ' navigated some barriers but hit significant walls. Each wall represents a policy failure with a policy solution.';
+  else msg = p.name + ' made it through with fewer walls than most. Even so — should getting mental health care really be this hard?';
+  document.getElementById('summary-msg').textContent = msg;
+  const questions = [
+    'Which barrier surprised you most? Which one do you think affects the most people?',
+    'For your specific persona, what was the single biggest obstacle to getting care?',
+    'Which of the six barriers do you think is most addressable through policy? What would you put in your Senator letter?',
+    'How does your own Health Policy Advocacy topic relate to the barriers ' + p.name + ' faced?',
+  ];
+  document.getElementById('debrief-list').innerHTML = questions.map(q => '<li style="margin-bottom:8px">' + q + '</li>').join('');
+  announce('Journey complete. ' + p.name + ' hit ' + wallsHit + ' out of 6 barriers. ' + msg, true);
+  go('s-summary');
+}
+
+function replayPers() {
+  barrierIdx = 0;
+  wallsHit = 0;
+  loadBarrier();
+  go('s-barrier');
+}
+
+function goIntro() { go('s-intro'); }
+</script>
+</body>
+</html>
