@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BH Parity Check | HLTH 207</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:        #004E64;
+      --teal-mid:    #0096A7;
+      --teal-light:  #CCF0F3;
+      --teal-bg:     #E6F5F7;
+      --navy:        #0F2133;
+      --white:       #FFFFFF;
+      --gray-50:     #F7FAFB;
+      --gray-100:    #EEF2F4;
+      --gray-300:    #C6D3DA;
+      --gray-500:    #7D949F;
+      --gray-700:    #3D5562;
+      --gray-900:    #182731;
+      --ok-dark:     #1A5C2A;
+      --ok-bg:       #EAF6ED;
+      --ok-border:   #43A047;
+      --bad-dark:    #7B0000;
+      --bad-bg:      #FDECEC;
+      --bad-border:  #E53935;
+      --info-dark:   #0D3B6B;
+      --info-bg:     #E8F0FD;
+      --info-border: #1976D2;
+      --font-head:   'DM Serif Display', Georgia, serif;
+      --font-body:   'DM Sans', system-ui, sans-serif;
+      --r:           12px;
+      --r-sm:        8px;
+      --shadow:      0 4px 20px rgba(0,78,100,.10);
+      --shadow-lg:   0 8px 32px rgba(0,78,100,.18);
+      --ease:        all .22s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); min-height: 100vh; line-height: 1.6; }
+    .app-header { background: var(--teal); color: var(--white); }
+    .header-inner { max-width: 840px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .header-brand { display: flex; flex-direction: column; gap: 2px; }
+    .header-course { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; opacity: .75; }
+    .header-title { font-family: var(--font-head); font-size: 1.3rem; }
+    .glossary-btn { background: rgba(255,255,255,.13); border: 1.5px solid rgba(255,255,255,.35); color: var(--white); font-family: var(--font-body); font-size: .8rem; font-weight: 600; padding: 7px 16px; border-radius: 20px; cursor: pointer; transition: var(--ease); white-space: nowrap; flex-shrink: 0; }
+    .glossary-btn:hover, .glossary-btn:focus-visible { background: rgba(255,255,255,.25); outline: 2px solid white; outline-offset: 2px; }
+    .glossary-panel { background: var(--navy); color: var(--white); max-height: 0; overflow: hidden; transition: max-height .38s ease; }
+    .glossary-panel.open { max-height: 560px; overflow-y: auto; }
+    .glossary-inner { max-width: 840px; margin: 0 auto; padding: 20px 24px 26px; }
+    .glossary-inner h2 { font-family: var(--font-head); font-size: 1rem; color: var(--teal-light); margin-bottom: 14px; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+    .g-item { background: rgba(255,255,255,.07); border-radius: var(--r-sm); padding: 11px 14px; }
+    .g-term { font-weight: 700; font-size: .79rem; color: var(--teal-light); display: block; margin-bottom: 3px; }
+    .g-def { font-size: .78rem; opacity: .83; line-height: 1.45; }
+    main { max-width: 840px; margin: 0 auto; padding: 32px 24px 64px; }
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeUp .28s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .card { background: var(--white); border-radius: var(--r); box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px; }
+    .progress-wrap { margin-bottom: 26px; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: .78rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 7px; }
+    .progress-bar { height: 7px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal) 0%, var(--teal-mid) 100%); border-radius: 4px; transition: width .4s ease; }
+    .badge { display: inline-block; background: var(--teal-bg); color: var(--teal); font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
+    .welcome-title { font-family: var(--font-head); font-size: 2.1rem; color: var(--teal); line-height: 1.2; margin-bottom: 14px; }
+    .welcome-desc { font-size: .95rem; color: var(--gray-700); line-height: 1.75; margin-bottom: 22px; }
+    .lo-box { background: var(--gray-50); border-left: 4px solid var(--teal); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 14px 18px; margin-bottom: 20px; }
+    .lo-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--teal); margin-bottom: 5px; }
+    .lo-box p { font-size: .88rem; color: var(--gray-900); }
+    .context-box { background: #FFF8E1; border-left: 4px solid #F57F17; border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 16px 18px; margin-bottom: 24px; }
+    .context-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #E65100; margin-bottom: 10px; }
+    .context-item { font-size: .86rem; color: var(--gray-900); margin-bottom: 9px; line-height: 1.65; }
+    .context-item:last-child { margin-bottom: 0; }
+    .context-item strong { color: #BF360C; }
+    .update-note { background: #FFF8E1; border: 1px solid #FFB300; border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: .82rem; line-height: 1.55; }
+    .update-label { font-weight: 700; color: #E65100; display: block; margin-bottom: 3px; }
+    .update-text { color: var(--gray-900); }
+    .field-label { display: block; font-size: .84rem; font-weight: 600; color: var(--gray-900); margin-bottom: 7px; }
+    .field-hint { font-size: .78rem; color: var(--gray-500); font-weight: 400; }
+    .name-input { display: block; width: 100%; max-width: 360px; border: 1.5px solid var(--gray-300); border-radius: var(--r-sm); padding: 10px 14px; font-family: var(--font-body); font-size: .92rem; color: var(--gray-900); background: var(--white); margin-bottom: 26px; transition: var(--ease); }
+    .name-input:focus-visible { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,78,100,.14); }
+    .btn { font-family: var(--font-body); font-weight: 600; border: none; border-radius: var(--r-sm); cursor: pointer; transition: var(--ease); display: inline-flex; align-items: center; gap: 8px; line-height: 1; }
+    .btn-primary { background: var(--teal); color: var(--white); font-size: .95rem; padding: 13px 30px; }
+    .btn-primary:hover, .btn-primary:focus-visible { background: #003347; box-shadow: var(--shadow-lg); outline: 2px solid var(--teal); outline-offset: 2px; }
+    .btn-primary:disabled { background: var(--gray-300); color: var(--gray-500); cursor: not-allowed; box-shadow: none; }
+    .btn-outline { background: var(--white); color: var(--teal); border: 2px solid var(--teal); font-size: .92rem; padding: 11px 24px; }
+    .btn-outline:hover, .btn-outline:focus-visible { background: var(--teal-bg); outline: 2px solid var(--teal); outline-offset: 2px; }
+    .scenario-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+    .scenario-title { font-family: var(--font-head); font-size: 1.55rem; color: var(--gray-900); line-height: 1.3; margin-bottom: 18px; }
+    .situation-box { background: var(--gray-50); border: 1px solid var(--gray-100); border-radius: var(--r-sm); padding: 18px 20px; margin-bottom: 18px; }
+    .situation-label { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; }
+    .situation-text { font-size: .93rem; line-height: 1.75; color: var(--gray-900); }
+    .question-text { font-size: 1.02rem; font-weight: 600; color: var(--gray-900); margin-bottom: 16px; line-height: 1.5; }
+    .choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .choice-btn { display: flex; align-items: flex-start; gap: 14px; background: var(--white); border: 2px solid var(--gray-300); border-radius: var(--r-sm); padding: 14px 16px; cursor: pointer; text-align: left; font-family: var(--font-body); font-size: .9rem; color: var(--gray-900); line-height: 1.55; transition: var(--ease); width: 100%; }
+    .choice-btn:hover:not(:disabled), .choice-btn:focus-visible:not(:disabled) { border-color: var(--teal); background: var(--teal-bg); outline: 2px solid var(--teal); outline-offset: 2px; }
+    .choice-btn.selected:not(.revealed) { border-color: var(--teal-mid); background: var(--teal-bg); }
+    .choice-btn.correct.revealed  { border-color: var(--ok-border);  background: var(--ok-bg);  color: var(--ok-dark);  }
+    .choice-btn.incorrect.revealed { border-color: var(--bad-border); background: var(--bad-bg); color: var(--bad-dark); }
+    .choice-btn:disabled { cursor: default; }
+    .letter-badge { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .75rem; color: var(--gray-500); margin-top: 1px; transition: var(--ease); }
+    .choice-btn.selected:not(.revealed) .letter-badge { background: var(--teal); color: white; }
+    .choice-btn.correct.revealed .letter-badge  { background: var(--ok-dark);  color: white; }
+    .choice-btn.incorrect.revealed .letter-badge { background: var(--bad-dark); color: white; }
+    .submit-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .submit-hint { font-size: .8rem; color: var(--gray-500); font-style: italic; }
+    .feedback { border-radius: var(--r-sm); padding: 20px 22px; margin-top: 18px; display: none; }
+    .feedback.show { display: block; animation: fadeUp .25s ease; }
+    .feedback.correct-fb  { background: var(--ok-bg);  border-left: 5px solid var(--ok-border);  }
+    .feedback.incorrect-fb { background: var(--bad-bg); border-left: 5px solid var(--bad-border); }
+    .verdict { font-size: .98rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .feedback.correct-fb  .verdict { color: var(--ok-dark);  }
+    .feedback.incorrect-fb .verdict { color: var(--bad-dark); }
+    .explain { font-size: .88rem; line-height: 1.75; color: var(--gray-900); margin-bottom: 14px; }
+    .key-term-card { background: var(--info-bg); border: 1px solid var(--info-border); border-radius: 6px; padding: 9px 14px; font-size: .82rem; line-height: 1.5; }
+    .kt-label { font-weight: 700; color: var(--info-dark); }
+    .kt-def   { color: var(--gray-900); }
+    .next-row { margin-top: 18px; display: flex; justify-content: flex-end; }
+    .results-hero { text-align: center; padding: 8px 0 28px; }
+    .score-ring { width: 116px; height: 116px; border-radius: 50%; background: var(--teal); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 18px; box-shadow: 0 8px 28px rgba(0,78,100,.24); }
+    .score-num { font-family: var(--font-head); font-size: 2.5rem; color: white; line-height: 1; }
+    .score-sub { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.7); }
+    .results-title { font-family: var(--font-head); font-size: 1.75rem; color: var(--teal); margin-bottom: 6px; }
+    .results-msg   { font-size: .93rem; color: var(--gray-700); margin-bottom: 4px; }
+    .results-name  { font-size: .93rem; color: var(--gray-700); }
+    .results-name strong { color: var(--gray-900); }
+    .summary-heading { font-family: var(--font-head); font-size: 1.15rem; color: var(--gray-900); margin-bottom: 14px; }
+    .summary-list { list-style: none; }
+    .summary-item { display: flex; align-items: flex-start; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--gray-100); font-size: .87rem; }
+    .summary-item:last-child { border-bottom: none; }
+    .s-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 900; margin-top: 1px; }
+    .s-icon.pass { background: var(--ok-dark);  color: white; }
+    .s-icon.fail { background: var(--bad-dark); color: white; }
+    .s-body { flex: 1; }
+    .s-q { font-weight: 600; color: var(--gray-900); margin-bottom: 3px; }
+    .s-correct { font-size: .83rem; color: var(--ok-dark); }
+    .results-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+    @media (max-width: 600px) { .card { padding: 22px 18px; } .welcome-title { font-size: 1.65rem; } .header-inner { flex-wrap: wrap; } }
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <span class="header-course">HLTH 207 &middot; Chapter 9 &middot; Behavioral Health Services</span>
+      <span class="header-title">BH Parity Check</span>
+    </div>
+    <button class="glossary-btn" aria-expanded="false" aria-controls="glossary-panel" onclick="toggleGlossary(this)">Key Terms &#9662;</button>
+  </div>
+</header>
+
+<div class="glossary-panel" id="glossary-panel" role="region" aria-label="Key Terms Reference">
+  <div class="glossary-inner">
+    <h2>Key Terms Reference &mdash; Chapter 9</h2>
+    <div class="glossary-grid">
+      <div class="g-item"><span class="g-term">Non-parity</span><span class="g-def">When insurance coverage for behavioral health conditions is less generous than for other medical conditions. A long-standing problem in U.S. health insurance.</span></div>
+      <div class="g-item"><span class="g-term">Carve-outs</span><span class="g-def">Insurance arrangements that outsource behavioral health coverage to a separate MBHO, creating a separate and often inferior benefit.</span></div>
+      <div class="g-item"><span class="g-term">Managed Behavioral Healthcare Organization (MBHO)</span><span class="g-def">A subcontractor that assumes financial risk for and manages access to behavioral health services on behalf of an insurer.</span></div>
+      <div class="g-item"><span class="g-term">Mental Health Parity Act (1996)</span><span class="g-def">Equalized lifetime and annual dollar limits but left loopholes for day limits, visit limits, and higher copays, and excluded substance use disorders entirely.</span></div>
+      <div class="g-item"><span class="g-term">MHPAEA (2008)</span><span class="g-def">Mental Health Parity and Addiction Equity Act. If a plan covers behavioral health, coverage must be at parity with medical/surgical benefits across all cost-sharing and treatment limitations.</span></div>
+      <div class="g-item"><span class="g-term">Nonquantitative Treatment Limitations (NQTLs)</span><span class="g-def">Treatment limits that restrict benefits without numbers, such as preauthorization or step therapy. A common mechanism for avoiding full parity. Enforcement weakened in 2025.</span></div>
+      <div class="g-item"><span class="g-term">Serious Mental Illness (SMI)</span><span class="g-def">Mental illness that substantially interferes with major life activities. Approximately 5.2% of U.S. adults. The highest-need population in behavioral health.</span></div>
+      <div class="g-item"><span class="g-term">Comorbidity</span><span class="g-def">Two or more diagnoses in the same individual. Nearly half of those with any psychiatric disorder meet criteria for two or more disorders.</span></div>
+      <div class="g-item"><span class="g-term">Deinstitutionalization</span><span class="g-def">The large-scale discharge of patients from state psychiatric hospitals from the 1960s onward, without sufficient community resources to support them.</span></div>
+      <div class="g-item"><span class="g-term">Recovery-Oriented Systems of Care (ROSC)</span><span class="g-def">A strength-based, person-centered model that replaced diagnosis-anchored problem lists with individualized hope plans centered on empowerment and choice.</span></div>
+      <div class="g-item"><span class="g-term">Essential Health Benefit (ACA)</span><span class="g-def">Ten categories of services that individual and small group marketplace plans must cover, including behavioral health treatment. Coverage is required, not just parity.</span></div>
+      <div class="g-item"><span class="g-term">Disability-Adjusted Life Years (DALYs)</span><span class="g-def">A measure of total disease burden. Neuropsychiatric disorders rank first in the U.S., surpassing cardiovascular disease and cancer.</span></div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <!-- WELCOME -->
+  <div class="screen active" id="screen-welcome" aria-label="Welcome">
+    <div class="card">
+      <span class="badge">Learning Objective 5</span>
+      <h1 class="welcome-title">Can you spot a parity violation?</h1>
+      <p class="welcome-desc">For decades, insurance companies treated mental health and substance use disorder coverage differently &mdash; and worse &mdash; than coverage for physical health. Laws like MHPAEA (2008) changed that, but loopholes and enforcement gaps remain.<br><br>Work through <strong>8 real-world insurance scenarios</strong> and decide whether a parity law is being violated, which law applies, and why it matters for patients.</p>
+      <div class="lo-box">
+        <div class="lo-label">Chapter 9 Learning Objective</div>
+        <p>Describe financing for behavioral health services, including the history of non-parity, key parity legislation, and current enforcement challenges.</p>
+      </div>
+      <div class="context-box" role="note" aria-label="2026 Policy Context">
+        <div class="context-label">&#9888; 2026 Policy Context &mdash; What Has Changed Since the Textbook</div>
+        <p class="context-item"><strong>ACA Subsidy Cliff Returned (January 1, 2026):</strong> Enhanced marketplace subsidies expired December 31, 2025. Average premiums more than doubled for millions of enrollees. Households earning even $1 over 400% of the federal poverty level &mdash; about $62,600 for a single person &mdash; lost all premium tax credits entirely.</p>
+        <p class="context-item"><strong>Medicaid Cut by $1 Trillion (H.R. 1, July 4, 2025):</strong> The One Big Beautiful Bill Act cut federal Medicaid funding by approximately 15% over 10 years. The CBO estimates 11.8 million people will directly lose Medicaid coverage. Since Medicaid pays 25% of all U.S. behavioral health spending, these cuts directly threaten access to care for the most vulnerable populations.</p>
+        <p class="context-item"><strong>MHPAEA Enforcement Weakened (May 2025):</strong> The current administration announced it will not enforce strengthened NQTL regulations finalized in September 2024. Those rules would have required insurers to prove comparable NQTL application using independent medical standards. MHPAEA itself remains law, but enforcement of the strongest new protections has stalled. Where noted in scenarios below, this context matters.</p>
+      </div>
+      <label class="field-label" for="student-name">Your Name <span class="field-hint">(optional &mdash; for your records)</span></label>
+      <input class="name-input" type="text" id="student-name" placeholder="First Last" autocomplete="name">
+      <button class="btn btn-primary" onclick="startApp()">Begin Scenarios &rsaquo;</button>
+    </div>
+  </div>
+
+  <!-- SCENARIO -->
+  <div class="screen" id="screen-scenario" aria-label="Scenario">
+    <div class="progress-wrap" aria-label="Progress">
+      <div class="progress-meta">
+        <span id="prog-label">Scenario 1 of 8</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progress through scenarios">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="scenario-label" id="s-label"></div>
+      <h2 class="scenario-title" id="s-title"></h2>
+      <div class="situation-box">
+        <div class="situation-label">Situation</div>
+        <p class="situation-text" id="s-situation"></p>
+      </div>
+      <p class="question-text" id="s-question"></p>
+      <div class="choices" id="s-choices" role="group" aria-label="Answer choices"></div>
+      <div class="submit-row">
+        <button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()" disabled>Check My Answer</button>
+        <span class="submit-hint" id="submit-hint">Select an answer above to continue.</span>
+      </div>
+      <div class="feedback" id="feedback-box" role="alert">
+        <div class="verdict" id="fb-verdict"></div>
+        <p class="explain" id="fb-explain"></p>
+        <div class="key-term-card" id="fb-term"></div>
+        <div id="fb-update"></div>
+        <div class="next-row">
+          <button class="btn btn-primary" id="btn-next" onclick="nextScenario()">Next Scenario &rsaquo;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results" aria-label="Results">
+    <div class="card">
+      <div class="results-hero">
+        <div class="score-ring" aria-hidden="true">
+          <span class="score-num" id="score-num"></span>
+          <span class="score-sub">out of 8</span>
+        </div>
+        <h2 class="results-title" id="results-title"></h2>
+        <p class="results-msg"  id="results-msg"></p>
+        <p class="results-name" id="results-name"></p>
+      </div>
+      <h3 class="summary-heading">Scenario Summary</h3>
+      <ul class="summary-list" id="summary-list" aria-label="Summary of your answers"></ul>
+      <div class="results-actions">
+        <button class="btn btn-primary" onclick="restartApp()">Try Again</button>
+        <button class="btn btn-outline" onclick="window.print()">Print Results</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+var SCENARIOS = [
+  {
+    title: "Inpatient Day Limits",
+    situation: "A health plan covers 60 days of inpatient medical or surgical care per year. The same plan limits inpatient psychiatric care to 14 days per year. A member's 17-year-old child has been diagnosed with severe depression and the treatment team recommends 30 days of inpatient treatment.",
+    question: "Does this plan's inpatient day limit violate federal parity law?",
+    choices: [
+      { letter: "A", text: "No. Health plans may set any limits they choose on psychiatric care as long as they disclose the limits clearly." },
+      { letter: "B", text: "Yes. This is a quantitative treatment limitation that is more restrictive for psychiatric care than for comparable medical and surgical care, which violates MHPAEA.", correct: true },
+      { letter: "C", text: "No. The 1996 Mental Health Parity Act permits day limits on psychiatric care as long as dollar limits are equal." }
+    ],
+    explanation: "MHPAEA (2008) prohibits quantitative treatment limitations such as day limits, visit limits, and dollar caps that are more restrictive for mental health or substance use benefits than for comparable medical and surgical benefits. Covering 60 medical inpatient days but only 14 psychiatric days is a direct violation. Note: the 1996 Parity Act did allow this loophole, which is exactly why a stronger law was needed in 2008.",
+    keyTerm: { term: "MHPAEA (2008)", def: "Requires that if a plan covers behavioral health services, coverage must be at parity with medical and surgical benefits across all cost-sharing and treatment limitations, including day limits and visit caps." },
+    context2026: null
+  },
+  {
+    title: "Preauthorization for Therapy",
+    situation: "A health plan requires preauthorization for outpatient mental health therapy visits after the first 5 sessions. The same plan does not require preauthorization for physical therapy visits at any point. A member with PTSD is repeatedly delayed in scheduling therapy sessions while waiting for approval.",
+    question: "What type of parity issue does this represent, and does it violate MHPAEA?",
+    choices: [
+      { letter: "A", text: "No parity issue. Plans may manage mental health benefits more carefully because they are more costly than physical health services." },
+      { letter: "B", text: "This is a quantitative treatment limitation like a visit cap and clearly violates MHPAEA." },
+      { letter: "C", text: "This is a nonquantitative treatment limitation applied more stringently to behavioral health than to a comparable medical benefit, which likely violates MHPAEA.", correct: true }
+    ],
+    explanation: "NQTLs are restrictions that do not use numbers but still limit access, such as preauthorization requirements, step therapy, and network composition standards. When an NQTL is applied to mental health or substance use benefits but not to comparable medical and surgical benefits, it likely violates MHPAEA. Requiring preauthorization for mental health therapy while physical therapy requires none is a textbook NQTL disparity and one of the most common current enforcement challenges in parity law.",
+    keyTerm: { term: "Nonquantitative Treatment Limitations (NQTLs)", def: "Treatment limits that restrict access without using numbers, such as preauthorization requirements or step therapy. MHPAEA prohibits applying NQTLs more stringently to behavioral health benefits than to comparable medical benefits." },
+    context2026: "2026 Update: In September 2024, the Biden administration finalized stronger NQTL enforcement rules requiring insurers to prove parity using independent medical standards. In May 2025, the current administration announced it would not enforce those rules. MHPAEA still prohibits NQTL disparities, but the regulatory floor for enforcement is lower today than it would have been."
+  },
+  {
+    title: "No Behavioral Health Coverage at All",
+    situation: "A mid-size company health plan offers comprehensive medical and surgical coverage but includes no mental health or substance use disorder benefits. An employee with bipolar disorder cannot afford her psychiatric medication because the plan simply does not cover any behavioral health services.",
+    question: "Does MHPAEA require this employer to add behavioral health coverage to the plan?",
+    choices: [
+      { letter: "A", text: "Yes. MHPAEA requires all employer health plans to include mental health and substance use disorder coverage." },
+      { letter: "B", text: "No. MHPAEA only requires parity if behavioral health coverage is offered. Plans are not required to offer it at all.", correct: true },
+      { letter: "C", text: "Yes, but only if the employer has more than 500 employees." }
+    ],
+    explanation: "This is a critical and often misunderstood point. MHPAEA does not mandate that employer health plans include behavioral health coverage. It only says that IF a plan covers behavioral health services, that coverage must be at parity with medical and surgical coverage. The ACA required behavioral health as an essential health benefit for individual and small group marketplace plans, but this does not apply to large employer self-insured plans. Many people with serious mental illness work for employers whose plans have no behavioral health coverage at all, and no federal law currently forces those employers to add it.",
+    keyTerm: { term: "Non-parity", def: "When insurance coverage for behavioral health is less generous than for other medical conditions. Even after MHPAEA, plans with no behavioral health coverage are technically legal because parity only applies when coverage is offered." },
+    context2026: "2026 Update: This scenario is more consequential today than ever. The One Big Beautiful Bill Act (H.R. 1, signed July 4, 2025) cut federal Medicaid funding by $1 trillion over 10 years. The CBO estimates 11.8 million people will lose Medicaid coverage. Since Medicaid pays 25% of all behavioral health spending in the U.S. and is the largest single payer of mental health and substance use services, these cuts leave millions more people in the situation described here with no coverage and no federal law requiring it."
+  },
+  {
+    title: "Out-of-Network Coverage",
+    situation: "A health plan provides out-of-network coverage for medical and surgical services, reimbursing 70% of costs after the deductible. The same plan offers no out-of-network coverage for mental health or substance use disorder services. A member's psychiatrist is out of network, and no in-network psychiatrist is accepting new patients in her area.",
+    question: "Does this plan's out-of-network policy violate MHPAEA?",
+    choices: [
+      { letter: "A", text: "No. Plans have discretion over which providers they include in their networks and how they handle out-of-network claims." },
+      { letter: "B", text: "No. Out-of-network coverage is optional and is not covered by parity requirements." },
+      { letter: "C", text: "Yes. If a plan offers out-of-network coverage for medical and surgical benefits, it must offer comparable out-of-network coverage for behavioral health benefits at parity.", correct: true }
+    ],
+    explanation: "MHPAEA explicitly states that if a group health plan provides out-of-network coverage for medical and surgical benefits, it must also provide out-of-network coverage at parity for mental health and substance use disorder benefits. Offering out-of-network medical coverage while refusing out-of-network mental health coverage is a direct violation. This provision is especially important in rural and underserved areas where in-network behavioral health providers are scarce.",
+    keyTerm: { term: "MHPAEA (2008)", def: "Requires parity in out-of-network coverage. If a plan covers out-of-network medical and surgical care, it cannot refuse out-of-network behavioral health care." },
+    context2026: null
+  },
+  {
+    title: "Step Therapy for Psychiatric Medication",
+    situation: "A health plan requires that patients with major depression try and fail at least two generic antidepressants before the plan will cover a brand-name medication their psychiatrist has specifically recommended. The same plan does not require step therapy before covering brand-name cardiac medications.",
+    question: "How should this step therapy requirement be classified under MHPAEA?",
+    choices: [
+      { letter: "A", text: "This is acceptable. Generic-first policies are standard cost-control measures and do not raise parity concerns." },
+      { letter: "B", text: "This is an NQTL applied more stringently to behavioral health than to comparable medical benefits, which likely violates MHPAEA.", correct: true },
+      { letter: "C", text: "This is a quantitative treatment limitation and clearly violates MHPAEA." }
+    ],
+    explanation: "Step therapy, also called fail-first requirements, is a nonquantitative treatment limitation. When it is applied to psychiatric medications but not to comparable medical medications such as cardiac drugs, it violates MHPAEA's requirement that NQTLs be applied comparably and no more stringently to behavioral health benefits than to medical benefits. Step therapy for psychiatric medication is one of the most commonly reported NQTL violations, and delays in effective psychiatric medication can lead to serious clinical consequences including increased hospitalization.",
+    keyTerm: { term: "Nonquantitative Treatment Limitations (NQTLs)", def: "Step therapy (fail-first requirements) is an NQTL. Applying it to psychiatric medications but not to comparable medical medications is an NQTL disparity that likely violates MHPAEA." },
+    context2026: "2026 Update: The 2024 MHPAEA regulations specifically targeted step therapy as a form of NQTL disparity requiring active justification by insurers. The current administration decided not to enforce those regulations in May 2025, meaning insurers face less scrutiny on exactly this practice. The legal principle remains, but patients challenging step therapy disparities now face a weaker enforcement environment."
+  },
+  {
+    title: "ACA Marketplace Coverage",
+    situation: "A 26-year-old freelancer buys an individual health plan through the ACA marketplace. After being diagnosed with generalized anxiety disorder, she discovers her plan has a $4,000 annual limit on mental health outpatient visits but places no annual dollar limit on other medical outpatient visits.",
+    question: "Does this plan comply with federal law?",
+    choices: [
+      { letter: "A", text: "Yes. Individual marketplace plans are not covered by MHPAEA requirements." },
+      { letter: "B", text: "No. ACA marketplace plans must cover behavioral health as an essential health benefit AND comply with MHPAEA. A dollar limit on mental health benefits that does not apply to other medical benefits violates both.", correct: true },
+      { letter: "C", text: "Yes. Annual limits are allowed as long as they are disclosed in the plan documents." }
+    ],
+    explanation: "Individual and small group plans sold through ACA marketplaces must cover behavioral health services as an essential health benefit AND comply with MHPAEA. This is one area where coverage itself is required, not just parity if coverage happens to be offered. A $4,000 annual limit on mental health outpatient visits that does not apply to other medical outpatient visits is a direct quantitative parity violation on top of an ACA compliance failure.",
+    keyTerm: { term: "Essential Health Benefit (ACA)", def: "Behavioral health treatment is one of ten categories of services that ACA individual and small group marketplace plans must cover. This is where coverage is required by law, not just parity if coverage is offered." },
+    context2026: "2026 Update: The parity violation in this scenario is still illegal. But the person here now faces a second problem: affording marketplace coverage at all. Enhanced ACA subsidies expired December 31, 2025, and the subsidy cliff returned January 1, 2026. A single person earning over $62,600 receives zero premium tax credits. Average premiums more than doubled for millions of enrollees. For students working on health policy advocacy projects, the interaction between subsidy affordability and parity enforcement is one of the most urgent issues in behavioral health access today."
+  },
+  {
+    title: "Carve-Out and the MBHO",
+    situation: "A large insurer uses a managed behavioral healthcare organization to administer all mental health and substance use benefits separately from its medical benefits. The MBHO requires new clinical review and reauthorization every 3 days during inpatient psychiatric stays. For inpatient medical stays, the insurer only requires review every 7 days.",
+    question: "Can an insurer avoid MHPAEA requirements by using an MBHO to manage behavioral health benefits?",
+    choices: [
+      { letter: "A", text: "Yes. When an MBHO manages benefits separately, it operates under its own utilization management standards outside MHPAEA's reach." },
+      { letter: "B", text: "No. MHPAEA requirements apply regardless of whether coverage is administered through a carve-out MBHO. More frequent review for psychiatric stays than for comparable medical stays is an NQTL violation.", correct: true },
+      { letter: "C", text: "Yes, but only if the MBHO is a separate legal entity with no common ownership with the insurer." }
+    ],
+    explanation: "Carve-outs and MBHOs were historically used to apply stricter management to behavioral health benefits outside the scrutiny of parity regulators. MHPAEA closed this loophole. The insurer remains responsible for parity compliance even when behavioral health administration is fully outsourced to an MBHO. Requiring 3-day reauthorization for psychiatric inpatient stays when 7-day review applies to medical stays is an NQTL applied more stringently to behavioral health, which violates MHPAEA regardless of who administers the benefit.",
+    keyTerm: { term: "Carve-outs / MBHO", def: "Outsourcing behavioral health coverage to an MBHO does not exempt the arrangement from MHPAEA. The insurer remains accountable for parity compliance in all cases." },
+    context2026: "2026 Update: The 2024 MHPAEA regulations would have required insurers and MBHOs to document comparative analyses of NQTL application, essentially proving parity rather than simply asserting it. With those regulations not being enforced as of May 2025, MBHOs again face less regulatory pressure to document their utilization management practices. The legal principle here is unchanged, but the practical accountability has weakened."
+  },
+  {
+    title: "The 1996 Act vs. MHPAEA",
+    situation: "Before MHPAEA passed in 2008, a health plan covered substance use disorder treatment up to a $2,000 lifetime maximum while placing no lifetime cap on medical and surgical benefits. A member with alcohol use disorder exhausted the $2,000 benefit in a single month and was denied any further coverage.",
+    question: "Why did the Mental Health Parity Act of 1996 fail to prevent this type of inequity?",
+    choices: [
+      { letter: "A", text: "It was not legal. The 1996 Act prohibited all forms of unequal coverage for both mental health and substance use disorder benefits." },
+      { letter: "B", text: "It was legal under the 1996 Act. That law only equalized aggregate lifetime and annual dollar limits for mental health benefits and did not require coverage for substance use disorders at all.", correct: true },
+      { letter: "C", text: "It was legal, but only because the $2,000 limit was applied equally to all mental health and substance use conditions in the plan." }
+    ],
+    explanation: "The Mental Health Parity Act of 1996 was a meaningful but limited step. It equalized aggregate lifetime and annual dollar limits between mental health and medical and surgical benefits but explicitly excluded substance use disorder coverage from its requirements, and it left many other loopholes including day limits, visit limits, copay differences, and preauthorization requirements. A $2,000 lifetime cap on substance use disorder treatment was completely legal under the 1996 Act. This is precisely why advocates pushed for MHPAEA in 2008, which required parity for substance use disorders and applied to a much broader range of cost-sharing and treatment limitations.",
+    keyTerm: { term: "Mental Health Parity Act (1996)", def: "Equalized lifetime and annual dollar limits but excluded substance use disorder coverage and left major loopholes. The gaps in this law are what led to the stronger MHPAEA in 2008." },
+    context2026: null
+  }
+];
+
+var idx = 0, selected = null, submitted = false, results = [], studentName = "";
+
+function toggleGlossary(btn) {
+  var panel = document.getElementById("glossary-panel");
+  var open = panel.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open);
+  btn.textContent = open ? "Key Terms \u25b4" : "Key Terms \u25be";
+}
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function startApp() {
+  studentName = document.getElementById("student-name").value.trim();
+  idx = 0; results = []; selected = null; submitted = false;
+  loadScenario();
+  show("screen-scenario");
+}
+
+function loadScenario() {
+  var s = SCENARIOS[idx];
+  selected = null; submitted = false;
+  var pct = Math.round((idx / SCENARIOS.length) * 100);
+  document.getElementById("prog-label").textContent = "Scenario " + (idx + 1) + " of " + SCENARIOS.length;
+  document.getElementById("prog-pct").textContent = pct + "%";
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.querySelector(".progress-bar").setAttribute("aria-valuenow", pct);
+  document.getElementById("s-label").textContent = "Scenario " + (idx + 1) + " of " + SCENARIOS.length;
+  document.getElementById("s-title").textContent = s.title;
+  document.getElementById("s-situation").textContent = s.situation;
+  document.getElementById("s-question").textContent = s.question;
+  var container = document.getElementById("s-choices");
+  container.innerHTML = "";
+  s.choices.forEach(function(c) {
+    var btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.setAttribute("aria-pressed", "false");
+    btn.innerHTML = "<span class=\"letter-badge\" aria-hidden=\"true\">" + c.letter + "</span><span>" + c.text + "</span>";
+    btn.onclick = function() { selectChoice(c.letter, btn); };
+    container.appendChild(btn);
+  });
+  document.getElementById("btn-submit").disabled = true;
+  document.getElementById("submit-hint").textContent = "Select an answer above to continue.";
+  document.getElementById("feedback-box").className = "feedback";
+  document.getElementById("btn-next").textContent = idx < SCENARIOS.length - 1 ? "Next Scenario \u203a" : "See My Results \u203a";
+}
+
+function selectChoice(letter, btn) {
+  if (submitted) return;
+  selected = letter;
+  document.querySelectorAll(".choice-btn").forEach(function(b) { b.classList.remove("selected"); b.setAttribute("aria-pressed", "false"); });
+  btn.classList.add("selected");
+  btn.setAttribute("aria-pressed", "true");
+  document.getElementById("btn-submit").disabled = false;
+  document.getElementById("submit-hint").textContent = "";
+}
+
+function submitAnswer() {
+  if (!selected || submitted) return;
+  submitted = true;
+  var s = SCENARIOS[idx];
+  var correct = s.choices.filter(function(c) { return c.correct; })[0];
+  var isRight = selected === correct.letter;
+  results.push({ correct: isRight, chosenLetter: selected, scenario: s });
+  document.querySelectorAll(".choice-btn").forEach(function(btn, i) {
+    btn.disabled = true;
+    btn.classList.add("revealed");
+    if (s.choices[i].correct) btn.classList.add("correct");
+    else if (s.choices[i].letter === selected) btn.classList.add("incorrect");
+  });
+  var fb = document.getElementById("feedback-box");
+  fb.className = "feedback show " + (isRight ? "correct-fb" : "incorrect-fb");
+  document.getElementById("fb-verdict").innerHTML = isRight
+    ? "<span class=\"verdict-icon\" aria-hidden=\"true\">&#10003;</span> Correct!"
+    : "<span class=\"verdict-icon\" aria-hidden=\"true\">&#10007;</span> Not quite &mdash; the correct answer is <strong>" + correct.letter + "</strong>.";
+  document.getElementById("fb-explain").textContent = s.explanation;
+  document.getElementById("fb-term").innerHTML = "<span class=\"kt-label\">Key Term: " + s.keyTerm.term + " &mdash; </span><span class=\"kt-def\">" + s.keyTerm.def + "</span>";
+  var upd = document.getElementById("fb-update");
+  if (s.context2026) {
+    upd.className = "update-note";
+    upd.innerHTML = "<span class=\"update-label\">2026 Policy Context</span><span class=\"update-text\">" + s.context2026 + "</span>";
+  } else {
+    upd.className = "";
+    upd.innerHTML = "";
+  }
+  document.getElementById("btn-submit").disabled = true;
+  document.getElementById("submit-hint").textContent = "";
+}
+
+function nextScenario() {
+  idx++;
+  if (idx < SCENARIOS.length) { loadScenario(); } else { showResults(); }
+}
+
+function showResults() {
+  var score = results.filter(function(r) { return r.correct; }).length;
+  document.getElementById("progress-fill").style.width = "100%";
+  document.getElementById("score-num").textContent = score;
+  var title, msg;
+  if (score === 8)     { title = "Perfect Score!";  msg = "You have a strong command of behavioral health financing and parity law."; }
+  else if (score >= 6) { title = "Well Done!";       msg = "You understand the key concepts. Review the scenarios you missed to solidify your knowledge."; }
+  else if (score >= 4) { title = "Good Effort!";     msg = "You are building your understanding. Open the Key Terms panel and try again."; }
+  else                 { title = "Keep Studying!";   msg = "Parity law is complex. Re-read the explanations carefully and try again."; }
+  document.getElementById("results-title").textContent = title;
+  document.getElementById("results-msg").textContent = msg;
+  document.getElementById("results-name").innerHTML = studentName ? "Completed by: <strong>" + studentName + "</strong>" : "";
+  var list = document.getElementById("summary-list");
+  list.innerHTML = "";
+  results.forEach(function(r, i) {
+    var correct = r.scenario.choices.filter(function(c) { return c.correct; })[0];
+    var li = document.createElement("li");
+    li.className = "summary-item";
+    li.innerHTML = "<span class=\"s-icon " + (r.correct ? "pass" : "fail") + "\" aria-label=\"" + (r.correct ? "Correct" : "Incorrect") + "\">" + (r.correct ? "&#10003;" : "&#10007;") + "</span><div class=\"s-body\"><div class=\"s-q\">" + (i + 1) + ". " + r.scenario.title + "</div>" + (r.correct ? "<div class=\"s-correct\">Correct &mdash; you chose " + r.chosenLetter + ".</div>" : "<div class=\"s-correct\">Correct answer: " + correct.letter + ". " + correct.text + "</div>") + "</div>";
+    list.appendChild(li);
+  });
+  show("screen-results");
+}
+
+function restartApp() {
+  idx = 0; results = []; selected = null; submitted = false;
+  document.getElementById("student-name").value = studentName;
+  show("screen-welcome");
+}
+</script>
+</body>
+</html>
