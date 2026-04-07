@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 9: Behavioral Health Services — HLTH 207 Presenter</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --purple:     #4A235A;
+  --purple-mid: #6B3580;
+  --teal:       #006D77;
+  --teal-light: #83C5BE;
+  --gold:       #E8A838;
+  --red:        #7A1515;
+  --green:      #155724;
+  --cream:      #F8F4FF;
+  --slate:      #2C3E50;
+  --white:      #FFFFFF;
+  --dark:       #12071A;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--dark)}
+body{font-family:'DM Sans',sans-serif}
+
+/* ── SLIDE CONTAINER ── */
+#deck{width:100vw;height:100vh;position:relative}
+.slide{
+  position:absolute;inset:0;
+  display:none;flex-direction:column;
+  opacity:0;transition:opacity .35s ease;
+}
+.slide.active{display:flex;opacity:1}
+
+/* ── NAVIGATION ── */
+#nav{
+  position:fixed;bottom:20px;right:24px;
+  display:flex;align-items:center;gap:10px;z-index:100;
+}
+.nav-btn{
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
+  color:white;padding:10px 20px;border-radius:50px;
+  font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;
+  backdrop-filter:blur(8px);transition:background .15s;
+}
+.nav-btn:hover{background:rgba(255,255,255,.22)}
+#slide-counter{font-size:12px;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;min-width:48px;text-align:center}
+
+/* ── INSTRUCTOR CUE BAR ── */
+.cue-bar{
+  position:fixed;top:0;left:0;right:0;
+  background:rgba(232,168,56,.95);color:#1a0a00;
+  padding:8px 20px;font-size:12px;font-weight:700;
+  text-align:center;z-index:200;
+  display:none;letter-spacing:.04em;text-transform:uppercase;
+  backdrop-filter:blur(4px);
+}
+.cue-bar.visible{display:block}
+
+/* ── PROGRESS BAR ── */
+#progress{
+  position:fixed;bottom:0;left:0;height:3px;
+  background:var(--teal-light);transition:width .3s ease;z-index:100;
+}
+
+/* ══════════════════════════════════════════
+   SLIDE LAYOUTS
+══════════════════════════════════════════ */
+
+/* TITLE slide */
+.s-title{
+  background:var(--dark);
+  justify-content:center;align-items:flex-start;padding:80px 10%;
+  position:relative;overflow:hidden;min-height:100vh;
+}
+.s-title::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 50%, rgba(74,35,90,.7) 0%, transparent 65%),
+             radial-gradient(ellipse at 20% 80%, rgba(0,109,119,.4) 0%, transparent 55%);
+}
+.s-title .chapter-tag{
+  font-size:11px;color:var(--teal-light);font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;margin-bottom:18px;
+  position:relative;z-index:1;
+}
+.s-title h1{
+  font-family:'Playfair Display',serif;font-size:clamp(42px,6vw,72px);
+  color:var(--white);line-height:1.1;margin-bottom:20px;
+  position:relative;z-index:1;max-width:700px;
+}
+.s-title .subtitle{
+  font-size:18px;color:rgba(255,255,255,.6);font-weight:300;
+  position:relative;z-index:1;margin-bottom:40px;
+}
+.s-title .meta{
+  font-size:13px;color:rgba(255,255,255,.35);
+  position:relative;z-index:1;letter-spacing:.05em;
+}
+.title-orb{
+  position:absolute;right:8%;top:50%;transform:translateY(-50%);
+  width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, var(--purple-mid), var(--dark));
+  border:1px solid rgba(131,197,190,.2);z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  font-size:120px;
+}
+
+/* SECTION HEADER slide */
+.s-section{
+  background:var(--purple);justify-content:center;align-items:center;
+  text-align:center;padding:60px;position:relative;overflow:hidden;
+}
+.s-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%, rgba(0,109,119,.35) 0%, transparent 70%);
+}
+.s-section .section-num{
+  font-size:11px;color:var(--teal-light);font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px;
+  position:relative;z-index:1;
+}
+.s-section h2{
+  font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,60px);
+  color:var(--white);line-height:1.15;position:relative;z-index:1;
+  max-width:700px;
+}
+
+/* CONTENT slide */
+.s-content{
+  background:var(--cream);flex-direction:column;
+}
+.slide-header{
+  background:var(--purple);padding:22px 48px;flex-shrink:0;
+}
+.slide-header h2{
+  font-family:'Playfair Display',serif;font-size:28px;color:var(--white);
+}
+.slide-body{
+  flex:1;padding:32px 48px;display:flex;flex-direction:column;
+  justify-content:flex-start;gap:14px;overflow:hidden;
+}
+
+/* DARK CONTENT slide */
+.s-dark{background:var(--dark)}
+.s-dark .slide-header{background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.1)}
+.s-dark .slide-header h2{color:var(--white)}
+.s-dark .slide-body{padding:32px 48px;gap:14px}
+
+/* ── REVEAL ITEMS ── */
+.reveal-item{
+  opacity:0;transform:translateY(12px);
+  transition:opacity .4s ease, transform .4s ease;
+  pointer-events:none;
+}
+.reveal-item.shown{opacity:1;transform:none;pointer-events:auto}
+
+/* ── CONTENT COMPONENTS ── */
+
+/* Stat card */
+.stat-card{
+  background:var(--purple);border-radius:14px;
+  padding:20px 24px;display:flex;align-items:center;gap:20px;
+}
+.stat-num{
+  font-family:'Playfair Display',serif;font-size:52px;
+  color:var(--gold);line-height:1;flex-shrink:0;
+}
+.stat-label{font-size:16px;color:rgba(255,255,255,.85);line-height:1.5}
+
+/* Two col stats */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Bullet point */
+.bullet-row{
+  display:flex;gap:14px;align-items:flex-start;
+  background:white;border-radius:10px;padding:14px 18px;
+  border-left:4px solid var(--teal);
+}
+.bullet-dot{
+  width:28px;height:28px;border-radius:50%;background:var(--teal);
+  color:white;font-size:12px;font-weight:700;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.bullet-text{font-size:17px;color:var(--slate);line-height:1.6}
+
+/* Dark bullet */
+.bullet-dark{
+  background:rgba(255,255,255,.07);border-left-color:var(--teal-light);
+}
+.bullet-dark .bullet-text{color:rgba(255,255,255,.88)}
+.bullet-dark .bullet-dot{background:var(--teal)}
+
+/* Promise/Reality columns */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+.col-block{border-radius:12px;overflow:hidden}
+.col-head{
+  padding:12px 18px;font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;color:white;
+}
+.col-head.green{background:var(--green)}
+.col-head.red{background:var(--red)}
+.col-items{background:white;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.col-item{font-size:15px;color:var(--slate);line-height:1.5;padding-left:14px;border-left:3px solid #ddd}
+
+/* Timeline */
+.timeline{display:flex;gap:0;align-items:stretch;flex:1}
+.t-item{flex:1;display:flex;flex-direction:column;position:relative}
+.t-item:not(:last-child)::after{
+  content:'→';position:absolute;right:-12px;top:38px;
+  font-size:18px;color:var(--teal);z-index:2;
+}
+.t-year{
+  background:var(--teal);color:white;font-size:13px;font-weight:700;
+  padding:6px 10px;border-radius:6px 6px 0 0;text-align:center;
+}
+.t-name{
+  background:var(--purple);color:white;font-size:13px;font-weight:600;
+  padding:6px 10px;text-align:center;
+}
+.t-body{
+  background:white;padding:10px;font-size:13px;color:var(--slate);
+  line-height:1.5;flex:1;border-radius:0 0 6px 6px;
+}
+
+/* Myth/Fact rows */
+.myth-row{
+  display:grid;grid-template-columns:80px 1fr;gap:0;
+  border-radius:10px;overflow:hidden;
+}
+.myth-tag{
+  background:var(--red);color:white;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:10px 8px;letter-spacing:.05em;
+}
+.myth-content{background:rgba(255,255,255,.06);padding:14px 18px}
+.myth-label{font-size:12px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.myth-text{font-size:15px;color:rgba(255,255,255,.9);line-height:1.5}
+
+/* Sector card */
+.sector-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sector-card{border-radius:10px;overflow:hidden}
+.sector-head{padding:10px 14px;font-size:14px;font-weight:700;color:white}
+.sector-body{background:white;padding:12px 14px;font-size:14px;color:var(--slate);line-height:1.5}
+
+/* Barrier cards */
+.barrier-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.barrier-card{border-radius:10px;overflow:hidden;background:white}
+.barrier-head{padding:10px 16px;font-size:14px;font-weight:700;color:white}
+.barrier-body{padding:12px 16px;font-size:14px;color:var(--slate);line-height:1.6}
+
+/* Definition box */
+.def-box{
+  background:white;border-radius:12px;padding:20px 24px;
+  border-left:5px solid var(--purple);
+}
+.def-term{font-size:14px;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.def-text{font-size:17px;color:var(--slate);line-height:1.7}
+
+/* Quote */
+.quote-box{
+  background:var(--purple);border-radius:14px;padding:24px 28px;
+  position:relative;
+}
+.quote-mark{font-size:60px;color:var(--gold);line-height:1;font-family:'Playfair Display',serif;position:absolute;top:8px;left:18px;opacity:.6}
+.quote-text{font-size:17px;color:rgba(255,255,255,.92);line-height:1.75;font-style:italic;padding-left:20px;margin-top:12px}
+.quote-src{font-size:13px;color:var(--teal-light);margin-top:10px;text-align:right;font-weight:600}
+
+/* Law table rows */
+.law-row{display:grid;grid-template-columns:70px 180px 1fr;gap:0;border-radius:8px;overflow:hidden}
+.law-year{background:var(--teal);color:white;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:10px 6px;text-align:center}
+.law-name{background:rgba(74,35,90,.9);color:white;font-size:14px;font-weight:600;padding:10px 12px;display:flex;align-items:center}
+.law-impact{background:white;padding:10px 14px;font-size:14px;color:var(--slate);line-height:1.5;display:flex;align-items:center}
+
+/* 988 callout */
+.crisis-grid{display:grid;grid-template-columns:1fr 200px 1fr;gap:20px;align-items:center;flex:1}
+.crisis-orb{
+  width:180px;height:180px;border-radius:50%;background:var(--teal);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0 auto;
+}
+.crisis-num{font-family:'Playfair Display',serif;font-size:64px;color:white;line-height:1}
+.crisis-sub{font-size:13px;color:rgba(255,255,255,.8);text-align:center;margin-top:4px;font-weight:600}
+
+/* ACTION SLIDE */
+.s-action{background:var(--dark);justify-content:center;align-items:center;text-align:center;padding:60px;position:relative;overflow:hidden}
+.s-action::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%, rgba(0,109,119,.4) 0%, transparent 65%)}
+.action-icon{font-size:64px;margin-bottom:20px;position:relative;z-index:1}
+.action-title{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);color:white;margin-bottom:12px;position:relative;z-index:1}
+.action-sub{font-size:16px;color:rgba(255,255,255,.6);margin-bottom:36px;font-style:italic;position:relative;z-index:1}
+.action-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--teal);color:white;padding:16px 32px;
+  border-radius:50px;font-size:16px;font-weight:700;
+  text-decoration:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:transform .1s,background .15s;position:relative;z-index:1;
+}
+.action-btn:hover{background:#00858F;transform:scale(1.03)}
+.action-url{
+  margin-top:16px;font-size:12px;color:rgba(255,255,255,.4);
+  position:relative;z-index:1;
+}
+
+/* FILM CUE slide */
+.s-film{background:#0a0a0a;justify-content:center;align-items:center;text-align:center;padding:60px;position:relative;overflow:hidden}
+.s-film::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%, rgba(232,168,56,.15) 0%, transparent 65%)}
+.film-icon{font-size:80px;margin-bottom:20px;position:relative;z-index:1}
+.film-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);color:var(--gold);margin-bottom:8px;position:relative;z-index:1}
+.film-detail{font-size:18px;color:rgba(255,255,255,.7);margin-bottom:6px;position:relative;z-index:1}
+.film-time{font-size:14px;color:rgba(255,255,255,.4);position:relative;z-index:1;margin-bottom:32px}
+.film-instructions{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:18px 28px;max-width:500px;
+  font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;
+  position:relative;z-index:1;
+}
+
+/* TAKEAWAYS slide */
+.takeaway-item{
+  display:flex;gap:16px;align-items:flex-start;
+  background:rgba(255,255,255,.05);border-radius:10px;
+  padding:14px 18px;border-left:3px solid var(--teal);
+}
+.takeaway-num{
+  width:28px;height:28px;border-radius:50%;background:var(--teal);
+  color:white;font-size:12px;font-weight:700;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;
+}
+.takeaway-text{font-size:15px;color:rgba(255,255,255,.88);line-height:1.6}
+
+/* Recovery principles */
+.recovery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;flex:1}
+.recovery-card{
+  background:white;border-radius:12px;padding:18px 14px;
+  text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;
+  border-top:4px solid var(--teal);
+}
+.recovery-icon{font-size:32px}
+.recovery-title{font-size:13px;color:var(--teal);font-weight:700}
+.recovery-text{font-size:11px;color:var(--slate);line-height:1.5}
+
+/* Settings grid */
+.settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.setting-card{background:white;border-radius:10px;overflow:hidden}
+.setting-head{background:var(--teal);padding:10px 14px;font-size:12px;font-weight:700;color:white;text-align:center}
+.setting-body{padding:12px 14px;font-size:12px;color:var(--slate);line-height:1.5}
+
+/* Parity box */
+.parity-main{background:var(--teal);border-radius:12px;padding:18px 22px;margin-bottom:14px}
+.parity-title{font-size:16px;color:white;font-weight:700;margin-bottom:6px}
+.parity-text{font-size:15px;color:rgba(255,255,255,.88);line-height:1.6}
+.parity-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.parity-card{background:white;border-radius:10px;padding:14px 16px}
+.parity-card-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.parity-card-text{font-size:14px;color:var(--slate);line-height:1.55}
+
+/* Keyboard hint */
+#hint{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,.25);font-family:'DM Sans',sans-serif;pointer-events:none;transition:opacity .5s;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div id="cue" class="cue-bar"></div>
+<div id="deck"></div>
+<div id="progress"></div>
+<div id="nav">
+  <button class="nav-btn" onclick="prev()">← Back</button>
+  <span id="slide-counter"></span>
+  <button class="nav-btn" onclick="next()">Next →</button>
+</div>
+<div id="hint">SPACE or → to advance · ← to go back</div>
+
+<script>
+// ══════════════════════════════════════════
+// SLIDE DATA
+// ══════════════════════════════════════════
+const SLIDES = [
+
+// 0 — TITLE
+{
+  cue: null,
+  html: `<div class="slide s-title" style="justify-content:center;min-height:100vh">
+    <div style="position:relative;z-index:1;max-width:620px">
+      <div class="chapter-tag">HLTH 207 · Chapter 9 · Week 11</div>
+      <h1 style="font-size:clamp(42px,5.5vw,68px)">Behavioral Health<br>Services</h1>
+      <p class="subtitle">Understanding the U.S. Mental Health<br>and Substance Use System</p>
+      <p class="meta">Towson University &nbsp;·&nbsp; W. Whitner</p>
+    </div>
+    <div class="title-orb" style="right:5%;top:50%;transform:translateY(-50%);width:280px;height:280px;font-size:90px" aria-hidden="true">🧠</div>
+  </div>`
+},
+
+// 1 — FILM CUE
+{
+  cue: "▶ PLAY FILM NOW — Netflix · The Mind, Explained · Season 1 Episode 3: Anxiety · 21 minutes",
+  html: `<div class="slide s-film">
+    <div class="film-icon" aria-hidden="true">🎬</div>
+    <div class="film-title">The Mind, Explained</div>
+    <div class="film-detail">Season 1, Episode 3 &nbsp;·&nbsp; "Anxiety"</div>
+    <div class="film-time">Netflix &nbsp;·&nbsp; 21 minutes</div>
+    <div class="film-instructions">
+      Open Netflix, search <strong>The Mind, Explained</strong>, and select Season 1, Episode 3.
+    </div>
+  </div>`
+},
+
+// 2 — SECTION: What Is Behavioral Health
+{
+  cue: "BEGIN LECTURE — Click to reveal content one step at a time",
+  html: `<div class="slide s-section">
+    <div class="section-num">Section 1</div>
+    <h2>What Is Behavioral Health?</h2>
+    <div style="margin-top:32px;display:flex;gap:32px;align-items:center;position:relative;z-index:1">
+      <div style="font-size:96px" aria-hidden="true">🧠</div>
+      <div style="text-align:left;max-width:500px">
+        <p style="font-size:18px;color:rgba(255,255,255,.85);line-height:1.7;margin-bottom:16px">Behavioral health is not separate from physical health. It is the foundation of it.</p>
+        <p style="font-size:15px;color:rgba(255,255,255,.55);line-height:1.6">In this section: Definition · Mental health · Substance use disorders · Comorbidity · The scale of the problem in America</p>
+      </div>
+    </div>
+  </div>`
+},
+
+// 3 — Definition + pillars
+{
+  cue: "LECTURE — Click to reveal each element",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>What Is Behavioral Health?</h2></div>
+    <div class="slide-body" style="gap:16px;justify-content:space-evenly">
+      <div class="reveal-item def-box">
+        <div class="def-term">Definition</div>
+        <div class="def-text">Behavioral health is the connection between behaviors — including mental health, substance use, and lifestyle choices — and overall physical and emotional well-being. It encompasses psychiatric disorders, substance use disorders, and the behaviors that affect health outcomes.</div>
+      </div>
+      <div class="reveal-item bullet-row" style="border-left-color:var(--purple)">
+        <div class="bullet-dot" style="background:var(--purple)">🧠</div>
+        <div class="bullet-text"><strong>Mental Health</strong> — Conditions such as depression, anxiety, bipolar disorder, schizophrenia, and PTSD that affect thinking, mood, and behavior.</div>
+      </div>
+      <div class="reveal-item bullet-row" style="border-left-color:var(--red)">
+        <div class="bullet-dot" style="background:var(--red)">💊</div>
+        <div class="bullet-text"><strong>Substance Use Disorders</strong> — Alcohol, opioid, and other substance-related conditions recognized as chronic brain diseases — not moral failures.</div>
+      </div>
+      <div class="reveal-item bullet-row" style="border-left-color:var(--gold)">
+        <div class="bullet-dot" style="background:var(--gold);color:#1a0a00">🔗</div>
+        <div class="bullet-text"><strong>Comorbidity</strong> means having two or more conditions at the same time. For example, a person may have both depression and a substance use disorder together — not one causing the other, but both present at once. Nearly half of people with any psychiatric disorder have at least one more. This is why behavioral health care must treat the whole person, not just one diagnosis.</div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 4 — Scale of the problem
+{
+  cue: "LECTURE — The numbers. Reveal each stat to let them sink in.",
+  html: `<div class="slide s-dark">
+    <div class="slide-header"><h2 style="color:white;font-family:'Playfair Display',serif">The Scale of Behavioral Health in America</h2></div>
+    <div class="slide-body" style="gap:16px;justify-content:space-evenly">
+      <p class="reveal-item" style="font-size:12px;color:rgba(255,255,255,.5);font-style:italic">2024 SAMHSA National Survey Data</p>
+      <div class="reveal-item stat-card">
+        <div class="stat-num">23%</div>
+        <div class="stat-label">of U.S. adults experienced any mental illness in the past year<br><span style="color:var(--teal-light);font-size:12px">~62 million people</span></div>
+      </div>
+      <div class="reveal-item stat-card">
+        <div class="stat-num">32%</div>
+        <div class="stat-label">of adults ages 18–25 — the highest rate of any age group<br><span style="color:var(--teal-light);font-size:12px">That includes your students</span></div>
+      </div>
+      <div class="reveal-item stat-card">
+        <div class="stat-num">48%</div>
+        <div class="stat-label">of adults with mental illness received NO treatment<br><span style="color:var(--teal-light);font-size:12px">~30 million people untreated</span></div>
+      </div>
+      <div class="reveal-item stat-card">
+        <div class="stat-num">#1</div>
+        <div class="stat-label">Neuropsychiatric disorders are the leading cause of disability in the U.S.<br><span style="color:var(--teal-light);font-size:12px">Surpasses heart disease and cancer — measured in DALYs</span></div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 5 — SECTION: History
+{
+  cue: null,
+  html: `<div class="slide s-section">
+    <div class="section-num">Section 2</div>
+    <h2>A Brief History: From Asylum to Community</h2>
+    <div style="position:relative;z-index:1;margin-top:14px;margin-bottom:24px">
+      <span style="background:var(--teal);color:white;font-size:15px;font-weight:700;padding:6px 18px;border-radius:50px;letter-spacing:.04em">1800s — Present Day</span>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:32px;align-items:center;position:relative;z-index:1">
+      <div style="font-size:96px" aria-hidden="true">🏛️</div>
+      <div style="text-align:left;max-width:520px">
+        <p style="font-size:18px;color:rgba(255,255,255,.85);line-height:1.7;margin-bottom:16px">We once housed over 500,000 people with mental illness in state hospitals. Then we discharged them — without building the communities to support them.</p>
+        <p style="font-size:15px;color:rgba(255,255,255,.55);line-height:1.6">In this section: The asylum era · Deinstitutionalization · The broken promise · The Recovery Movement</p>
+      </div>
+    </div>
+  </div>`
+},
+
+// 6 — History timeline
+{
+  cue: "LECTURE — Walk through each era left to right",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>From Asylum to Community: 1800s — Present Day</h2></div>
+    <div class="slide-body" style="gap:12px;justify-content:space-evenly">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div class="reveal-item" style="border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--teal);color:white;font-size:15px;font-weight:700;padding:8px;text-align:center">1800s</div>
+          <div style="background:var(--purple);color:white;font-size:13px;font-weight:600;padding:7px 10px;text-align:center">Asylum Era</div>
+          <div style="background:white;padding:10px;font-size:13px;color:var(--slate);line-height:1.5;flex:1">Dorothea Dix leads reform. Quakers establish the first humane asylum. Large state hospitals become the primary model of care.</div>
+        </div>
+        <div class="reveal-item" style="border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--teal);color:white;font-size:15px;font-weight:700;padding:8px;text-align:center">1955–1963</div>
+          <div style="background:var(--purple);color:white;font-size:13px;font-weight:600;padding:7px 10px;text-align:center">Peak and Shift</div>
+          <div style="background:white;padding:10px;font-size:13px;color:var(--slate);line-height:1.5;flex:1">500,000 in state hospitals at peak. The 1963 Community Mental Health Act launches deinstitutionalization — discharges begin.</div>
+        </div>
+        <div class="reveal-item" style="border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--red);color:white;font-size:15px;font-weight:700;padding:8px;text-align:center">1970s–80s</div>
+          <div style="background:#5a0f0f;color:white;font-size:13px;font-weight:600;padding:7px 10px;text-align:center">The Gap Widens</div>
+          <div style="background:white;padding:10px;font-size:13px;color:var(--slate);line-height:1.5;flex:1">Community resources never materialize. Homelessness surges. Jails become the de facto mental health system. McKinney Act (1987) acknowledges the crisis.</div>
+        </div>
+        <div class="reveal-item" style="border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--red);color:white;font-size:15px;font-weight:700;padding:8px;text-align:center">1990s</div>
+          <div style="background:#5a0f0f;color:white;font-size:13px;font-weight:600;padding:7px 10px;text-align:center">Civil Rights Era</div>
+          <div style="background:white;padding:10px;font-size:13px;color:var(--slate);line-height:1.5;flex:1">ADA (1990) protects people with mental illness. SAMHSA established (1992). First Mental Health Parity Act (1996). Olmstead Supreme Court ruling (1999) bans unnecessary institutionalization.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div class="reveal-item" style="border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--green);color:white;font-size:15px;font-weight:700;padding:8px;text-align:center">2004+</div>
+          <div style="background:#0d3d1a;color:white;font-size:13px;font-weight:600;padding:7px 10px;text-align:center">Recovery Movement</div>
+          <div style="background:white;padding:10px;font-size:13px;color:var(--slate);line-height:1.5;flex:1">Strength-based, person-centered model replaces the problem-based approach. Recovery is self-directed and full of hope.</div>
+        </div>
+        <div class="reveal-item" style="border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--green);color:white;font-size:15px;font-weight:700;padding:8px;text-align:center">2008–2010</div>
+          <div style="background:#0d3d1a;color:white;font-size:13px;font-weight:600;padding:7px 10px;text-align:center">Parity and the ACA</div>
+          <div style="background:white;padding:10px;font-size:13px;color:var(--slate);line-height:1.5;flex:1">MHPAEA (2008) requires equal insurance coverage for mental health. The ACA (2010) expands Medicaid and makes behavioral health an essential benefit.</div>
+        </div>
+        <div class="reveal-item" style="border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="background:var(--green);color:white;font-size:15px;font-weight:700;padding:8px;text-align:center">2022–Today</div>
+          <div style="background:#0d3d1a;color:white;font-size:13px;font-weight:600;padding:7px 10px;text-align:center">988 and Beyond</div>
+          <div style="background:white;padding:10px;font-size:13px;color:var(--slate);line-height:1.5;flex:1">988 Suicide and Crisis Lifeline launches. Workforce shortages and access gaps remain the defining challenge of the decade.</div>
+        </div>
+      </div>
+      <div class="reveal-item bullet-row" style="border-left-color:var(--red)">
+        <div class="bullet-dot" style="background:var(--red)">!</div>
+        <div class="bullet-text"><strong>The throughline:</strong> Every decade brought new laws and promises. The funding and infrastructure to back them up never fully arrived. That gap is still the central problem in behavioral health today.</div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 7 — Deinstitutionalization
+{
+  cue: "LECTURE — Promise vs. Reality. Let the contrast land.",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>Deinstitutionalization: Promise and Reality</h2></div>
+    <div class="slide-body">
+      <div class="two-col">
+        <div class="reveal-item col-block">
+          <div class="col-head green">✓ The Promise</div>
+          <div class="col-items">
+            <div class="col-item">Community mental health centers would provide ongoing outpatient care close to home.</div>
+            <div class="col-item">People with mental illness would live independently with support services.</div>
+            <div class="col-item">Treatment would shift from custodial warehousing to active recovery.</div>
+            <div class="col-item">Federal funding through the Community Mental Health Act would sustain the system.</div>
+          </div>
+        </div>
+        <div class="reveal-item col-block">
+          <div class="col-head red">✗ The Reality</div>
+          <div class="col-items">
+            <div class="col-item">Community centers were never adequately funded or built.</div>
+            <div class="col-item">67% of unhoused people in the U.S. have a mental illness.</div>
+            <div class="col-item">64% of jail inmates met criteria for mental illness at time of booking.</div>
+            <div class="col-item">Jails and prisons became — and remain — the de facto mental health system.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 8 — Recovery Movement
+{
+  cue: "LECTURE — The Recovery Movement is a paradigm shift. Ask: what does 'recovery' mean to you?",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>The Recovery Movement</h2></div>
+    <div class="slide-body" style="gap:20px;justify-content:space-evenly">
+      <div class="reveal-item quote-box">
+        <div class="quote-mark">"</div>
+        <div class="quote-text">Recovery is a process of change through which individuals improve their health and wellness, live self-directed lives, and strive to reach their full potential.</div>
+        <div class="quote-src">— SAMHSA, 2012</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+        <div class="reveal-item" style="background:white;border-radius:12px;padding:20px 14px;text-align:center;border-top:4px solid var(--teal)">
+          <div style="font-size:36px;margin-bottom:10px">🌱</div>
+          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-bottom:8px">Strength-Based</div>
+          <div style="font-size:12px;color:var(--slate);line-height:1.55">Focuses on what people can do and build on — not just diagnoses and deficits.</div>
+        </div>
+        <div class="reveal-item" style="background:white;border-radius:12px;padding:20px 14px;text-align:center;border-top:4px solid var(--teal)">
+          <div style="font-size:36px;margin-bottom:10px">👤</div>
+          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-bottom:8px">Person-Centered</div>
+          <div style="font-size:12px;color:var(--slate);line-height:1.55">The individual directs their own recovery. No one-size-fits-all path exists.</div>
+        </div>
+        <div class="reveal-item" style="background:white;border-radius:12px;padding:20px 14px;text-align:center;border-top:4px solid var(--teal)">
+          <div style="font-size:36px;margin-bottom:10px">🤝</div>
+          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-bottom:8px">Community-Supported</div>
+          <div style="font-size:12px;color:var(--slate);line-height:1.55">Peers, family, and community play central roles alongside clinical providers.</div>
+        </div>
+        <div class="reveal-item" style="background:white;border-radius:12px;padding:20px 14px;text-align:center;border-top:4px solid var(--teal)">
+          <div style="font-size:36px;margin-bottom:10px">💛</div>
+          <div style="font-size:13px;color:var(--teal);font-weight:700;margin-bottom:8px">Hope-Focused</div>
+          <div style="font-size:12px;color:var(--slate);line-height:1.55">Recovery is possible for everyone, regardless of diagnosis or history.</div>
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 9 — SECTION: Where Care Happens
+{
+  cue: null,
+  html: `<div class="slide s-section">
+    <div class="section-num">Section 3</div>
+    <h2>Where Behavioral Health Care Happens</h2>
+    <div style="margin-top:32px;display:flex;gap:32px;align-items:center;position:relative;z-index:1">
+      <div style="font-size:96px" aria-hidden="true">🗺️</div>
+      <div style="text-align:left;max-width:520px">
+        <p style="font-size:18px;color:rgba(255,255,255,.85);line-height:1.7;margin-bottom:16px">The U.S. does not have one mental health system. It has four loosely connected sectors — and most people first seek help in a place that was never designed to provide it.</p>
+        <p style="font-size:15px;color:rgba(255,255,255,.55);line-height:1.6">In this section: The four sectors · Treatment settings · Barriers to access · The workforce shortage</p>
+      </div>
+    </div>
+  </div>`
+},
+
+// 10 — Four sectors
+{
+  cue: "LECTURE — The U.S. has four disconnected sectors, not one unified system.",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>The Four Sectors of the System</h2></div>
+    <div class="slide-body" style="gap:12px">
+      <div class="reveal-item bullet-row" style="border-left-color:var(--red);background:#FFF5F5">
+        <div class="bullet-dot" style="background:var(--red)">!</div>
+        <div class="bullet-text">The U.S. does <strong>not</strong> have a single mental health system. It has four loosely connected sectors with separate funding streams and poor coordination between them.</div>
+      </div>
+      <div class="sector-grid">
+        <div class="reveal-item sector-card">
+          <div class="sector-head" style="background:var(--purple)">1 · Psychiatric & Behavioral Health</div>
+          <div class="sector-body">Psychiatrists, psychologists, psychiatric nurses, social workers, peer specialists. Outpatient clinics, community mental health centers, inpatient units.</div>
+        </div>
+        <div class="reveal-item sector-card">
+          <div class="sector-head" style="background:var(--teal)">2 · Primary Care</div>
+          <div class="sector-body">Internists, family practitioners, pediatricians, NPs. This is where most people <em>first</em> present with mental health symptoms — before ever seeing a specialist.</div>
+        </div>
+        <div class="reveal-item sector-card">
+          <div class="sector-head" style="background:var(--red)">3 · Human Services</div>
+          <div class="sector-body">Social workers, case managers, school counselors, clergy. Schools, faith communities, social service agencies, homeless shelters.</div>
+        </div>
+        <div class="reveal-item sector-card">
+          <div class="sector-head" style="background:#8B6914">4 · Volunteer Support Network</div>
+          <div class="sector-body">Self-help groups, peer support orgs — AA, NAMI, DBSA. Often the only accessible support for people who cannot enter the formal system.</div>
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 11 — Barriers
+{
+  cue: "LECTURE — These barriers are why 48% go untreated. Reveal each category.",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>Barriers to Accessing Care</h2></div>
+    <div class="slide-body" style="gap:12px">
+      <div class="barrier-grid">
+        <div class="reveal-item barrier-card">
+          <div class="barrier-head" style="background:var(--red)">Workforce Shortage</div>
+          <div class="barrier-body">1 in 3 Americans lives in a mental health professional shortage area. 65% of nonmetropolitan counties have <strong>no psychiatrists at all</strong>. HRSA projects 49% demand increase by 2033 — with only 11% supply growth.</div>
+        </div>
+        <div class="reveal-item barrier-card">
+          <div class="barrier-head" style="background:var(--purple)">Access and Wait Times</div>
+          <div class="barrier-body">Average national wait time: <strong>48 days</strong>. Nearly half of adults with mental illness received no treatment in 2024. 250,000–400,000 people with serious mental illness are homeless or incarcerated.</div>
+        </div>
+        <div class="reveal-item barrier-card">
+          <div class="barrier-head" style="background:#8B6914">Stigma</div>
+          <div class="barrier-body">Fear of judgment prevents millions from seeking care. Many believe mental illness is a personal failing. Stigma is especially pronounced in communities of color and rural populations.</div>
+        </div>
+        <div class="reveal-item barrier-card">
+          <div class="barrier-head" style="background:var(--teal)">Insurance and Cost</div>
+          <div class="barrier-body">Narrow networks mean few in-network providers. Prior authorization creates delays. Cost-sharing for mental health may exceed medical and surgical benefits in practice.</div>
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 12 — SECTION: Stigma
+{
+  cue: null,
+  html: `<div class="slide s-section" style="background:var(--red)">
+    <div class="section-num">Section 4</div>
+    <h2>Stigma: The Hidden Barrier</h2>
+    <div style="margin-top:32px;display:flex;gap:32px;align-items:center;position:relative;z-index:1">
+      <div style="font-size:96px" aria-hidden="true">🚫</div>
+      <div style="text-align:left;max-width:520px">
+        <p style="font-size:18px;color:rgba(255,255,255,.9);line-height:1.7;margin-bottom:16px">Stigma is not just a social problem. It is a public health crisis. It kills people by convincing them not to seek care — and it is built on myths that the data directly contradicts.</p>
+        <p style="font-size:15px;color:rgba(255,255,255,.6);line-height:1.6">In this section: Three of the most dangerous myths · The evidence that disproves each one</p>
+      </div>
+    </div>
+  </div>`
+},
+
+// 13 — Stigma myths
+{
+  cue: "LECTURE — These myths are exactly what students will encounter in Fact or Stigma. Let them predict the answer.",
+  html: `<div class="slide s-dark">
+    <div class="slide-header"><h2 style="color:white;font-family:'Playfair Display',serif">Stigma: The Hidden Barrier</h2></div>
+    <div class="slide-body" style="gap:12px">
+      <div class="reveal-item myth-row">
+        <div class="myth-tag">STIGMA</div>
+        <div class="myth-content">
+          <div class="myth-label">Myth</div>
+          <div class="myth-text"><strong style="color:#FFB3B3">People with mental illness are dangerous and violent.</strong><br><span style="color:var(--teal-light)">FACT: They are 10x more likely to be VICTIMS of violent crime. Only 3–5% of violent acts are attributable to serious mental illness.</span></div>
+        </div>
+      </div>
+      <div class="reveal-item myth-row">
+        <div class="myth-tag">STIGMA</div>
+        <div class="myth-content">
+          <div class="myth-label">Myth</div>
+          <div class="myth-text"><strong style="color:#FFB3B3">Addiction is a moral failing or lack of willpower.</strong><br><span style="color:var(--teal-light)">FACT: Substance use disorder is a chronic brain disease recognized by every major medical authority. Relapse is part of the disease — not a character flaw.</span></div>
+        </div>
+      </div>
+      <div class="reveal-item myth-row">
+        <div class="myth-tag">STIGMA</div>
+        <div class="myth-content">
+          <div class="myth-label">Myth</div>
+          <div class="myth-text"><strong style="color:#FFB3B3">Once diagnosed with mental illness, you cannot recover.</strong><br><span style="color:var(--teal-light)">FACT: The Recovery Movement, active since 2004, is built on evidence that people can pursue a fulfilling, contributing life regardless of diagnosis.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 14 — GAME CUE: Fact or Stigma
+{
+  cue: "▶ LAUNCH GAME — Click the button below to open Fact or Stigma for students",
+  html: `<div class="slide s-action">
+    <div class="action-icon" aria-hidden="true">🧠</div>
+    <div class="action-title">Activity 1: Fact or Stigma</div>
+    <div class="action-sub">Can you separate the evidence from the myths?</div>
+    <a class="action-btn" href="https://hlth207-longtermcare.netlify.app/week10/fact-or-stigma.html" target="_blank" aria-label="Open Fact or Stigma game in new tab">
+      Open Fact or Stigma →
+    </a>
+    <div class="action-url">hlth207-longtermcare.netlify.app/week10/fact-or-stigma.html</div>
+    <p style="margin-top:24px;font-size:13px;color:rgba(255,255,255,.45);position:relative;z-index:1;max-width:420px">Students open the same link on their own device. Everyone votes at the same time, then discuss after each reveal.</p>
+  </div>`
+},
+
+// 15 — SECTION: Financing and Parity
+{
+  cue: null,
+  html: `<div class="slide s-section">
+    <div class="section-num">Section 5</div>
+    <h2>Financing Behavioral Health: Parity and Its Limits</h2>
+    <div style="margin-top:32px;display:flex;gap:32px;align-items:center;position:relative;z-index:1">
+      <div style="font-size:96px" aria-hidden="true">⚖️</div>
+      <div style="text-align:left;max-width:520px">
+        <p style="font-size:18px;color:rgba(255,255,255,.85);line-height:1.7;margin-bottom:16px">The law says mental health coverage must be equal to physical health coverage. The reality is far more complicated — and for millions of Americans, parity exists only on paper.</p>
+        <p style="font-size:15px;color:rgba(255,255,255,.55);line-height:1.6">In this section: How behavioral health is funded · The MHPAEA parity law · Where parity fails · Key legislation · The 988 crisis line</p>
+      </div>
+    </div>
+  </div>`
+},
+
+// 16 — Parity
+{
+  cue: "LECTURE — Parity on paper vs. parity in practice. This is the key policy tension.",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>The Mental Health Parity and Addiction Equity Act</h2></div>
+    <div class="slide-body" style="gap:14px">
+      <div class="reveal-item parity-main">
+        <div class="parity-title">MHPAEA — 2008 (Wellstone-Domenici Act)</div>
+        <div class="parity-text">Requires that insurance coverage for mental health and substance use disorder treatment be <strong>no more restrictive</strong> than coverage for medical and surgical care. Dollar limits, treatment limitations, and network standards must be equal.</div>
+      </div>
+      <div class="parity-grid">
+        <div class="reveal-item parity-card">
+          <div class="parity-card-title" style="color:var(--green)">✓ What It Does</div>
+          <div class="parity-card-text">Prohibits stricter annual or lifetime dollar limits on mental health benefits. Requires equal treatment limitations and equal network access standards compared to medical and surgical coverage.</div>
+        </div>
+        <div class="reveal-item parity-card">
+          <div class="parity-card-title" style="color:var(--red)">✗ Where It Fails</div>
+          <div class="parity-card-text">
+            <strong>Carve-outs:</strong> Insurers outsource mental health benefits to a separate managed care organization, creating a parallel and often inferior system.<br><br>
+            <strong>NQTLs — Nonquantitative Treatment Limitations:</strong> These are insurance restrictions that are not dollar limits but still block access. Examples include requiring prior authorization before seeing a therapist, making patients try cheaper treatments before approving the one their doctor recommends (step therapy), and designing provider networks so narrow that no in-network behavioral health providers are available nearby. Insurers can use NQTLs to effectively deny mental health care even when dollar limits are technically equal.<br><br>
+            <strong>Network adequacy:</strong> Parity does not require that enough in-network providers actually exist.
+          </div>
+        </div>
+      </div>
+      <div class="reveal-item" style="background:#E8F0FE;border-left:5px solid #1849A9;border-radius:0 10px 10px 0;padding:16px 20px">
+        <div style="font-size:13px;font-weight:700;color:#1849A9;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">📋 Advocacy Project Connection</div>
+        <div style="font-size:14px;color:var(--slate);line-height:1.65">
+          <strong>If behavioral health is your advocacy topic:</strong> Parity law is your most powerful policy lever. Your Senator letter should identify a specific NQTL — prior authorization, step therapy, or narrow networks — that is blocking access for your population, and argue for stronger enforcement of the MHPAEA. Name the population, name the barrier, and cite the law.<br><br>
+          <strong>If behavioral health is NOT your advocacy topic:</strong> Every health issue intersects with behavioral health. Maternal health, opioids, veterans, food insecurity, rural health — all of these populations face elevated rates of mental illness. Understanding parity helps you make a stronger argument for your own population.
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 17 — Key legislation
+{
+  cue: "LECTURE — Connect each law to what students already know from earlier chapters.",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>Key Federal Legislation</h2></div>
+    <div class="slide-body" style="gap:10px">
+      <div class="reveal-item law-row">
+        <div class="law-year">1963</div>
+        <div class="law-name">Community Mental Health Act</div>
+        <div class="law-impact">Launched community mental health centers and funded deinstitutionalization. Community resources never materialized at scale.</div>
+      </div>
+      <div class="reveal-item law-row">
+        <div class="law-year">1965</div>
+        <div class="law-name">Medicare & Medicaid</div>
+        <div class="law-impact">Extended financial coverage to people with mental illness for the first time at scale, enabling community living.</div>
+      </div>
+      <div class="reveal-item law-row">
+        <div class="law-year">1996</div>
+        <div class="law-name">Mental Health Parity Act</div>
+        <div class="law-impact">First federal parity law — limited scope. Only applied to dollar limits for companies with 50+ employees.</div>
+      </div>
+      <div class="reveal-item law-row">
+        <div class="law-year">2008</div>
+        <div class="law-name">MHPAEA</div>
+        <div class="law-impact">Landmark parity law. Coverage for MH and SUD treatment must be no more restrictive than medical/surgical coverage.</div>
+      </div>
+      <div class="reveal-item law-row">
+        <div class="law-year">2010</div>
+        <div class="law-name">Affordable Care Act</div>
+        <div class="law-impact">Expanded Medicaid, made behavioral health an essential benefit, reinforced parity. Reduced uninsured from 44.8M to 28.8M.</div>
+      </div>
+      <div class="reveal-item law-row">
+        <div class="law-year">2022</div>
+        <div class="law-name">988 Suicide & Crisis Lifeline</div>
+        <div class="law-impact">Established 3-digit crisis line, expanding the mental health crisis system of care nationally.</div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 18 — 988
+{
+  cue: "LECTURE — Every student should know this number before they leave class today.",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>The 988 Crisis Lifeline</h2></div>
+    <div class="slide-body" style="justify-content:center">
+      <div class="crisis-grid">
+        <div>
+          <div class="reveal-item bullet-row" style="margin-bottom:12px">
+            <div class="bullet-dot">📞</div>
+            <div class="bullet-text"><strong>Call or text 988</strong> — Available 24/7. Launched July 16, 2022.</div>
+          </div>
+          <div class="reveal-item bullet-row" style="margin-bottom:12px">
+            <div class="bullet-dot">🏘️</div>
+            <div class="bullet-text"><strong>Mobile crisis teams</strong> — Community-based, no police involvement required.</div>
+          </div>
+          <div class="reveal-item bullet-row">
+            <div class="bullet-dot">🏥</div>
+            <div class="bullet-text"><strong>Crisis stabilization units</strong> — Short-term, non-hospital alternative to the ER.</div>
+          </div>
+        </div>
+        <div class="reveal-item crisis-orb">
+          <div class="crisis-num">988</div>
+          <div class="crisis-sub">Suicide &amp; Crisis<br>Lifeline</div>
+        </div>
+        <div>
+          <div class="reveal-item bullet-row" style="margin-bottom:12px">
+            <div class="bullet-dot">🎖️</div>
+            <div class="bullet-text"><strong>Veterans Crisis Line</strong> — Call 988 and press 1.</div>
+          </div>
+          <div class="reveal-item bullet-row" style="margin-bottom:12px">
+            <div class="bullet-dot">💬</div>
+            <div class="bullet-text"><strong>Crisis Text Line</strong> — Text HOME to 741741.</div>
+          </div>
+          <div class="reveal-item bullet-row">
+            <div class="bullet-dot">☎️</div>
+            <div class="bullet-text"><strong>SAMHSA Helpline</strong> — 1-800-662-HELP (4357). Free, confidential treatment referral.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 19 — GAME CUE: Try to Get Help
+{
+  cue: "▶ LAUNCH GAME — Click the button to open Try to Get Help",
+  html: `<div class="slide s-action">
+    <div class="action-icon" aria-hidden="true">🗺️</div>
+    <div class="action-title">Activity 2: Try to Get Help</div>
+    <div class="action-sub">Navigate the behavioral health system as a patient.</div>
+    <a class="action-btn" href="https://hlth207-longtermcare.netlify.app/week10/try-to-get-help.html" target="_blank" aria-label="Open Try to Get Help game in new tab">
+      Open Try to Get Help →
+    </a>
+    <div class="action-url">hlth207-longtermcare.netlify.app/week10/try-to-get-help.html</div>
+    <p style="margin-top:24px;font-size:13px;color:rgba(255,255,255,.45);position:relative;z-index:1;max-width:420px">Students navigate the system independently on their own device. Each decision reveals the real barriers people face when trying to access behavioral health care.</p>
+  </div>`
+},
+
+// 20 — ADVOCACY PROJECT CONNECTION
+{
+  cue: "PAUSE HERE — Give students 2 minutes to connect this content to their own advocacy topic",
+  html: `<div class="slide s-dark">
+    <div class="slide-header"><h2 style="color:white;font-family:'Playfair Display',serif">Connecting Chapter 9 to Your Advocacy Project</h2></div>
+    <div class="slide-body" style="gap:14px;justify-content:space-evenly">
+      <div style="background:#1849A9;border-radius:12px;padding:18px 22px">
+        <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">If Behavioral Health IS Your Advocacy Topic</div>
+        <div style="font-size:15px;color:white;line-height:1.7">Parity law is your most powerful policy lever. Identify the specific NQTL blocking access for your population — prior authorization, step therapy, or narrow networks. Argue for stronger MHPAEA enforcement in your Senator letter. Name the population, name the barrier, cite the law.</div>
+      </div>
+      <div class="reveal-item" style="background:rgba(255,255,255,.07);border-radius:12px;padding:18px 22px;border:1px solid rgba(255,255,255,.15)">
+        <div style="font-size:14px;font-weight:700;color:var(--teal-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">If Behavioral Health is NOT Your Advocacy Topic</div>
+        <div style="font-size:15px;color:rgba(255,255,255,.88);line-height:1.7">Every health issue intersects with behavioral health. Ask yourself: does my population have elevated rates of mental illness or substance use? How do stigma, access barriers, or parity failures affect them? Weaving behavioral health into your advocacy argument makes it stronger and more complete.</div>
+      </div>
+      <div class="reveal-item" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🤰</div>
+          <div style="font-size:13px;color:var(--teal-light);font-weight:600;margin-bottom:4px">Maternal Health</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);line-height:1.5">Perinatal depression affects 1 in 5 mothers. Access to BH care is a maternal health issue.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🎖️</div>
+          <div style="font-size:13px;color:var(--teal-light);font-weight:600;margin-bottom:4px">Veterans</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);line-height:1.5">17.6% of veterans have a mental illness. PTSD and SUD are inseparable from veteran health.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">💊</div>
+          <div style="font-size:13px;color:var(--teal-light);font-weight:600;margin-bottom:4px">Opioids</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);line-height:1.5">Opioid use disorder is a behavioral health condition. Parity and access barriers are central to the epidemic.</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:22px;margin-bottom:6px">🏡</div>
+          <div style="font-size:13px;color:var(--teal-light);font-weight:600;margin-bottom:4px">Rural Health</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);line-height:1.5">65% of rural counties have no psychiatrist. The workforce shortage hits rural populations hardest.</div>
+        </div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 21 — REFLECTION ASSIGNMENT
+{
+  cue: "ASSIGN — Read through the guiding questions with students. This reflection is due before next class.",
+  html: `<div class="slide s-content">
+    <div class="slide-header"><h2>Reflection Assignment — Chapter 9: Behavioral Health</h2></div>
+    <div class="slide-body" style="gap:12px;justify-content:space-evenly">
+      <div style="background:var(--purple);border-radius:10px;padding:14px 20px">
+        <div style="font-size:14px;color:rgba(255,255,255,.8);line-height:1.6">Write a thoughtful reflection of at least <strong style="color:var(--gold)">250 words</strong> responding to the guiding questions below. You do not need to answer every question — use them to guide your thinking. Include at least one citation from the textbook or class materials in APA 7th edition format.</div>
+      </div>
+      <div class="reveal-item bullet-row">
+        <div class="bullet-dot" style="background:var(--teal)">1</div>
+        <div class="bullet-text">The film showed anxiety as a medical and neurological condition. How did that framing change or challenge the way you think about mental health — in yourself, in others, or in the healthcare system?</div>
+      </div>
+      <div class="reveal-item bullet-row">
+        <div class="bullet-dot" style="background:var(--teal)">2</div>
+        <div class="bullet-text">Deinstitutionalization was built on a promise of community care that never fully arrived. Where do you see the consequences of that broken promise in your own community today?</div>
+      </div>
+      <div class="reveal-item bullet-row">
+        <div class="bullet-dot" style="background:var(--teal)">3</div>
+        <div class="bullet-text">Identify one barrier to behavioral health access — stigma, workforce shortage, insurance, wait times — and explain how it connects to the health population you are advocating for in your Senator letter.</div>
+      </div>
+      <div class="reveal-item bullet-row">
+        <div class="bullet-dot" style="background:var(--teal)">4</div>
+        <div class="bullet-text">The Recovery Movement says recovery is possible for everyone regardless of diagnosis. How does that principle challenge the way mental illness is typically portrayed in the media, and why does that portrayal matter for policy?</div>
+      </div>
+      <div class="reveal-item bullet-row">
+        <div class="bullet-dot" style="background:var(--teal)">5</div>
+        <div class="bullet-text">If you could change one thing in the U.S. behavioral health system — one law, one funding decision, one structural change — what would it be and why? Connect your answer to at least one concept from class.</div>
+      </div>
+    </div>
+  </div>`
+},
+
+
+{
+  cue: "CLOSING — Reveal each takeaway and connect back to their advocacy project",
+  html: `<div class="slide s-dark">
+    <div class="slide-header"><h2 style="color:white;font-family:'Playfair Display',serif">Key Takeaways — Chapter 9</h2></div>
+    <div class="slide-body" style="gap:10px">
+      <div class="reveal-item takeaway-item">
+        <div class="takeaway-num">1</div>
+        <div class="takeaway-text">Behavioral health — mental health and substance use disorders — is the <strong style="color:var(--teal-light)">leading cause of disability</strong> in the U.S. as measured by DALYs.</div>
+      </div>
+      <div class="reveal-item takeaway-item">
+        <div class="takeaway-num">2</div>
+        <div class="takeaway-text">Deinstitutionalization had the right vision but the wrong funding. <strong style="color:var(--teal-light)">Jails and prisons filled the gap</strong> left by state hospitals.</div>
+      </div>
+      <div class="reveal-item takeaway-item">
+        <div class="takeaway-num">3</div>
+        <div class="takeaway-text">The Recovery Movement redefined what getting better means: <strong style="color:var(--teal-light)">self-directed, strength-based, and full of hope</strong>.</div>
+      </div>
+      <div class="reveal-item takeaway-item">
+        <div class="takeaway-num">4</div>
+        <div class="takeaway-text">The four sectors of the system are disconnected. Most people first disclose mental health concerns in <strong style="color:var(--teal-light)">primary care</strong>.</div>
+      </div>
+      <div class="reveal-item takeaway-item">
+        <div class="takeaway-num">5</div>
+        <div class="takeaway-text">The MHPAEA requires parity on paper. <strong style="color:var(--teal-light)">Carve-outs, NQTLs, and workforce shortages</strong> undermine it in practice.</div>
+      </div>
+      <div class="reveal-item takeaway-item">
+        <div class="takeaway-num">6</div>
+        <div class="takeaway-text">Stigma is not just a social problem — it is a <strong style="color:var(--teal-light)">health systems problem</strong> that kills people by delaying care.</div>
+      </div>
+    </div>
+  </div>`
+},
+
+// 21 — END
+{
+  cue: null,
+  html: `<div class="slide s-section" style="background:var(--dark)">
+    <div class="section-num">Chapter 9 Complete</div>
+    <h2 style="color:var(--teal-light)">See you next week.<br>Chapter 10: Public and Population Health.</h2>
+  </div>`
+}
+
+];
+
+// ══════════════════════════════════════════
+// ENGINE
+// ══════════════════════════════════════════
+let current = 0;
+let revealIndex = 0;
+
+function buildSlides() {
+  const deck = document.getElementById('deck');
+  SLIDES.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.innerHTML = s.html;
+    const inner = div.firstElementChild;
+    inner.dataset.index = i;
+    deck.appendChild(inner);
+  });
+}
+
+function getSlideEl(i) {
+  return document.querySelector(`[data-index="${i}"]`);
+}
+
+function getRevealItems(i) {
+  return getSlideEl(i).querySelectorAll('.reveal-item');
+}
+
+function showSlide(i, resetReveal = true) {
+  document.querySelectorAll('.slide.active').forEach(s => s.classList.remove('active'));
+  getSlideEl(i).classList.add('active');
+  if (resetReveal) {
+    revealIndex = 0;
+    getRevealItems(i).forEach(el => el.classList.remove('shown'));
+  }
+  updateUI(i);
+  window.scrollTo(0, 0);
+}
+
+function updateUI(i) {
+  // Counter
+  document.getElementById('slide-counter').textContent = `${i + 1} / ${SLIDES.length}`;
+  // Progress
+  document.getElementById('progress').style.width = `${((i + 1) / SLIDES.length) * 100}%`;
+  // Cue bar
+  const cue = document.getElementById('cue');
+  if (SLIDES[i].cue) {
+    cue.textContent = SLIDES[i].cue;
+    cue.classList.add('visible');
+  } else {
+    cue.classList.remove('visible');
+  }
+  // Hide hint after first advance
+  if (i > 0) document.getElementById('hint').style.opacity = '0';
+}
+
+function next() {
+  const items = getRevealItems(current);
+  if (revealIndex < items.length) {
+    items[revealIndex].classList.add('shown');
+    revealIndex++;
+  } else if (current < SLIDES.length - 1) {
+    current++;
+    showSlide(current);
+  }
+}
+
+function prev() {
+  if (current > 0) {
+    current--;
+    // Show all reveals on previous slide
+    showSlide(current, true);
+    const items = getRevealItems(current);
+    items.forEach(el => el.classList.add('shown'));
+    revealIndex = items.length;
+  }
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+});
+
+// Click anywhere on slide (but not on nav buttons or links)
+document.getElementById('deck').addEventListener('click', e => {
+  if (e.target.closest('a') || e.target.closest('button')) return;
+  next();
+});
+
+buildSlides();
+showSlide(0);
+</script>
+</body>
+</html>
