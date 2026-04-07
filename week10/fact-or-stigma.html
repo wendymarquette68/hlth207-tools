@@ -9,13 +9,20 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#1a1a2e;color:#1a1a1a;min-height:100vh}
 .skip-link{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .skip-link:focus{position:fixed;top:8px;left:8px;width:auto;height:auto;padding:10px 16px;background:#4A235A;color:white;border-radius:8px;font-size:15px;font-weight:700;z-index:9999;text-decoration:none}
+
+/* ── Screen visibility ── */
 .screen{display:none;min-height:100vh;animation:fadeIn .2s ease}
-.screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
+/* Each screen gets the RIGHT display when active */
+#s-title.active{display:flex}
+#s-question.active{display:flex}
+#s-reveal.active{display:block}
+#s-score.active{display:flex}
+
 /* Title screen */
-.title-screen{background:linear-gradient(160deg,#4A235A 0%,#1a1a2e 100%);padding:48px 24px;text-align:center;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center}
-.title-screen h1{font-size:clamp(28px,6vw,48px);font-weight:900;color:white;margin-bottom:12px;line-height:1.2}
+#s-title{background:linear-gradient(160deg,#4A235A 0%,#1a1a2e 100%);padding:48px 24px;text-align:center;flex-direction:column;justify-content:center;align-items:center}
+#s-title h1{font-size:clamp(28px,6vw,48px);font-weight:900;color:white;margin-bottom:12px;line-height:1.2}
 .subtitle{font-size:18px;color:rgba(255,255,255,.75);margin-bottom:10px}
 .course-tag{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:40px}
 .start-btn{background:#9B59B6;color:white;border:none;padding:18px 40px;border-radius:14px;font-size:20px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s}
@@ -24,7 +31,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .tip{margin-top:20px;font-size:14px;color:rgba(255,255,255,.5);max-width:380px;line-height:1.6}
 
 /* Question screen */
-.q-screen{min-height:100vh;display:flex;flex-direction:column}
+#s-question{flex-direction:column}
 .q-header{background:#4A235A;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
 .q-counter{font-size:13px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.05em}
 .q-score-display{font-size:13px;font-weight:700;color:#E8D5F5}
@@ -41,7 +48,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .btn-stigma{background:#7A1515;color:white}
 .vote-btn:disabled{cursor:default;opacity:.6}
 
-/* Reveal */
+/* Reveal screen */
+#s-reveal{background:white}
+.reveal-header{background:#4A235A;padding:14px 20px}
+.reveal-body{padding:20px;background:white;min-height:calc(100vh - 50px)}
 .reveal-box{border-radius:12px;padding:16px 18px;margin-bottom:16px;border:2px solid}
 .reveal-fact{background:#E8F5E9;border-color:#155724}
 .reveal-stigma{background:#FDEAEA;border-color:#7A1515}
@@ -55,10 +65,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 .next-btn:focus-visible{outline:3px solid #1a1a1a;outline-offset:3px}
 
 /* Score screen */
-.score-screen{background:linear-gradient(160deg,#4A235A 0%,#1a1a2e 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
-.score-screen h2{font-size:32px;font-weight:900;color:white;margin-bottom:8px}
-.score-screen .score-big{font-size:64px;font-weight:900;color:#E8D5F5;margin:16px 0}
-.score-screen p{font-size:17px;color:rgba(255,255,255,.8);margin-bottom:28px;line-height:1.6;max-width:400px}
+#s-score{background:linear-gradient(160deg,#4A235A 0%,#1a1a2e 100%);flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+#s-score h2{font-size:32px;font-weight:900;color:white;margin-bottom:8px}
+.score-big{font-size:64px;font-weight:900;color:#E8D5F5;margin:16px 0}
+#s-score p{font-size:17px;color:rgba(255,255,255,.8);margin-bottom:28px;line-height:1.6;max-width:400px}
 .replay-btn{background:white;color:#4A235A;border:none;padding:16px 36px;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit}
 </style>
 </head>
@@ -67,7 +77,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 <div role="status" aria-live="polite" aria-atomic="true" id="live-msg" style="position:absolute;left:-9999px;height:1px;width:1px;overflow:hidden"></div>
 
 <!-- TITLE -->
-<main id="s-title" class="screen active title-screen" aria-labelledby="game-title">
+<main id="s-title" class="screen active" aria-labelledby="game-title">
   <a id="main-content" tabindex="-1" aria-hidden="true" style="display:block;height:0"></a>
   <div style="font-size:56px;margin-bottom:20px" aria-hidden="true">🧠</div>
   <h1 id="game-title">Fact or Stigma?</h1>
@@ -78,7 +88,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 </main>
 
 <!-- QUESTION -->
-<main id="s-question" class="screen q-screen" aria-labelledby="q-statement">
+<main id="s-question" class="screen" aria-labelledby="q-statement">
   <div class="q-header">
     <span class="q-counter" id="q-counter" aria-live="polite"></span>
     <span class="q-score-display" id="q-score-display"></span>
@@ -99,10 +109,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 
 <!-- REVEAL -->
 <main id="s-reveal" class="screen" aria-labelledby="reveal-heading">
-  <div style="background:#4A235A;padding:14px 20px">
+  <div class="reveal-header">
     <h2 id="reveal-heading" style="font-size:15px;font-weight:700;color:white">The Reveal</h2>
   </div>
-  <div style="padding:20px;background:white;min-height:calc(100vh - 50px)">
+  <div class="reveal-body">
     <div class="reveal-box" id="reveal-box">
       <div class="reveal-label" id="reveal-label"></div>
       <div class="reveal-text" id="reveal-text"></div>
@@ -114,7 +124,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
 </main>
 
 <!-- SCORE -->
-<main id="s-score" class="screen score-screen" aria-labelledby="score-heading">
+<main id="s-score" class="screen" aria-labelledby="score-heading">
   <div style="font-size:52px;margin-bottom:12px" aria-hidden="true">🎯</div>
   <h2 id="score-heading">Game Complete!</h2>
   <div class="score-big" id="final-score" aria-live="polite"></div>
@@ -136,7 +146,7 @@ const QUESTIONS = [
     answer: "fact",
     reveal: "This is a fact from SAMHSA's 2024 National Survey on Drug Use and Health. Mental illness is the most common health condition in the United States, yet it receives a fraction of the research and funding that physical illness does.",
     stat: "In 2024, 23.4% of U.S. adults — 62 million people — experienced any mental illness. For comparison, approximately 20 million Americans have diabetes and 6 million have heart failure (SAMHSA, 2025).",
-    advocacy: "The sheer prevalence of behavioral health conditions makes this one of the most urgent public health issues of our time. Any student's advocacy topic — from maternal health to veterans to opioids — intersects with mental health."
+    advocacy: "The sheer prevalence of behavioral health conditions makes this one of the most urgent public health issues of our time. Any student's advocacy topic intersects with mental health."
   },
   {
     statement: "If people with mental illness just tried harder and had more willpower, they could get better without professional help.",
@@ -149,70 +159,68 @@ const QUESTIONS = [
     statement: "Nearly half of all Americans with mental illness received no treatment in 2024.",
     answer: "fact",
     reveal: "This is a staggering fact. Despite the existence of effective treatments, the treatment gap in behavioral health is enormous — driven by stigma, workforce shortages, cost, lack of insurance coverage, and geographic barriers.",
-    stat: "48% of the 62 million U.S. adults with mental illness received NO treatment in 2024. The national average wait time for behavioral health services is 48 days — and 6 in 10 psychologists do not accept new patients (SAMHSA 2025; HRSA 2025).",
+    stat: "48% of the 62 million U.S. adults with mental illness received NO treatment in 2024. The national average wait time for behavioral health services is 48 days (SAMHSA 2025; HRSA 2025).",
     advocacy: "This treatment gap is exactly what parity laws, Medicaid expansion, and the ACA were designed to address. Students advocating for any health issue should understand how mental health access barriers intersect with their population."
   },
   {
     statement: "Mental health conditions are rare and only affect a small portion of the U.S. population.",
     answer: "stigma",
     reveal: "This is stigma-driven myth. Mental illness is extraordinarily common. The idea that it affects only a 'small' or 'other' population leads to underinvestment in care, reduced empathy, and continued discrimination.",
-    stat: "In 2024: 23.4% of adults had any mental illness, 5.6% had serious mental illness, 32.2% of adults ages 18–25 had a mental illness, and 12.6% of young adults had serious thoughts of suicide. Neuropsychiatric disorders are the leading cause of disability in the U.S., surpassing heart disease and cancer (NAMI, 2025).",
-    advocacy: "Students advocating on youth health, college health, opioids, or maternal health are directly addressing populations with the highest rates of mental illness. Behavioral health is embedded in virtually every health advocacy topic."
+    stat: "In 2024: 23.4% of adults had any mental illness, 5.6% had serious mental illness, 32.2% of adults ages 18–25 had a mental illness. Neuropsychiatric disorders are the leading cause of disability in the U.S., surpassing heart disease and cancer (NAMI, 2025).",
+    advocacy: "Students advocating on youth health, college health, opioids, or maternal health are directly addressing populations with the highest rates of mental illness."
   },
   {
     statement: "Deinstitutionalization in the 1960s and 70s successfully moved people with mental illness into well-supported community care.",
     answer: "stigma",
     reveal: "This is a common misunderstanding of history. Deinstitutionalization discharged hundreds of thousands of people from psychiatric hospitals — but the promised community-based care was never adequately funded. The result was widespread homelessness and incarceration.",
-    stat: "From its peak of over 500,000 in the mid-1950s, the inpatient psychiatric population fell to approximately 72,000 by 1994. But community mental health centers were chronically underfunded. Today, 67% of unhoused people in the U.S. have a mental illness, and 64% of jail inmates meet criteria for mental illness at time of booking (NAMI 2025; Chapter 9).",
-    advocacy: "This history is directly relevant to housing, criminal justice, and veteran health advocacy topics. The failure of deinstitutionalization is a cautionary tale about policy without adequate funding and infrastructure."
+    stat: "The inpatient psychiatric population fell from 500,000 in the mid-1950s to approximately 72,000 by 1994. Today, 67% of unhoused people in the U.S. have a mental illness, and 64% of jail inmates meet criteria for mental illness (NAMI 2025; Chapter 9).",
+    advocacy: "This history is directly relevant to housing, criminal justice, and veteran health advocacy topics. The failure of deinstitutionalization is a cautionary tale about policy without adequate funding."
   },
   {
     statement: "Jails and prisons have effectively become the largest mental health 'system' in the United States.",
     answer: "fact",
     reveal: "Sadly, this is true. As community mental health resources shrank and deinstitutionalization moved forward without adequate funding, the criminal justice system absorbed the population that psychiatric hospitals once served.",
-    stat: "64% of jail inmates meet criteria for mental illness at time of booking. 69% of jail inmates have problems related to drugs, alcohol, or both. The American Psychiatric Association has noted that incarcerated individuals now have more severe mental illness than in the past (Chapter 9, Sultz & Young).",
+    stat: "64% of jail inmates meet criteria for mental illness at time of booking. 69% of jail inmates have problems related to drugs, alcohol, or both (Chapter 9, Sultz & Young).",
     advocacy: "Students advocating on criminal justice reform, substance use, or housing policy are directly engaging with behavioral health. The pipeline from untreated mental illness to incarceration is a policy failure with a policy solution."
   },
   {
     statement: "Veterans have lower rates of mental illness than the general U.S. population due to military discipline and resilience training.",
     answer: "stigma",
     reveal: "This is stigma — and a dangerous one, because it discourages veterans from seeking help. Military service is associated with significantly elevated rates of PTSD, depression, anxiety, and substance use disorder compared to civilians.",
-    stat: "17.6% of U.S. veterans experienced a mental illness in 2023 — 3.5 million people. Rates of PTSD and suicide are significantly elevated among veterans. The VHA operates one of the largest behavioral health systems in the country specifically because of this elevated need (NAMI, 2025).",
-    advocacy: "Students with veteran health as their advocacy topic should understand that mental health is inseparable from veteran health outcomes. PTSD, moral injury, and substance use are not signs of weakness — they are predictable responses to combat and trauma exposure."
+    stat: "17.6% of U.S. veterans experienced a mental illness in 2023 — 3.5 million people. The VHA operates one of the largest behavioral health systems in the country specifically because of this elevated need (NAMI, 2025).",
+    advocacy: "Students with veteran health as their advocacy topic should understand that mental health is inseparable from veteran health outcomes. PTSD and moral injury are not signs of weakness — they are predictable responses to combat exposure."
   },
   {
     statement: "Mental health parity laws require insurance companies to cover mental health treatment the same way they cover physical health treatment.",
     answer: "fact",
     reveal: "This is a fact — though enforcement has been inconsistent. The Wellstone-Domenici Mental Health Parity and Addiction Equity Act of 2008 requires that insurance coverage limits for mental health and substance use disorders be no more restrictive than those for medical and surgical care.",
-    stat: "Despite the 2008 parity law, many insurers still use 'nonquantitative treatment limitations' (NQTLs) — prior authorization requirements, step therapy protocols, and network design — that effectively restrict behavioral health access more than medical access. Compliance and enforcement remain major challenges (Chapter 9).",
-    advocacy: "Parity is a key policy lever for behavioral health access. Students advocating on mental health access, opioid treatment, or eating disorders should understand how parity law works — and where it fails — as the foundation of their policy argument."
+    stat: "Despite the 2008 parity law, many insurers still use nonquantitative treatment limitations (NQTLs) that effectively restrict behavioral health access more than medical access. Compliance and enforcement remain major challenges (Chapter 9).",
+    advocacy: "Parity is a key policy lever for behavioral health access. Students advocating on mental health access, opioid treatment, or eating disorders should understand how parity law works — and where it fails."
   },
   {
     statement: "The United States has enough behavioral health providers to meet current demand for mental health services.",
     answer: "stigma",
-    reveal: "This is dramatically false — the behavioral health workforce shortage is one of the most acute crises in American healthcare. More than one-third of the U.S. population currently lives in areas designated as mental health professional shortage areas.",
-    stat: "The U.S. faces a projected 49% increase in demand for mental health services by 2033, while the workforce supply is expected to grow only 11%. Shortages of 88,000 mental health counselors and 114,000 addiction counselors are projected by 2037. Over one-third of the U.S. population lacks adequate access to mental health professionals (HRSA, 2025).",
-    advocacy: "Workforce shortage is the most concrete barrier to behavioral health access in the United States. Students advocating for mental health access, rural health, or underserved populations need to understand that parity law is meaningless if there are no providers to see."
+    reveal: "This is dramatically false. The behavioral health workforce shortage is one of the most acute crises in American healthcare. More than one-third of the U.S. population lives in areas designated as mental health professional shortage areas.",
+    stat: "The U.S. faces a projected 49% increase in demand for mental health services by 2033, while the workforce supply is expected to grow only 11%. Over one-third of the U.S. population lacks adequate access to mental health professionals (HRSA, 2025).",
+    advocacy: "Workforce shortage is the most concrete barrier to behavioral health access. Parity law is meaningless if there are no providers to see."
   },
   {
     statement: "Young adults ages 18–25 have significantly higher rates of mental illness than older adults.",
     answer: "fact",
-    reveal: "This is a striking and important fact. Young adulthood is the highest-risk period for the onset of mental illness — and also the age group least likely to receive treatment. Understanding this is critical for any health policy advocate.",
-    stat: "In 2024, 32.2% of U.S. adults ages 18–25 experienced mental illness — the highest rate of any age group. 12.6% of young adults had serious thoughts of suicide. Young adults ages 18–29 also had the highest rate of mental health crises at 15.1% in 2025 (NAMI 2025; Johns Hopkins, 2025).",
-    advocacy: "College-age students are in the highest-risk demographic for mental illness onset. Students advocating on college health, opioids, maternal health (for young mothers), or food insecurity are directly addressing a population disproportionately affected by behavioral health conditions."
+    reveal: "This is a striking and important fact. Young adulthood is the highest-risk period for the onset of mental illness — and also the age group least likely to receive treatment.",
+    stat: "In 2024, 32.2% of U.S. adults ages 18–25 experienced mental illness — the highest rate of any age group. 12.6% of young adults had serious thoughts of suicide (NAMI 2025; Johns Hopkins, 2025).",
+    advocacy: "College-age students are in the highest-risk demographic for mental illness onset. Students advocating on college health, opioids, or food insecurity are directly addressing a population disproportionately affected by behavioral health conditions."
   },
   {
     statement: "Mental illness is a personal weakness or character flaw, not a medical condition.",
     answer: "stigma",
-    reveal: "This is perhaps the most pervasive and damaging stigma in behavioral health. Mental illnesses have neurobiological, genetic, environmental, and social causes — they are medical conditions, not moral failures. This belief is the primary reason people avoid seeking help.",
-    stat: "The DSM-5 identifies more than 300 classified mental health conditions with diagnostic criteria subjected to field testing for reliability and validity. Major depression involves measurable changes in brain structure and function. PTSD causes lasting neurological changes. These are medical realities, not character flaws (APA 2022; Chapter 9).",
-    advocacy: "Reducing stigma is a policy issue. Anti-stigma campaigns, training programs for schools and workplaces, and media literacy education are all evidence-based policy interventions. This is the foundation of any behavioral health advocacy argument."
+    reveal: "This is perhaps the most pervasive and damaging stigma in behavioral health. Mental illnesses have neurobiological, genetic, environmental, and social causes — they are medical conditions, not moral failures.",
+    stat: "The DSM-5 identifies more than 300 classified mental health conditions. Major depression involves measurable changes in brain structure and function. PTSD causes lasting neurological changes. These are medical realities, not character flaws (APA 2022; Chapter 9).",
+    advocacy: "Reducing stigma is a policy issue. Anti-stigma campaigns, training programs for schools and workplaces, and media literacy education are all evidence-based policy interventions."
   },
 ];
 
-let current = 0;
-let score = 0;
-let voted = false;
+let current = 0, score = 0, voted = false;
 
 function announce(msg) {
   const el = document.getElementById('live-msg');
@@ -225,7 +233,7 @@ function go(id) {
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const h = document.getElementById(id).querySelector('h1,h2,[tabindex="-1"]');
+    const h = document.getElementById(id).querySelector('h1,h2,button');
     if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
   }, 120);
 }
@@ -260,7 +268,6 @@ function vote(choice) {
   if (correct) score++;
   document.getElementById('btn-fact').disabled = true;
   document.getElementById('btn-stigma').disabled = true;
-
   const box = document.getElementById('reveal-box');
   const label = document.getElementById('reveal-label');
   const text = document.getElementById('reveal-text');
@@ -276,22 +283,16 @@ function vote(choice) {
   text.textContent = q.reveal;
   document.getElementById('reveal-stat').textContent = '📊 The data: ' + q.stat;
   document.getElementById('advocacy-note').textContent = '📋 Advocacy connection: ' + q.advocacy;
-
   const isLast = current >= QUESTIONS.length - 1;
   document.getElementById('next-btn').textContent = isLast ? 'See My Score →' : 'Next Statement →';
-
   announce((correct ? 'Correct! ' : 'Incorrect. ') + 'The answer is ' + q.answer + '. ' + q.reveal);
   go('s-reveal');
 }
 
 function nextQuestion() {
   current++;
-  if (current >= QUESTIONS.length) {
-    showScore();
-  } else {
-    loadQuestion();
-    go('s-question');
-  }
+  if (current >= QUESTIONS.length) { showScore(); }
+  else { loadQuestion(); go('s-question'); }
 }
 
 function showScore() {
