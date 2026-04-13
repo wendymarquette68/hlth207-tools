@@ -276,7 +276,7 @@
     {
       id:'s1', correct:'assess',
       text:'Monitor health status to identify community health problems',
-      Explanation:'Monitoring and surveillance are the core of the Assessment function. In 2024, U.S. life expectancy reached a record high of 79 years (CDC, January 2026), but still trails comparable countries by 3.7 years. That gap was only visible because of ongoing surveillance work now at risk: by end of 2025 the CDC had lost roughly a quarter of its workforce, including the epidemiologists and data scientists who run these systems.'
+      explanation:'Monitoring and surveillance are the core of the Assessment function. In 2024, U.S. life expectancy reached a record high of 79 years (CDC, January 2026), but still trails comparable countries by 3.7 years. That gap was only visible because of ongoing surveillance work now at risk: by end of 2025 the CDC had lost roughly a quarter of its workforce, including the epidemiologists and data scientists who run these systems.'
     },
     {
       id:'s2', correct:'assess',
@@ -330,7 +330,7 @@
     10:'Perfect score! You have a strong command of how the public health system is organized.',
     9:'Excellent work. You understand the framework very well.',
     8:'Great job. Review the ones you missed and you will have this down.',
-    7:'Good effort. A couple of the service assignments are tricky — the explanations will help.',
+    7:'Good effort. A couple of the service assignments are tricky, so read the explanations carefully.',
     6:'Take a close look at the Assurance services, which are the most numerous group.',
     5:'Keep at it. The explanations below will help clarify the distinctions between functions.',
     4:'This is a good learning opportunity. Review the function definitions and try again.',
