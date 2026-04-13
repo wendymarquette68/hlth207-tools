@@ -276,7 +276,7 @@
     {
       id:'s1', correct:'assess',
       text:'Monitor health status to identify community health problems',
-      explanation:'Monitoring and surveillance are the core of the Assessment function. In 2024, U.S. life expectancy reached a record high of 79 years (CDC, January 2026), but still trails comparable countries by 3.7 years. That gap was only visible because of ongoing surveillance work now at risk: by end of 2025 the CDC had lost roughly a quarter of its workforce, including the epidemiologists and data scientists who run these systems.'
+      Explanation:'Monitoring and surveillance are the core of the Assessment function. In 2024, U.S. life expectancy reached a record high of 79 years (CDC, January 2026), but still trails comparable countries by 3.7 years. That gap was only visible because of ongoing surveillance work now at risk: by end of 2025 the CDC had lost roughly a quarter of its workforce, including the epidemiologists and data scientists who run these systems.'
     },
     {
       id:'s2', correct:'assess',
