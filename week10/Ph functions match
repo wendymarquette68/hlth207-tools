@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Functions Match — Public and Population Health | HLTH 207</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dark-bg:      #0A3D0A;
+      --primary:      #1B5E20;
+      --mid:          #2E7D32;
+      --accent:       #66BB6A;
+      --light-bg:     #E8F5E9;
+      --card-bg:      #F1F8E9;
+      --white:        #FFFFFF;
+      --body-text:    #1A1A1A;
+      --muted:        #37474F;
+      --assess-dark:  #1565C0;
+      --assess-light: #E3F2FD;
+      --policy-dark:  #6A1B9A;
+      --policy-light: #F3E5F5;
+      --assure-dark:  #1B5E20;
+      --assure-light: #E8F5E9;
+      --correct-bg:   #C8E6C9;
+      --correct-text: #1B5E20;
+      --correct-dark: #2E7D32;
+      --wrong-bg:     #FFCDD2;
+      --wrong-text:   #B71C1C;
+      --wrong-dark:   #B71C1C;
+    }
+    body { font-family: Georgia,"Times New Roman",serif; font-size:1rem; line-height:1.6; color:var(--body-text); background:#F4F6F4; min-height:100vh; }
+    .skip-link { position:absolute; top:-999px; left:0; background:var(--primary); color:var(--white); padding:.6rem 1.2rem; font-weight:bold; text-decoration:none; z-index:9999; border-radius:0 0 4px 0; }
+    .skip-link:focus { top:0; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .app-wrap { max-width:860px; margin:0 auto; padding:0 1rem 4rem; }
+    .app-header { background:var(--dark-bg); color:var(--white); padding:1.4rem 1.5rem 1.2rem; margin:0 -1rem 1.5rem; }
+    .app-header .eyebrow { font-family:"Helvetica Neue",Arial,sans-serif; font-size:.8125rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:.25rem; }
+    .app-header h1 { font-size:1.6rem; line-height:1.2; color:var(--white); margin-bottom:.2rem; }
+    .app-header .subtitle { font-size:.9375rem; color:#C8E6C9; font-style:italic; }
+    .progress-wrap { margin-bottom:1.25rem; }
+    .progress-label { font-family:"Helvetica Neue",Arial,sans-serif; font-size:.875rem; color:var(--muted); margin-bottom:.3rem; }
+    .progress-bar-bg { background:#C8E6C9; border-radius:99px; height:.5rem; overflow:hidden; }
+    .progress-bar-fill { background:var(--primary); height:100%; border-radius:99px; width:0%; transition:width .4s ease; }
+    .screen { display:none; }
+    .screen.active { display:block; }
+    .welcome-box { background:var(--white); border-radius:6px; padding:2rem 1.5rem; border:1px solid #C8E6C9; }
+    .welcome-box h2 { font-size:1.4rem; color:var(--primary); margin-bottom:.75rem; }
+    .welcome-box p { margin-bottom:.85rem; color:var(--body-text); }
+    .stat-callout { background:var(--dark-bg); color:var(--white); border-radius:5px; padding:.85rem 1.1rem; margin:1rem 0; display:flex; align-items:flex-start; gap:.85rem; }
+    .stat-callout .stat-num { font-size:2rem; font-weight:bold; color:var(--accent); line-height:1; flex-shrink:0; }
+    .stat-callout .stat-text { font-size:.9375rem; color:#C8E6C9; }
+    .stat-callout .stat-text strong { color:var(--white); }
+    .function-intro { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:.75rem; margin:1.25rem 0; }
+    .function-intro-card { border-radius:5px; padding:.9rem 1rem; border:2px solid transparent; }
+    .function-intro-card.assess { background:var(--assess-light); border-color:var(--assess-dark); }
+    .function-intro-card.policy { background:var(--policy-light); border-color:var(--policy-dark); }
+    .function-intro-card.assure { background:var(--assure-light); border-color:var(--assure-dark); }
+    .function-intro-card .fn-name { font-family:"Helvetica Neue",Arial,sans-serif; font-weight:bold; font-size:.9375rem; margin-bottom:.3rem; }
+    .function-intro-card.assess .fn-name { color:var(--assess-dark); }
+    .function-intro-card.policy .fn-name { color:var(--policy-dark); }
+    .function-intro-card.assure .fn-name { color:var(--assure-dark); }
+    .function-intro-card p { font-size:.9rem; margin-bottom:0; color:var(--body-text); }
+    .advocacy-prompt { background:var(--light-bg); border-left:4px solid var(--primary); padding:.8rem 1rem; margin:1.25rem 0 1.5rem; border-radius:0 4px 4px 0; }
+    .advocacy-prompt .ap-label { font-family:"Helvetica Neue",Arial,sans-serif; font-size:.8rem; font-weight:bold; text-transform:uppercase; letter-spacing:.06em; color:var(--primary); margin-bottom:.2rem; }
+    .advocacy-prompt p { font-size:.9375rem; margin-bottom:0; color:var(--body-text); }
+    .btn { display:inline-flex; align-items:center; gap:.4rem; padding:.65rem 1.4rem; border:none; border-radius:4px; font-family:"Helvetica Neue",Arial,sans-serif; font-size:1rem; font-weight:bold; cursor:pointer; text-decoration:none; transition:background .15s,transform .1s; }
+    .btn:focus { outline:3px solid var(--accent); outline-offset:3px; }
+    .btn:active { transform:scale(.98); }
+    .btn-primary { background:var(--primary); color:var(--white); }
+    .btn-primary:hover { background:var(--mid); }
+    .btn-secondary { background:var(--white); color:var(--primary); border:2px solid var(--primary); }
+    .btn-secondary:hover { background:var(--light-bg); }
+    .btn-lg { padding:.8rem 1.8rem; font-size:1.0625rem; }
+    .btn-row { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1.25rem; }
+    .quiz-intro { background:var(--white); border:1px solid #C8E6C9; border-radius:5px; padding:.85rem 1rem; margin-bottom:1.25rem; font-size:.9375rem; color:var(--muted); }
+    .quiz-intro strong { color:var(--body-text); }
+    .service-card { background:var(--white); border:1px solid #C8E6C9; border-radius:6px; padding:1rem 1.1rem; margin-bottom:1rem; transition:border-color .2s,background .2s; }
+    .service-card:focus-within { border-color:var(--primary); box-shadow:0 0 0 3px rgba(27,94,32,.2); }
+    .service-card.answered-correct { background:var(--correct-bg); border-color:var(--correct-dark); }
+    .service-card.answered-wrong { background:var(--wrong-bg); border-color:var(--wrong-dark); }
+    .service-num { font-family:"Helvetica Neue",Arial,sans-serif; font-size:.8rem; font-weight:bold; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.2rem; }
+    .service-text { font-size:1rem; color:var(--body-text); margin-bottom:.75rem; line-height:1.5; }
+    .radio-group { display:flex; flex-wrap:wrap; gap:.5rem; }
+    .radio-option { position:relative; }
+    .radio-option input[type="radio"] { position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; z-index:1; }
+    .radio-option label { display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .85rem; border-radius:99px; border:2px solid transparent; font-family:"Helvetica Neue",Arial,sans-serif; font-size:.875rem; font-weight:bold; cursor:pointer; transition:background .15s,border-color .15s; user-select:none; }
+    .radio-option.assess label { background:var(--assess-light); color:var(--assess-dark); border-color:var(--assess-dark); }
+    .radio-option.assess input:checked + label, .radio-option.assess label:hover { background:var(--assess-dark); color:var(--white); }
+    .radio-option.policy label { background:var(--policy-light); color:var(--policy-dark); border-color:var(--policy-dark); }
+    .radio-option.policy input:checked + label, .radio-option.policy label:hover { background:var(--policy-dark); color:var(--white); }
+    .radio-option.assure label { background:var(--assure-light); color:var(--assure-dark); border-color:var(--assure-dark); }
+    .radio-option.assure input:checked + label, .radio-option.assure label:hover { background:var(--assure-dark); color:var(--white); }
+    .radio-option input:focus-visible + label { outline:3px solid var(--accent); outline-offset:2px; }
+    .card-feedback { display:none; margin-top:.6rem; padding:.5rem .75rem; border-radius:4px; font-size:.9rem; font-family:"Helvetica Neue",Arial,sans-serif; }
+    .card-feedback.correct { background:var(--correct-bg); color:var(--correct-text); border:1px solid var(--correct-dark); display:flex; align-items:flex-start; gap:.4rem; }
+    .card-feedback.wrong { background:var(--wrong-bg); color:var(--wrong-text); border:1px solid var(--wrong-dark); display:flex; align-items:flex-start; gap:.4rem; }
+    .card-feedback.show { display:flex; }
+    .submit-row { position:sticky; bottom:0; background:rgba(244,246,244,.97); backdrop-filter:blur(4px); padding:.85rem 0; margin-top:.5rem; border-top:2px solid #C8E6C9; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+    .answer-count { font-family:"Helvetica Neue",Arial,sans-serif; font-size:.9rem; color:var(--muted); }
+    .answer-count strong { color:var(--body-text); }
+    #live-region { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+    .results-header { background:var(--primary); color:var(--white); border-radius:6px; padding:1.5rem 1.5rem 1.25rem; margin-bottom:1.25rem; text-align:center; }
+    .results-header h2 { font-size:1.5rem; color:var(--white); margin-bottom:.3rem; }
+    .score-display { font-size:3rem; font-weight:bold; line-height:1; color:var(--accent); margin:.5rem 0 .2rem; }
+    .score-label { font-size:1rem; color:#C8E6C9; }
+    .function-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:.75rem; margin-bottom:1.5rem; }
+    .fn-summary-card { border-radius:5px; padding:.9rem 1rem; border:2px solid transparent; }
+    .fn-summary-card.assess { background:var(--assess-light); border-color:var(--assess-dark); }
+    .fn-summary-card.policy { background:var(--policy-light); border-color:var(--policy-dark); }
+    .fn-summary-card.assure { background:var(--assure-light); border-color:var(--assure-dark); }
+    .fn-summary-card .fn-title { font-family:"Helvetica Neue",Arial,sans-serif; font-weight:bold; font-size:.9375rem; margin-bottom:.25rem; }
+    .fn-summary-card.assess .fn-title { color:var(--assess-dark); }
+    .fn-summary-card.policy .fn-title { color:var(--policy-dark); }
+    .fn-summary-card.assure .fn-title { color:var(--assure-dark); }
+    .fn-summary-card .fn-services { font-size:.875rem; color:var(--body-text); }
+    .results-detail h3 { font-size:1.1rem; color:var(--primary); margin-bottom:.75rem; border-left:4px solid var(--primary); padding-left:.6rem; }
+    .result-item { display:flex; align-items:flex-start; gap:.75rem; padding:.65rem .75rem; margin-bottom:.4rem; border-radius:4px; font-size:.9375rem; }
+    .result-item.correct { background:var(--correct-bg); }
+    .result-item.wrong { background:var(--wrong-bg); }
+    .result-icon { font-size:1rem; flex-shrink:0; margin-top:.1rem; font-style:normal; }
+    .result-content { flex:1; }
+    .result-service { font-weight:bold; color:var(--body-text); }
+    .result-answer { font-size:.875rem; font-family:"Helvetica Neue",Arial,sans-serif; margin-top:.15rem; }
+    .result-item.correct .result-answer { color:var(--correct-text); }
+    .result-item.wrong .result-answer { color:var(--wrong-text); }
+    .project-connection { background:var(--white); border:1px solid #C8E6C9; border-radius:6px; padding:1.25rem 1.5rem; margin-top:1.5rem; }
+    .project-connection h3 { font-size:1.05rem; color:var(--primary); margin-bottom:.75rem; border-left:4px solid var(--primary); padding-left:.6rem; }
+    .project-stage { padding:.5rem .75rem; background:var(--card-bg); border:1px solid #C8E6C9; border-radius:4px; margin-bottom:.5rem; font-size:.9rem; }
+    .project-stage .stage-label { font-family:"Helvetica Neue",Arial,sans-serif; font-weight:bold; color:var(--primary); font-size:.8125rem; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.15rem; }
+    @media (max-width:520px) { .radio-group { flex-direction:column; } .btn-row { flex-direction:column; } .function-intro,.function-summary { grid-template-columns:1fr; } .stat-callout { flex-direction:column; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; animation:none !important; } }
+    :focus-visible { outline:3px solid var(--accent); outline-offset:2px; border-radius:2px; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
+  <header role="banner">
+    <div class="app-header">
+      <p class="eyebrow">HLTH 207 &middot; Public and Population Health</p>
+      <h1>Core Functions Match</h1>
+      <p class="subtitle">Match each essential service to its core public health function</p>
+    </div>
+  </header>
+  <main id="main-content">
+    <div class="app-wrap">
+
+      <!-- WELCOME SCREEN -->
+      <section id="screen-welcome" class="screen active" aria-labelledby="welcome-title">
+        <div class="welcome-box">
+          <h2 id="welcome-title">How to Use This Activity</h2>
+          <p>Public health is built on three core functions defined by the Institute of Medicine. Every one of the 10 essential public health services falls under one of these functions. Your task is to match each service to the right one.</p>
+          <p>This activity is more urgent than it might seem. Right now, in 2026, each of these 10 services is under direct pressure from federal budget cuts, workforce reductions, and agency restructuring. Understanding which function each service belongs to will help you see exactly where the gaps are forming.</p>
+
+          <div class="stat-callout" role="note" aria-label="Current public health context">
+            <span class="stat-num" aria-hidden="true">53%</span>
+            <span class="stat-text"><strong>Proposed FY 2026 CDC budget cut</strong> if enacted. The CDC lost roughly a quarter of its workforce by the end of 2025, including over 1,000 scientists, physicians, and public health specialists. About 80% of CDC's domestic budget flows directly to state and local health departments. Source: Trust for America's Health, 2025.</span>
+          </div>
+
+          <div class="function-intro" role="list" aria-label="The three core functions of public health">
+            <div class="function-intro-card assess" role="listitem">
+              <p class="fn-name">Assessment</p>
+              <p>Collecting and analyzing data to understand the health of populations, identify health problems, and generate the evidence base for action.</p>
+            </div>
+            <div class="function-intro-card policy" role="listitem">
+              <p class="fn-name">Policy Development</p>
+              <p>Using evidence to inform, educate, and mobilize communities and policymakers toward health-protective policies and plans.</p>
+            </div>
+            <div class="function-intro-card assure" role="listitem">
+              <p class="fn-name">Assurance</p>
+              <p>Ensuring that all people can access necessary health services and that the workforce, laws, and systems to deliver those services are in place and functioning.</p>
+            </div>
+          </div>
+
+          <p>For each of the 10 essential services, select Assessment, Policy Development, or Assurance. After you submit, you will see an explanation for each one that connects to what is happening in public health right now.</p>
+
+          <div class="advocacy-prompt" role="note">
+            <p class="ap-label">Health Advocacy Project Connection</p>
+            <p>As you work through this activity, ask yourself: which core function does your senator letter address? Most policy advocacy letters call on legislators to take action within the Policy Development function, but they must be grounded in Assessment evidence and must ultimately demand Assurance results.</p>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary btn-lg" id="btn-start" aria-label="Start the Core Functions Match activity">
+              Start Activity
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ SCREEN -->
+      <section id="screen-quiz" class="screen" aria-labelledby="quiz-title">
+        <h2 id="quiz-title" class="sr-only">Core Functions Match — Answer all 10 services</h2>
+        <div class="progress-wrap" role="group" aria-label="Activity progress">
+          <p class="progress-label" id="progress-text" aria-live="polite">0 of 10 answered</p>
+          <div class="progress-bar-bg" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10" aria-labelledby="progress-text" id="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+          </div>
+        </div>
+        <p class="quiz-intro">
+          <strong>Instructions:</strong> For each essential public health service below, select the core function it belongs to:
+          <span style="color:var(--assess-dark);font-weight:bold;">Assessment</span>,
+          <span style="color:var(--policy-dark);font-weight:bold;">Policy Development</span>, or
+          <span style="color:var(--assure-dark);font-weight:bold;">Assurance</span>.
+        </p>
+        <div id="cards-container" role="list" aria-label="10 essential public health services to categorize"></div>
+        <div class="submit-row" role="group" aria-label="Submission controls">
+          <p class="answer-count" aria-live="polite" id="answered-count">
+            <strong id="answered-num">0</strong> of 10 answered
+          </p>
+          <button class="btn btn-primary" id="btn-submit" aria-label="Check all answers">Check Answers</button>
+          <button class="btn btn-secondary" id="btn-clear" aria-label="Clear all selections and start over">Clear All</button>
+        </div>
+      </section>
+
+      <!-- RESULTS SCREEN -->
+      <section id="screen-results" class="screen" aria-labelledby="results-title">
+        <div class="results-header" role="region" aria-labelledby="results-title">
+          <h2 id="results-title">Your Results</h2>
+          <p class="score-display" id="score-display" aria-label="Score">&mdash;</p>
+          <p class="score-label" id="score-label">out of 10 correct</p>
+          <p id="score-message" style="margin-top:.5rem;font-size:1rem;color:#C8E6C9;"></p>
+        </div>
+        <div class="function-summary" role="list" aria-label="Results grouped by core function">
+          <div class="fn-summary-card assess" role="listitem">
+            <p class="fn-title">Assessment (2 services)</p>
+            <p class="fn-services" id="assess-services"></p>
+          </div>
+          <div class="fn-summary-card policy" role="listitem">
+            <p class="fn-title">Policy Development (3 services)</p>
+            <p class="fn-services" id="policy-services"></p>
+          </div>
+          <div class="fn-summary-card assure" role="listitem">
+            <p class="fn-title">Assurance (5 services)</p>
+            <p class="fn-services" id="assure-services"></p>
+          </div>
+        </div>
+        <div class="results-detail">
+          <h3>Detailed Results</h3>
+          <div id="results-list" role="list" aria-label="Detailed results for each service"></div>
+        </div>
+        <div class="project-connection" role="region" aria-labelledby="project-connection-title">
+          <h3 id="project-connection-title">Health Advocacy Project Connection</h3>
+          <div class="project-stage">
+            <p class="stage-label">Stage 1: Identify Your Issue</p>
+            <p>Now that you can classify the 10 essential services, where does your policy topic fit? Is the gap an Assessment problem (we lack data or surveillance), a Policy Development problem (we lack the right laws or community engagement), or an Assurance problem (people cannot access services that already exist in policy)?</p>
+          </div>
+          <div class="project-stage">
+            <p class="stage-label">Stage 2: Article Reviews</p>
+            <p>When you read your three peer-reviewed articles, look for which core function the researchers are addressing. Papers that describe disease burden or health disparities are building the Assessment case. Papers that evaluate program reach or service gaps are addressing Assurance. Papers about policy design or advocacy strategy fall under Policy Development.</p>
+          </div>
+          <div class="project-stage">
+            <p class="stage-label">Stage 3: Senator Letter</p>
+            <p>Your letter is itself a Policy Development action. You are informing a policymaker and mobilizing them toward change. Frame your opening argument using Assessment data, identify the Assurance failure your community is experiencing, and propose a Policy Development solution the senator can act on.</p>
+          </div>
+          <div class="project-stage">
+            <p class="stage-label">Stage 4: Presentation</p>
+            <p>Structure your presentation around all three functions: open with Assessment evidence that shows the problem, move to the Policy Development gap that allowed it to persist, and close with an Assurance commitment the senator must make to fix it. This three-act structure is the most persuasive framework in public health advocacy.</p>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:1.5rem;">
+          <button class="btn btn-primary btn-lg" id="btn-retry" aria-label="Try the activity again with cleared answers">Try Again</button>
+          <button class="btn btn-secondary" id="btn-back-welcome" aria-label="Return to the activity introduction">Back to Start</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+  <footer role="contentinfo" style="background:var(--dark-bg);color:#C8E6C9;padding:1rem 1.5rem;font-family:'Helvetica Neue',Arial,sans-serif;font-size:.875rem;text-align:center;">
+    HLTH 207: Public and Population Health &nbsp;&middot;&nbsp; Towson University &nbsp;&middot;&nbsp; Dr. Wendy Whitner
+  </footer>
+
+  <script>
+  'use strict';
+  const SERVICES = [
+    {
+      id:'s1', correct:'assess',
+      text:'Monitor health status to identify community health problems',
+      explanation:'Monitoring and surveillance are the core of the Assessment function. In 2024, U.S. life expectancy reached a record high of 79 years (CDC, January 2026), but still trails comparable countries by 3.7 years. That gap was only visible because of ongoing surveillance work now at risk: by end of 2025 the CDC had lost roughly a quarter of its workforce, including the epidemiologists and data scientists who run these systems.'
+    },
+    {
+      id:'s2', correct:'assess',
+      text:'Diagnose and investigate health problems and health hazards in the community',
+      explanation:'Outbreak investigation is Assessment at its most urgent. In 2025, measles outbreaks spread across multiple states while Dallas County was forced to cancel 50 immunization clinics because federal funding was clawed back. The CDC\'s Epidemic Intelligence Service, which trains the disease detectives who investigate outbreaks, faced deep cuts in 2025 as part of the broader HHS restructuring.'
+    },
+    {
+      id:'s3', correct:'policy',
+      text:'Inform, educate, and empower people about health issues',
+      explanation:'Health communication is a Policy Development function: it builds the public understanding needed to support evidence-based decisions and behavior change. In 2025, vaccine communication campaigns were among the public health programs cut or halted when HHS clawed back $11.4 billion in previously approved state grants. Immunization rates fell in communities that lost this outreach infrastructure.'
+    },
+    {
+      id:'s4', correct:'policy',
+      text:'Mobilize community partnerships to identify and solve health problems',
+      explanation:'Building coalitions across sectors is Policy Development work. In 2025 and 2026, dozens of advocacy coalitions, including the American Public Health Association, Trust for America\'s Health, and 23 state governments filing lawsuits, mobilized partnerships in direct response to federal public health funding cuts. This is the essential service your senator letter activates.'
+    },
+    {
+      id:'s5', correct:'policy',
+      text:'Develop policies and plans that support individual and community health',
+      explanation:'Writing, championing, and implementing health policy is the defining work of Policy Development. Senators are voting right now on FY2026 appropriations that would cut CDC funding by up to 53% and eliminate agencies including SAMHSA, HRSA, and NIOSH. Your Health Advocacy Project letter lands directly in this function.'
+    },
+    {
+      id:'s6', correct:'assure',
+      text:'Enforce laws and regulations that protect health and ensure safety',
+      explanation:'Enforcement is Assurance: existing protections only work if they are actively upheld. The National Institute for Occupational Safety and Health (NIOSH), which enforces workplace safety standards for 160 million U.S. workers, was proposed for elimination in the FY2026 HHS restructuring. Eliminating the agency does not repeal the laws; it eliminates the Assurance that those laws are enforced.'
+    },
+    {
+      id:'s7', correct:'assure',
+      text:'Link people to needed personal health services and assure provision of care when otherwise unavailable',
+      explanation:'Connecting people to care is an Assurance obligation. The Health Resources and Services Administration (HRSA), which funds community health centers serving 30 million patients who have no other access point, was proposed for elimination in March 2025. Over 1,400 federally qualified health centers nationwide depend on HRSA funding to keep their doors open.'
+    },
+    {
+      id:'s8', correct:'assure',
+      text:'Assure a competent public health and personal healthcare workforce',
+      explanation:'Workforce development is Assurance: the system cannot deliver any of the other nine services without skilled people. U.S. health departments already needed approximately 80,000 additional workers before 2025 (Health Affairs). By February 2026, CDC had lost over 3,000 workers through firings, early retirements, and resignations. Federal workers historically had the lowest exit rates in healthcare; that changed sharply in 2025.'
+    },
+    {
+      id:'s9', correct:'assure',
+      text:'Evaluate effectiveness, accessibility, and quality of personal and population-based health services',
+      explanation:'Quality evaluation is Assurance: it ensures that services are actually working and reaching everyone equitably. The Agency for Healthcare Research and Quality (AHRQ), the primary federal agency responsible for this evaluation function, was demoted from an independent HHS agency to a sub-agency of the new Office of Strategy in the March 2025 HHS restructuring, reducing its independence and capacity.'
+    },
+    {
+      id:'s10', correct:'assess',
+      text:'Research new insights and innovative solutions to health problems',
+      explanation:'Research generates the evidence base that drives all of public health, making it a core Assessment function. In 2025, the National Institutes of Health faced proposed cuts of $18 billion in the FY2026 budget, the largest proposed cut in NIH history. More than 100 public health programs and funding lines would be eliminated under the proposed budget, including 61 programs at CDC alone.'
+    }
+  ];
+
+  const FUNCTION_LABELS = { assess:'Assessment', policy:'Policy Development', assure:'Assurance' };
+  const SCORE_MESSAGES = {
+    10:'Perfect score! You have a strong command of how the public health system is organized.',
+    9:'Excellent work. You understand the framework very well.',
+    8:'Great job. Review the ones you missed and you will have this down.',
+    7:'Good effort. A couple of the service assignments are tricky — the explanations will help.',
+    6:'Take a close look at the Assurance services, which are the most numerous group.',
+    5:'Keep at it. The explanations below will help clarify the distinctions between functions.',
+    4:'This is a good learning opportunity. Review the function definitions and try again.',
+    3:'Take your time with the function definitions and give it another try.',
+    2:'Review the three core functions on the welcome screen and try again.',
+    1:'Start fresh from the welcome screen and read each function description carefully.',
+    0:'No worries. Review the three function definitions and try again.'
+  };
+
+  let answers = {}, submitted = false;
+  const $ = id => document.getElementById(id);
+  const announce = msg => { $('live-region').textContent=''; setTimeout(()=>$('live-region').textContent=msg,50); };
+  const showScreen = id => {
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    $(id).classList.add('active');
+    const h = $(id).querySelector('h2,h3,[tabindex="-1"]');
+    if(h){ h.setAttribute('tabindex','-1'); h.focus(); }
+  };
+
+  function buildCards(){
+    const c=$('cards-container'); c.innerHTML=''; answers={}; submitted=false;
+    SERVICES.forEach((svc,i)=>{
+      const card=document.createElement('div');
+      card.className='service-card'; card.setAttribute('role','listitem'); card.id=`card-${svc.id}`;
+      card.innerHTML=`
+        <p class="service-num" aria-hidden="true">Service ${i+1} of 10</p>
+        <p class="service-text" id="label-${svc.id}">${svc.text}</p>
+        <fieldset class="radio-group" aria-labelledby="label-${svc.id}" aria-describedby="feedback-${svc.id}">
+          <legend class="sr-only">Assign service ${i+1} to a core function</legend>
+          ${['assess','policy','assure'].map(fn=>`
+            <div class="radio-option ${fn}">
+              <input type="radio" id="radio-${svc.id}-${fn}" name="${svc.id}" value="${fn}" aria-label="${FUNCTION_LABELS[fn]}">
+              <label for="radio-${svc.id}-${fn}">${FUNCTION_LABELS[fn]}</label>
+            </div>`).join('')}
+        </fieldset>
+        <div class="card-feedback" id="feedback-${svc.id}" role="note" aria-live="polite"></div>`;
+      c.appendChild(card);
+      card.querySelectorAll('input[type="radio"]').forEach(r=>{
+        r.addEventListener('change',()=>{ if(submitted) return; answers[svc.id]=r.value; updateProgress(); });
+      });
+    });
+  }
+
+  function updateProgress(){
+    const n=Object.keys(answers).length;
+    $('progress-text').textContent=`${n} of 10 answered`;
+    $('answered-num').textContent=n;
+    $('progress-bar').style.width=`${n*10}%`;
+    const pb=$('progress-bar-wrap'); pb.setAttribute('aria-valuenow',n);
+  }
+
+  function submitAnswers(){
+    if(Object.keys(answers).length===0){ announce('Please select at least one answer before checking.'); return; }
+    submitted=true; let correct=0;
+    SERVICES.forEach(svc=>{
+      const card=$(`card-${svc.id}`), fb=$(`feedback-${svc.id}`), chosen=answers[svc.id];
+      if(!chosen) return;
+      card.querySelectorAll('input[type="radio"]').forEach(r=>r.disabled=true);
+      if(chosen===svc.correct){
+        correct++;
+        card.classList.add('answered-correct');
+        fb.className='card-feedback correct show';
+        fb.innerHTML=`<span aria-hidden="true">&#10003;</span><span><strong>Correct.</strong> ${svc.explanation}</span>`;
+      } else {
+        card.classList.add('answered-wrong');
+        fb.className='card-feedback wrong show';
+        fb.innerHTML=`<span aria-hidden="true">&#10007;</span><span><strong>Not quite.</strong> The correct answer is <strong>${FUNCTION_LABELS[svc.correct]}</strong>. ${svc.explanation}</span>`;
+      }
+    });
+    buildResults(correct);
+    showScreen('screen-results');
+    announce(`Activity complete. You scored ${correct} out of ${Object.keys(answers).length} answered. Review your results below.`);
+  }
+
+  function buildResults(correct){
+    const answered=Object.keys(answers).length;
+    $('score-display').textContent=`${correct} / ${answered}`;
+    $('score-display').setAttribute('aria-label',`Score: ${correct} out of ${answered}`);
+    $('score-label').textContent=`out of ${answered} answered${answered<10?' ('+(10-answered)+' skipped)':''}`;
+    $('score-message').textContent=SCORE_MESSAGES[correct]||'';
+    const byFn={assess:[],policy:[],assure:[]};
+    SERVICES.forEach((svc,i)=>byFn[svc.correct].push(`${i+1}. ${svc.text}`));
+    ['assess','policy','assure'].forEach(fn=>{
+      $(`${fn}-services`).innerHTML=byFn[fn].map(s=>`<span style="display:block;font-size:.85rem;margin-bottom:.2rem;">${s}</span>`).join('');
+    });
+    const list=$('results-list'); list.innerHTML='';
+    SERVICES.forEach((svc,i)=>{
+      const chosen=answers[svc.id]; if(!chosen) return;
+      const ok=chosen===svc.correct;
+      const item=document.createElement('div');
+      item.className=`result-item ${ok?'correct':'wrong'}`; item.setAttribute('role','listitem');
+      item.innerHTML=`
+        <span class="result-icon" aria-label="${ok?'Correct':'Incorrect'}">${ok?'&#10003;':'&#10007;'}</span>
+        <div class="result-content">
+          <p class="result-service">${i+1}. ${svc.text}</p>
+          <p class="result-answer">${ok?`Correct: ${FUNCTION_LABELS[svc.correct]}`:`You answered: ${FUNCTION_LABELS[chosen]} &nbsp;&middot;&nbsp; Correct: ${FUNCTION_LABELS[svc.correct]}`}</p>
+        </div>`;
+      list.appendChild(item);
+    });
+  }
+
+  function resetActivity(){ buildCards(); updateProgress(); showScreen('screen-quiz'); announce('Activity reset. All answers cleared.'); }
+
+  $('btn-start').addEventListener('click',()=>{ buildCards(); updateProgress(); showScreen('screen-quiz'); announce('Activity started. Match each of the 10 essential services to its core function.'); });
+  $('btn-submit').addEventListener('click',submitAnswers);
+  $('btn-clear').addEventListener('click',()=>{ if(confirm('Clear all your answers and start over?')) resetActivity(); });
+  $('btn-retry').addEventListener('click',resetActivity);
+  $('btn-back-welcome').addEventListener('click',()=>{ showScreen('screen-welcome'); announce('Returned to activity introduction.'); });
+  </script>
+</body>
+</html>
