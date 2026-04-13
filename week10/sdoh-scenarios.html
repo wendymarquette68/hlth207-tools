@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SDOH Community Case Study | HLTH 207</title>
+  <title>SDOH Community Case Study | HLTH 207 | Public and Population Health</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --green:       #1B5E20;
       --green-mid:   #388E3C;
-      --green-light: #CCE8CE;
+      --green-light: #C8E6C9;
       --green-bg:    #E8F5E9;
       --navy:        #0F2133;
       --white:       #FFFFFF;
       --gray-50:     #F7FAFB;
       --gray-100:    #EEF2F4;
       --gray-300:    #C6D3DA;
-      --gray-500:    #7D949F;
+      /* FIX: darkened #7D949F (3.18:1 FAIL) → #4D6B78 (5.69:1 PASS) */
+      --gray-500:    #4D6B78;
       --gray-700:    #3D5562;
       --gray-900:    #182731;
       --ok-dark:     #1A5C2A;
@@ -32,30 +33,39 @@
       --proj-dark:   #4A148C;
       --proj-bg:     #F3E5F5;
       --proj-border: #7B1FA2;
-      --warn-dark:   #E65100;
+      /* FIX: darkened #E65100 (3.57:1 FAIL) → #BF360C (5.0:1 PASS) on warn-bg */
+      --warn-dark:   #BF360C;
       --warn-bg:     #FFF8E1;
       --warn-border: #FFB300;
-      --font-head:   'DM Serif Display', Georgia, serif;
-      --font-body:   'DM Sans', system-ui, sans-serif;
-      --r:           12px;
-      --r-sm:        8px;
-      --shadow:      0 4px 20px rgba(27,94,32,.10);
-      --shadow-lg:   0 8px 32px rgba(27,94,32,.18);
-      --ease:        all .22s ease;
+      --font-head: 'DM Serif Display', Georgia, serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --r:    12px;
+      --r-sm:  8px;
+      --shadow:    0 4px 20px rgba(27,94,32,.10);
+      --shadow-lg: 0 8px 32px rgba(27,94,32,.18);
+      --ease: all .22s ease;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); min-height: 100vh; line-height: 1.6; }
 
-    /* Header */
+    /* ── SKIP LINK (ADA Title II) ─────────────────────── */
+    .skip-link { position: absolute; top: -999px; left: 0; background: var(--green); color: var(--white); padding: .6rem 1.2rem; font-weight: bold; text-decoration: none; z-index: 9999; border-radius: 0 0 4px 0; font-family: var(--font-body); }
+    .skip-link:focus { top: 0; }
+
+    /* ── SR-ONLY ──────────────────────────────────────── */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ── HEADER ───────────────────────────────────────── */
     .app-header { background: var(--green); color: var(--white); }
     .header-inner { max-width: 840px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
     .header-brand { display: flex; flex-direction: column; gap: 2px; }
-    .header-course { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; opacity: .75; }
-    .header-title { font-family: var(--font-head); font-size: 1.3rem; }
-    .glossary-btn { background: rgba(255,255,255,.13); border: 1.5px solid rgba(255,255,255,.35); color: var(--white); font-family: var(--font-body); font-size: .8rem; font-weight: 600; padding: 7px 16px; border-radius: 20px; cursor: pointer; transition: var(--ease); white-space: nowrap; flex-shrink: 0; }
-    .glossary-btn:hover, .glossary-btn:focus-visible { background: rgba(255,255,255,.25); outline: 2px solid white; outline-offset: 2px; }
+    /* FIX: removed opacity:.75 → explicit color #C8E6C9 (5.85:1 on green) */
+    .header-course { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #C8E6C9; }
+    .header-title  { font-family: var(--font-head); font-size: 1.3rem; }
+    .glossary-btn  { background: rgba(255,255,255,.13); border: 1.5px solid rgba(255,255,255,.35); color: var(--white); font-family: var(--font-body); font-size: .8rem; font-weight: 600; padding: 7px 16px; border-radius: 20px; cursor: pointer; transition: var(--ease); white-space: nowrap; flex-shrink: 0; }
+    .glossary-btn:hover, .glossary-btn:focus-visible { background: rgba(255,255,255,.25); outline: 3px solid white; outline-offset: 2px; }
 
-    /* Glossary */
+    /* ── GLOSSARY ─────────────────────────────────────── */
     .glossary-panel { background: var(--navy); color: var(--white); max-height: 0; overflow: hidden; transition: max-height .38s ease; }
     .glossary-panel.open { max-height: 600px; overflow-y: auto; }
     .glossary-inner { max-width: 840px; margin: 0 auto; padding: 20px 24px 26px; }
@@ -63,248 +73,298 @@
     .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
     .g-item { background: rgba(255,255,255,.07); border-radius: var(--r-sm); padding: 11px 14px; }
     .g-term { font-weight: 700; font-size: .79rem; color: var(--green-light); display: block; margin-bottom: 3px; }
-    .g-def { font-size: .78rem; opacity: .83; line-height: 1.45; }
+    /* FIX: removed opacity:.83 → explicit color #C8D8DC (11.13:1 on navy) */
+    .g-def { font-size: .78rem; color: #C8D8DC; line-height: 1.45; }
 
-    /* Main */
+    /* ── MAIN ─────────────────────────────────────────── */
     main { max-width: 840px; margin: 0 auto; padding: 32px 24px 64px; }
 
-    /* Screens */
+    /* ── SCREENS ──────────────────────────────────────── */
     .screen { display: none; }
     .screen.active { display: block; animation: fadeUp .28s ease; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Card */
+    /* ── CARD ─────────────────────────────────────────── */
     .card { background: var(--white); border-radius: var(--r); box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px; }
 
-    /* Progress */
-    .progress-wrap { margin-bottom: 26px; }
-    .progress-meta { display: flex; justify-content: space-between; font-size: .78rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 7px; }
-    .progress-bar { height: 7px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green) 0%, var(--green-mid) 100%); border-radius: 4px; transition: width .4s ease; }
+    /* ── PROGRESS ─────────────────────────────────────── */
+    .progress-wrap  { margin-bottom: 26px; }
+    .progress-meta  { display: flex; justify-content: space-between; font-size: .78rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 7px; }
+    .progress-bar   { height: 7px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: linear-gradient(90deg, var(--green) 0%, var(--green-mid) 100%); border-radius: 4px; transition: width .4s ease; }
 
-    /* Welcome */
-    .badge { display: inline-block; background: var(--green-bg); color: var(--green); font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
+    /* ── WELCOME ──────────────────────────────────────── */
+    .badge         { display: inline-block; background: var(--green-bg); color: var(--green); font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px; }
     .welcome-title { font-family: var(--font-head); font-size: 2.1rem; color: var(--green); line-height: 1.2; margin-bottom: 14px; }
-    .welcome-desc { font-size: .95rem; color: var(--gray-700); line-height: 1.75; margin-bottom: 22px; }
-    .lo-box { background: var(--gray-50); border-left: 4px solid var(--green); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 14px 18px; margin-bottom: 20px; }
-    .lo-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--green); margin-bottom: 5px; }
-    .lo-box p { font-size: .88rem; color: var(--gray-900); }
-
-    /* Project prompt box */
-    .project-prompt { background: var(--proj-bg); border-left: 4px solid var(--proj-border); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 14px 18px; margin-bottom: 20px; }
+    .welcome-desc  { font-size: .95rem; color: var(--gray-700); line-height: 1.75; margin-bottom: 22px; }
+    .lo-box        { background: var(--gray-50); border-left: 4px solid var(--green); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 14px 18px; margin-bottom: 20px; }
+    .lo-label      { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--green); margin-bottom: 5px; }
+    .lo-box p      { font-size: .88rem; color: var(--gray-900); }
+    .project-prompt       { background: var(--proj-bg); border-left: 4px solid var(--proj-border); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 14px 18px; margin-bottom: 20px; }
     .project-prompt-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--proj-dark); margin-bottom: 6px; }
-    .project-prompt p { font-size: .88rem; color: var(--gray-900); line-height: 1.65; }
-
-    /* Context box */
-    .context-box { background: var(--warn-bg); border-left: 4px solid var(--warn-border); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 16px 18px; margin-bottom: 24px; }
+    .project-prompt p     { font-size: .88rem; color: var(--gray-900); line-height: 1.65; }
+    .context-box   { background: var(--warn-bg); border-left: 4px solid var(--warn-border); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 16px 18px; margin-bottom: 24px; }
     .context-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--warn-dark); margin-bottom: 10px; }
-    .context-item { font-size: .86rem; color: var(--gray-900); margin-bottom: 9px; line-height: 1.65; }
+    .context-item  { font-size: .86rem; color: var(--gray-900); margin-bottom: 9px; line-height: 1.65; }
     .context-item:last-child { margin-bottom: 0; }
-    .context-item strong { color: #BF360C; }
-
-    /* Update note in feedback */
-    .update-note { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: .82rem; line-height: 1.55; }
-    .update-label { font-weight: 700; color: var(--warn-dark); display: block; margin-bottom: 3px; }
-    .update-text { color: var(--gray-900); }
+    /* FIX: strong color #8B2500 = 6.7:1 on warn-bg */
+    .context-item strong { color: #8B2500; }
+    .update-note   { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: .82rem; line-height: 1.55; }
+    .update-label  { font-weight: 700; color: var(--warn-dark); display: block; margin-bottom: 3px; }
+    .update-text   { color: var(--gray-900); }
 
     .field-label { display: block; font-size: .84rem; font-weight: 600; color: var(--gray-900); margin-bottom: 7px; }
-    .field-hint { font-size: .78rem; color: var(--gray-500); font-weight: 400; }
-    .name-input { display: block; width: 100%; max-width: 360px; border: 1.5px solid var(--gray-300); border-radius: var(--r-sm); padding: 10px 14px; font-family: var(--font-body); font-size: .92rem; color: var(--gray-900); background: var(--white); margin-bottom: 26px; transition: var(--ease); }
+    .field-hint  { font-size: .78rem; color: var(--gray-500); font-weight: 400; }
+    .name-input  { display: block; width: 100%; max-width: 360px; border: 1.5px solid var(--gray-300); border-radius: var(--r-sm); padding: 10px 14px; font-family: var(--font-body); font-size: .92rem; color: var(--gray-900); background: var(--white); margin-bottom: 26px; transition: var(--ease); }
     .name-input:focus-visible { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(27,94,32,.14); }
 
-    /* Buttons */
-    .btn { font-family: var(--font-body); font-weight: 600; border: none; border-radius: var(--r-sm); cursor: pointer; transition: var(--ease); display: inline-flex; align-items: center; gap: 8px; line-height: 1; }
-    .btn-primary { background: var(--green); color: var(--white); font-size: .95rem; padding: 13px 30px; }
-    .btn-primary:hover, .btn-primary:focus-visible { background: #0d3b11; box-shadow: var(--shadow-lg); outline: 2px solid var(--green); outline-offset: 2px; }
+    /* ── BUTTONS ──────────────────────────────────────── */
+    .btn          { font-family: var(--font-body); font-weight: 600; border: none; border-radius: var(--r-sm); cursor: pointer; transition: var(--ease); display: inline-flex; align-items: center; gap: 8px; line-height: 1; }
+    .btn-primary  { background: var(--green); color: var(--white); font-size: .95rem; padding: 13px 30px; }
+    .btn-primary:hover, .btn-primary:focus-visible { background: #0d3b11; box-shadow: var(--shadow-lg); outline: 3px solid var(--green); outline-offset: 3px; }
     .btn-primary:disabled { background: var(--gray-300); color: var(--gray-500); cursor: not-allowed; box-shadow: none; }
-    .btn-outline { background: var(--white); color: var(--green); border: 2px solid var(--green); font-size: .92rem; padding: 11px 24px; }
-    .btn-outline:hover, .btn-outline:focus-visible { background: var(--green-bg); outline: 2px solid var(--green); outline-offset: 2px; }
+    .btn-outline  { background: var(--white); color: var(--green); border: 2px solid var(--green); font-size: .92rem; padding: 11px 24px; }
+    .btn-outline:hover, .btn-outline:focus-visible { background: var(--green-bg); outline: 3px solid var(--green); outline-offset: 3px; }
 
-    /* Scenario */
-    .scenario-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
-    .scenario-title { font-family: var(--font-head); font-size: 1.55rem; color: var(--gray-900); line-height: 1.3; margin-bottom: 18px; }
-    .situation-box { background: var(--gray-50); border: 1px solid var(--gray-100); border-radius: var(--r-sm); padding: 18px 20px; margin-bottom: 18px; }
+    /* ── SCENARIO ─────────────────────────────────────── */
+    .scenario-label  { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .scenario-title  { font-family: var(--font-head); font-size: 1.55rem; color: var(--gray-900); line-height: 1.3; margin-bottom: 18px; }
+    .situation-box   { background: var(--gray-50); border: 1px solid var(--gray-100); border-radius: var(--r-sm); padding: 18px 20px; margin-bottom: 18px; }
     .situation-label { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; }
-    .situation-text { font-size: .93rem; line-height: 1.75; color: var(--gray-900); }
-    .question-text { font-size: 1.02rem; font-weight: 600; color: var(--gray-900); margin-bottom: 16px; line-height: 1.5; }
+    .situation-text  { font-size: .93rem; line-height: 1.75; color: var(--gray-900); }
+    .question-text   { font-size: 1.02rem; font-weight: 600; color: var(--gray-900); margin-bottom: 16px; line-height: 1.5; }
+    .domain-tag      { display: inline-flex; align-items: center; gap: 6px; background: var(--green-bg); color: var(--green); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 16px; }
 
-    /* Domain badge */
-    .domain-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--green-bg); color: var(--green); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 16px; }
-
-    /* Choices */
-    .choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    /* ── CHOICES: FIX aria-pressed → role=radio/aria-checked ─ */
+    .choices    { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
     .choice-btn { display: flex; align-items: flex-start; gap: 14px; background: var(--white); border: 2px solid var(--gray-300); border-radius: var(--r-sm); padding: 14px 16px; cursor: pointer; text-align: left; font-family: var(--font-body); font-size: .9rem; color: var(--gray-900); line-height: 1.55; transition: var(--ease); width: 100%; }
-    .choice-btn:hover:not(:disabled), .choice-btn:focus-visible:not(:disabled) { border-color: var(--green); background: var(--green-bg); outline: 2px solid var(--green); outline-offset: 2px; }
-    .choice-btn.selected:not(.revealed) { border-color: var(--green-mid); background: var(--green-bg); }
+    .choice-btn:hover:not(:disabled), .choice-btn:focus-visible:not(:disabled) { border-color: var(--green); background: var(--green-bg); outline: 3px solid var(--green); outline-offset: 2px; }
+    .choice-btn[aria-checked="true"]:not(.revealed) { border-color: var(--green-mid); background: var(--green-bg); }
     .choice-btn.correct.revealed  { border-color: var(--ok-border); background: var(--ok-bg); color: var(--ok-dark); }
     .choice-btn.incorrect.revealed { border-color: var(--bad-border); background: var(--bad-bg); color: var(--bad-dark); }
     .choice-btn:disabled { cursor: default; }
-    .letter-badge { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .75rem; color: var(--gray-500); margin-top: 1px; transition: var(--ease); }
-    .choice-btn.selected:not(.revealed) .letter-badge { background: var(--green); color: white; }
-    .choice-btn.correct.revealed .letter-badge  { background: var(--ok-dark); color: white; }
-    .choice-btn.incorrect.revealed .letter-badge { background: var(--bad-dark); color: white; }
 
-    /* Submit */
-    .submit-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .letter-badge { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .8rem; color: var(--gray-500); margin-top: 1px; transition: var(--ease); }
+    .choice-btn[aria-checked="true"]:not(.revealed) .letter-badge { background: var(--green); color: white; }
+    /* FIX: add text icons to badges after reveal (not color-only) */
+    .choice-btn.correct.revealed   .letter-badge { background: var(--ok-dark); color: white; font-size: .7rem; }
+    .choice-btn.incorrect.revealed .letter-badge { background: var(--bad-dark); color: white; font-size: .7rem; }
+
+    /* ── SUBMIT ───────────────────────────────────────── */
+    .submit-row  { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .submit-hint { font-size: .8rem; color: var(--gray-500); font-style: italic; }
 
-    /* Feedback */
+    /* ── FEEDBACK ─────────────────────────────────────── */
     .feedback { border-radius: var(--r-sm); padding: 20px 22px; margin-top: 18px; display: none; }
-    .feedback.show { display: block; animation: fadeUp .25s ease; }
-    .feedback.correct-fb  { background: var(--ok-bg);  border-left: 5px solid var(--ok-border);  }
+    .feedback.show     { display: block; animation: fadeUp .25s ease; }
+    .feedback.correct-fb   { background: var(--ok-bg);  border-left: 5px solid var(--ok-border); }
     .feedback.incorrect-fb { background: var(--bad-bg); border-left: 5px solid var(--bad-border); }
     .verdict { font-size: .98rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-    .feedback.correct-fb  .verdict { color: var(--ok-dark); }
+    .feedback.correct-fb   .verdict { color: var(--ok-dark); }
     .feedback.incorrect-fb .verdict { color: var(--bad-dark); }
-    .explain { font-size: .88rem; line-height: 1.75; color: var(--gray-900); margin-bottom: 14px; }
+    .explain   { font-size: .88rem; line-height: 1.75; color: var(--gray-900); margin-bottom: 14px; }
     .key-term-card { background: var(--info-bg); border: 1px solid var(--info-border); border-radius: 6px; padding: 9px 14px; font-size: .82rem; line-height: 1.5; }
     .kt-label { font-weight: 700; color: var(--info-dark); }
-    .kt-def { color: var(--gray-900); }
+    .kt-def   { color: var(--gray-900); }
     .next-row { margin-top: 18px; display: flex; justify-content: flex-end; }
 
-    /* Results */
+    /* ── RESULTS ──────────────────────────────────────── */
     .results-hero { text-align: center; padding: 8px 0 28px; }
-    .score-ring { width: 116px; height: 116px; border-radius: 50%; background: var(--green); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 18px; box-shadow: 0 8px 28px rgba(27,94,32,.24); }
-    .score-num { font-family: var(--font-head); font-size: 2.5rem; color: white; line-height: 1; }
-    .score-sub { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.7); }
+    .score-ring   { width: 116px; height: 116px; border-radius: 50%; background: var(--green); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 18px; box-shadow: 0 8px 28px rgba(27,94,32,.24); }
+    .score-num    { font-family: var(--font-head); font-size: 2.5rem; color: white; line-height: 1; }
+    /* FIX: removed opacity:.70 → explicit color #A5D6A7 (4.79:1 on green) */
+    .score-sub    { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #A5D6A7; }
     .results-title { font-family: var(--font-head); font-size: 1.75rem; color: var(--green); margin-bottom: 6px; }
-    .results-msg { font-size: .93rem; color: var(--gray-700); margin-bottom: 4px; }
-    .results-name { font-size: .93rem; color: var(--gray-700); }
+    .results-msg   { font-size: .93rem; color: var(--gray-700); margin-bottom: 4px; }
+    .results-name  { font-size: .93rem; color: var(--gray-700); }
     .results-name strong { color: var(--gray-900); }
     .summary-heading { font-family: var(--font-head); font-size: 1.15rem; color: var(--gray-900); margin-bottom: 14px; }
-    .summary-list { list-style: none; }
-    .summary-item { display: flex; align-items: flex-start; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--gray-100); font-size: .87rem; }
+    .summary-list    { list-style: none; }
+    .summary-item    { display: flex; align-items: flex-start; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--gray-100); font-size: .87rem; }
     .summary-item:last-child { border-bottom: none; }
     .s-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 900; margin-top: 1px; }
     .s-icon.pass { background: var(--ok-dark); color: white; }
     .s-icon.fail { background: var(--bad-dark); color: white; }
-    .s-body { flex: 1; }
-    .s-q { font-weight: 600; color: var(--gray-900); margin-bottom: 3px; }
+    .s-body   { flex: 1; }
+    .s-q      { font-weight: 600; color: var(--gray-900); margin-bottom: 3px; }
     .s-correct { font-size: .83rem; color: var(--ok-dark); }
 
-    /* Project Connection section */
-    .project-section { margin-top: 28px; }
+    /* ── PROJECT CONNECTION ───────────────────────────── */
+    .project-section       { margin-top: 28px; }
     .project-section-title { font-family: var(--font-head); font-size: 1.3rem; color: var(--proj-dark); margin-bottom: 6px; }
-    .project-section-sub { font-size: .88rem; color: var(--gray-700); margin-bottom: 18px; line-height: 1.65; }
-    .stage-card { background: var(--proj-bg); border: 1px solid var(--proj-border); border-radius: var(--r-sm); padding: 16px 18px; margin-bottom: 12px; }
-    .stage-label { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--proj-dark); margin-bottom: 6px; }
+    .project-section-sub   { font-size: .88rem; color: var(--gray-700); margin-bottom: 18px; line-height: 1.65; }
+    .stage-card     { background: var(--proj-bg); border: 1px solid var(--proj-border); border-radius: var(--r-sm); padding: 16px 18px; margin-bottom: 12px; }
+    .stage-label    { font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--proj-dark); margin-bottom: 6px; }
     .stage-question { font-size: .9rem; color: var(--gray-900); line-height: 1.65; }
-    .notes-label { font-size: .84rem; font-weight: 600; color: var(--gray-900); margin-bottom: 7px; display: block; margin-top: 18px; }
-    .notes-area { width: 100%; min-height: 120px; border: 1.5px solid var(--gray-300); border-radius: var(--r-sm); padding: 12px 14px; font-family: var(--font-body); font-size: .88rem; color: var(--gray-900); background: var(--white); resize: vertical; transition: var(--ease); }
+    .notes-label    { font-size: .84rem; font-weight: 600; color: var(--gray-900); margin-bottom: 7px; display: block; margin-top: 18px; }
+    .notes-area     { width: 100%; min-height: 120px; border: 1.5px solid var(--gray-300); border-radius: var(--r-sm); padding: 12px 14px; font-family: var(--font-body); font-size: .88rem; color: var(--gray-900); background: var(--white); resize: vertical; transition: var(--ease); }
     .notes-area:focus-visible { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(27,94,32,.14); }
-    .project-link { font-size: .82rem; color: var(--proj-dark); margin-top: 10px; display: block; }
+    .project-link   { font-size: .82rem; color: var(--proj-dark); margin-top: 10px; display: block; }
     .project-link a { color: var(--proj-dark); text-underline-offset: 2px; }
+    .project-link a:focus-visible { outline: 3px solid var(--proj-dark); outline-offset: 2px; border-radius: 2px; }
 
     .results-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
-    @media (max-width: 600px) { .card { padding: 22px 18px; } .welcome-title { font-size: 1.65rem; } .header-inner { flex-wrap: wrap; } }
+
+    /* ── REDUCED MOTION ───────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 22px 18px; }
+      .welcome-title { font-size: 1.65rem; }
+      .header-inner { flex-wrap: wrap; }
+    }
   </style>
 </head>
 <body>
 
-<header class="app-header">
-  <div class="header-inner">
-    <div class="header-brand">
-      <span class="header-course">HLTH 207 &middot; Public and Population Health</span>
-      <span class="header-title">SDOH Community Case Study</span>
+<!-- SKIP LINK — required for keyboard/screen reader navigation -->
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- Screen-reader live region for dynamic announcements -->
+<div id="live-region" role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+<header role="banner">
+  <div class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="header-course">HLTH 207 &middot; Public and Population Health</span>
+        <span class="header-title" aria-hidden="true">SDOH Community Case Study</span>
+      </div>
+      <button class="glossary-btn"
+              aria-expanded="false"
+              aria-controls="glossary-panel"
+              onclick="toggleGlossary(this)">Key Terms &#9662;</button>
     </div>
-    <button class="glossary-btn" aria-expanded="false" aria-controls="glossary-panel" onclick="toggleGlossary(this)">Key Terms &#9662;</button>
   </div>
 </header>
 
 <div class="glossary-panel" id="glossary-panel" role="region" aria-label="Key Terms Reference">
   <div class="glossary-inner">
-    <h2>Key Terms &amp; SDOH Domains &mdash; Public and Population Health</h2>
+    <!-- FIX: removed em dash from heading -->
+    <h2>Key Terms and SDOH Domains, Public and Population Health</h2>
     <div class="glossary-grid">
       <div class="g-item"><span class="g-term">SDOH Domain 1: Economic Stability</span><span class="g-def">Income, employment, food security, and housing stability. Poverty directly shapes health through stress, diet, housing conditions, and access to care.</span></div>
       <div class="g-item"><span class="g-term">SDOH Domain 2: Education Access and Quality</span><span class="g-def">Early childhood education, high school graduation, higher education, language and literacy. Educational attainment predicts income, employment, and health literacy.</span></div>
       <div class="g-item"><span class="g-term">SDOH Domain 3: Health and Health Care</span><span class="g-def">Access to healthcare, health insurance coverage, availability of providers, quality of care, and health literacy. Many people face barriers before they ever see a provider.</span></div>
-      <div class="g-item"><span class="g-term">SDOH Domain 4: Neighborhood and Built Environment</span><span class="g-def">Housing quality, access to healthy foods, transportation, environmental conditions (air/water quality), and safety from violence. Where you live shapes how healthy you can be.</span></div>
+      <div class="g-item"><span class="g-term">SDOH Domain 4: Neighborhood and Built Environment</span><span class="g-def">Housing quality, access to healthy foods, transportation, environmental conditions, and safety from violence. Where you live shapes how healthy you can be.</span></div>
       <div class="g-item"><span class="g-term">SDOH Domain 5: Social and Community Context</span><span class="g-def">Social cohesion, support systems, discrimination, incarceration, and community engagement. Structural racism and social isolation are measurable health determinants.</span></div>
-      <div class="g-item"><span class="g-term">Population Health</span><span class="g-def">An approach that focuses on health outcomes of a group of individuals, the distribution of outcomes within the group, and the factors that shape distribution — including SDOH.</span></div>
-      <div class="g-item"><span class="g-term">Public Health 3.0</span><span class="g-def">A model calling for cross-sector partnerships, upstream interventions, and community-level action to address the social determinants of health rather than primarily treating downstream outcomes.</span></div>
-      <div class="g-item"><span class="g-term">Healthy People 2030</span><span class="g-def">HHS's 10-year national health objectives initiative (2020-2030). Key goals include eliminating health disparities, achieving health equity, and addressing social determinants of health.</span></div>
+      <div class="g-item"><span class="g-term">Population Health</span><span class="g-def">An approach that focuses on health outcomes of a group, the distribution of outcomes within the group, and the factors that shape distribution, including SDOH.</span></div>
+      <div class="g-item"><span class="g-term">Public Health 3.0</span><span class="g-def">A model calling for cross-sector partnerships, upstream interventions, and community-level action to address social determinants rather than primarily treating downstream outcomes.</span></div>
+      <div class="g-item"><span class="g-term">Healthy People 2030</span><span class="g-def">HHS's 10-year national health objectives initiative (2020 to 2030). Key goals include eliminating health disparities, achieving health equity, and addressing social determinants of health.</span></div>
       <div class="g-item"><span class="g-term">Core Functions of Public Health</span><span class="g-def">Three functions defined by the IOM: Assessment (collecting data on population health), Assurance (ensuring health services are in place), and Policy Development (guiding evidence-based policy).</span></div>
       <div class="g-item"><span class="g-term">Essential Public Health Services</span><span class="g-def">Ten services flowing from the 3 core functions. Range from monitoring health status to evaluating programs. Used as a framework for public health organization and workforce planning.</span></div>
       <div class="g-item"><span class="g-term">Health Equity</span><span class="g-def">The state in which everyone has a fair and just opportunity to attain their highest level of health. Requires removing obstacles such as poverty, discrimination, and lack of access to good jobs.</span></div>
-      <div class="g-item"><span class="g-term">Systems Perspective in Public Health</span><span class="g-def">The recognition that health problems are embedded in complex, interconnected systems. Effective public health responses address multiple system levels simultaneously rather than single causes.</span></div>
+      <div class="g-item"><span class="g-term">Systems Perspective in Public Health</span><span class="g-def">The recognition that health problems are embedded in complex, interconnected systems. Effective responses address multiple system levels simultaneously rather than single causes.</span></div>
     </div>
   </div>
 </div>
 
-<main>
+<main id="main-content">
 
-  <!-- WELCOME -->
-  <div class="screen active" id="screen-welcome" aria-label="Welcome">
+  <!-- ══ WELCOME SCREEN ════════════════════════════════════ -->
+  <section class="screen active" id="screen-welcome" role="region" aria-labelledby="welcome-heading">
     <div class="card">
       <span class="badge">Learning Objectives 1, 2, 8, 9</span>
-      <h1 class="welcome-title">Where does health really come from?</h1>
-      <p class="welcome-desc">The conditions where people are born, grow, live, work, and age have a greater influence on health than medical care alone. These social determinants of health (SDOH) explain why ZIP code is often a better predictor of health than genetic code.<br><br>Work through <strong>8 community case studies</strong> and apply the five SDOH domains, the Public Health 3.0 framework, and Healthy People 2030 goals to real health problems.</p>
-      <div class="lo-box">
+      <h1 class="welcome-title" id="welcome-heading">Where does health really come from?</h1>
+      <p class="welcome-desc">The conditions where people are born, grow, live, work, and age have a greater influence on health than medical care alone. These social determinants of health explain why ZIP code is often a better predictor of health than genetic code.<br><br>Work through <strong>8 community case studies</strong> and apply the five SDOH domains, the Public Health 3.0 framework, and Healthy People 2030 goals to real health problems.</p>
+
+      <div class="lo-box" role="note" aria-label="Learning objectives covered">
         <div class="lo-label">Reading Learning Objectives Covered</div>
         <p>Describe public health from a population health perspective. Discuss the systems perspective in public health. Discuss national health objectives from Healthy People 2030. Discuss social determinants of health in the context of the national health agenda.</p>
       </div>
+
+      <!-- FIX: removed em dash from label text -->
       <div class="project-prompt" role="note" aria-label="Health Advocacy Project prompt">
-        <div class="project-prompt-label">&#127775; Health Advocacy Project &mdash; Before You Begin</div>
+        <div class="project-prompt-label">Health Advocacy Project: Before You Begin</div>
         <p>Keep your project issue or target population in mind as you work through these scenarios. Every SDOH domain you encounter may be relevant to your chosen health topic. At the end you will have a structured opportunity to connect what you learned directly to each stage of your project.</p>
       </div>
-      <div class="context-box" role="note" aria-label="2026 Policy Context">
-        <div class="context-label">&#9888; 2026 Policy Context &mdash; What Has Changed</div>
-        <p class="context-item"><strong>CDC Lost Approximately 24% of Its Workforce in 2025:</strong> Through DOGE-directed reductions, earlier layoffs, and voluntary early retirement offers, roughly one in four CDC employees was gone by late 2025. Programs eliminated include the Office of Minority Health, the childhood lead poisoning prevention division, and the Epidemic Intelligence Service officer program that investigated disease outbreaks.</p>
-        <p class="context-item"><strong>$11.4 Billion Clawed Back from States (March 2025):</strong> HHS rescinded $11.4 billion in public health grants to states and localities, including funds for epidemiology and laboratory capacity, vaccination programs, and community health worker initiatives. About 80% of CDC's domestic budget normally flows to states, so federal cuts are directly local cuts.</p>
-        <p class="context-item"><strong>FY 2026 Budget Would Cut CDC by 53%:</strong> The administration's proposed FY 2026 budget would reduce CDC funding by more than half compared to FY 2024. Over 100 public health programs would be eliminated. These cuts directly affect the programs that address each of the five SDOH domains covered in this activity.</p>
-      </div>
-      <label class="field-label" for="student-name">Your Name <span class="field-hint">(optional &mdash; for your records)</span></label>
-      <input class="name-input" type="text" id="student-name" placeholder="First Last" autocomplete="name">
-      <button class="btn btn-primary" onclick="startApp()">Begin Case Studies &rsaquo;</button>
-    </div>
-  </div>
 
-  <!-- SCENARIO -->
-  <div class="screen" id="screen-scenario" aria-label="Scenario">
-    <div class="progress-wrap" aria-label="Progress">
-      <div class="progress-meta">
+      <!-- FIX: removed em dash from label text -->
+      <div class="context-box" role="note" aria-label="2026 Policy Context">
+        <div class="context-label">2026 Policy Context: What Has Changed</div>
+        <p class="context-item"><strong>CDC Lost Approximately 25% of Its Workforce in 2025:</strong> Through DOGE-directed reductions, layoffs, and voluntary early retirement offers, roughly one in four CDC employees was gone by the end of 2025, totaling more than 3,000 workers including over 1,000 scientists, physicians, and public health specialists. Programs eliminated include the Office of Minority Health, the childhood lead poisoning prevention division, and the Epidemic Intelligence Service officer program.</p>
+        <p class="context-item"><strong>$11.4 Billion Clawed Back from States in March 2025:</strong> HHS rescinded $11.4 billion in public health grants to states and localities, including funds for epidemiology and laboratory capacity, vaccination programs, and community health worker initiatives. About 80% of CDC's domestic budget normally flows to states, so federal cuts are directly local cuts.</p>
+        <p class="context-item"><strong>FY 2026 Budget Would Cut CDC by 53%:</strong> The administration's proposed FY 2026 budget would reduce CDC funding by more than half compared to FY 2024. Over 100 public health programs would be eliminated. These cuts directly affect the programs that address each of the five SDOH domains covered in this activity. Source: Trust for America's Health, September 2025.</p>
+      </div>
+
+      <label class="field-label" for="student-name">
+        Your Name <span class="field-hint">(optional, for your records)</span>
+      </label>
+      <input class="name-input" type="text" id="student-name"
+             placeholder="First Last" autocomplete="name"
+             aria-describedby="name-hint">
+      <span id="name-hint" class="sr-only">Optional. Your name will appear on the results screen.</span>
+
+      <button class="btn btn-primary" onclick="startApp()">Begin Case Studies &#8250;</button>
+    </div>
+  </section>
+
+  <!-- ══ SCENARIO SCREEN ═══════════════════════════════════ -->
+  <section class="screen" id="screen-scenario" role="region" aria-labelledby="s-title">
+
+    <div class="progress-wrap">
+      <div class="progress-meta" aria-hidden="true">
         <span id="prog-label">Scenario 1 of 8</span>
         <span id="prog-pct">0%</span>
       </div>
-      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progress through scenarios">
+      <div class="progress-bar"
+           role="progressbar"
+           aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+           aria-label="Scenario progress">
         <div class="progress-fill" id="progress-fill" style="width:0%"></div>
       </div>
     </div>
+
     <div class="card">
-      <div class="scenario-label" id="s-label"></div>
-      <h2 class="scenario-title" id="s-title"></h2>
+      <p class="scenario-label" id="s-label" aria-hidden="true"></p>
+      <h2 class="scenario-title" id="s-title" tabindex="-1"></h2>
       <div id="s-domain-tag"></div>
+
       <div class="situation-box">
-        <div class="situation-label">Community Situation</div>
-        <p class="situation-text" id="s-situation"></p>
+        <p class="situation-label" id="situation-label-id">Community Situation</p>
+        <p class="situation-text" id="s-situation" aria-labelledby="situation-label-id"></p>
       </div>
+
       <p class="question-text" id="s-question"></p>
-      <div class="choices" id="s-choices" role="group" aria-label="Answer choices"></div>
+
+      <!-- FIX: role="radiogroup" + aria-labelledby on question, replaces role="group" -->
+      <div class="choices"
+           id="s-choices"
+           role="radiogroup"
+           aria-labelledby="s-question"></div>
+
       <div class="submit-row">
-        <button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()" disabled>Check My Answer</button>
-        <span class="submit-hint" id="submit-hint">Select an answer above to continue.</span>
+        <button class="btn btn-primary" id="btn-submit"
+                onclick="submitAnswer()" disabled
+                aria-describedby="submit-hint">Check My Answer</button>
+        <span class="submit-hint" id="submit-hint" aria-live="polite">Select an answer above to continue.</span>
       </div>
-      <div class="feedback" id="feedback-box" role="alert">
+
+      <!-- FIX: role="alert" correctly announces feedback immediately -->
+      <div class="feedback" id="feedback-box" role="alert" aria-atomic="true">
         <div class="verdict" id="fb-verdict"></div>
         <p class="explain" id="fb-explain"></p>
         <div class="key-term-card" id="fb-term"></div>
         <div id="fb-update"></div>
         <div class="next-row">
-          <button class="btn btn-primary" id="btn-next" onclick="nextScenario()">Next Scenario &rsaquo;</button>
+          <button class="btn btn-primary" id="btn-next" onclick="nextScenario()">Next Scenario &#8250;</button>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- RESULTS -->
-  <div class="screen" id="screen-results" aria-label="Results">
+  <!-- ══ RESULTS SCREEN ════════════════════════════════════ -->
+  <section class="screen" id="screen-results" role="region" aria-labelledby="results-heading">
     <div class="card">
+
       <div class="results-hero">
-        <div class="score-ring" aria-hidden="true">
+        <div class="score-ring" role="img" id="score-ring-label" aria-label="Score display">
           <span class="score-num" id="score-num"></span>
           <span class="score-sub">out of 8</span>
         </div>
-        <h2 class="results-title" id="results-title"></h2>
+        <h2 class="results-title" id="results-heading" tabindex="-1"></h2>
         <p class="results-msg"  id="results-msg"></p>
         <p class="results-name" id="results-name"></p>
       </div>
@@ -313,34 +373,44 @@
       <ul class="summary-list" id="summary-list" aria-label="Summary of your answers"></ul>
 
       <!-- Project Connection -->
-      <div class="project-section" aria-label="Health Advocacy Project Connection">
-        <h3 class="project-section-title">&#127775; Health Advocacy Project Connection</h3>
+      <div class="project-section" role="region" aria-labelledby="project-conn-heading">
+        <h3 class="project-section-title" id="project-conn-heading">Health Advocacy Project Connection</h3>
         <p class="project-section-sub">Use these prompts to connect what you just learned to your project. Type your notes in the box below and screenshot or print this page for your records.</p>
 
+        <!-- FIX: removed em dashes from stage labels -->
         <div class="stage-card">
-          <div class="stage-label">Stage 1 &mdash; Issue Identification</div>
+          <div class="stage-label">Stage 1: Issue Identification</div>
           <p class="stage-question">Which of the five SDOH domains does your project issue or target population primarily live in? Does this activity change or deepen how you would describe the root cause of the health problem you are addressing? If your issue touches multiple domains, which is the most upstream driver?</p>
         </div>
 
         <div class="stage-card">
-          <div class="stage-label">Stage 2 &mdash; Article Reviews</div>
-          <p class="stage-question">Search terms for your literature review: pair your health topic with the SDOH domain most relevant to it. Examples: "food desert AND type 2 diabetes," "neighborhood environment AND childhood asthma," "structural racism AND maternal mortality," "education attainment AND substance use disorder." What specific SDOH factor from this activity gives you a new peer-reviewed search angle you had not considered before?</p>
+          <div class="stage-label">Stage 2: Article Reviews</div>
+          <p class="stage-question">Search terms for your literature review: pair your health topic with the SDOH domain most relevant to it. Examples include food desert and type 2 diabetes, neighborhood environment and childhood asthma, structural racism and maternal mortality, or education attainment and substance use disorder. What specific SDOH factor from this activity gives you a new peer-reviewed search angle you had not considered before?</p>
         </div>
 
         <div class="stage-card">
-          <div class="stage-label">Stage 3 &mdash; Senator Letter</div>
+          <div class="stage-label">Stage 3: Senator Letter</div>
           <p class="stage-question">The 2025 CDC cuts eliminated programs in nearly every SDOH domain. If your issue is affected by any of the following, you can cite them by name in your policy letter: the Office of Minority Health (Social and Community Context), the childhood lead poisoning prevention program (Neighborhood and Built Environment), the Epidemic Intelligence Service (Health and Health Care), immunization grants to states (Health and Health Care), or the Prevention and Public Health Fund. Which specific program cut most directly harms the population your project addresses?</p>
         </div>
 
         <div class="stage-card">
-          <div class="stage-label">Stage 4 &mdash; Presentation</div>
+          <div class="stage-label">Stage 4: Presentation</div>
           <p class="stage-question">Which of the 8 scenarios in this activity most closely mirrors the community situation in your project? What data point, SDOH framework diagram, or Public Health 3.0 cross-sector approach could you use in your presentation to explain why your policy recommendation addresses root causes rather than just symptoms?</p>
         </div>
 
         <label class="notes-label" for="project-notes">Your Notes</label>
-        <textarea class="notes-area" id="project-notes" placeholder="Type your project reflection notes here. Screenshot or print this page to keep them." aria-label="Project reflection notes"></textarea>
+        <textarea class="notes-area" id="project-notes"
+                  placeholder="Type your project reflection notes here. Screenshot or print this page to keep them."
+                  aria-label="Project reflection notes"></textarea>
+
         <span class="project-link">
-          Project guidelines: <a href="https://blackboard.towson.edu" target="_blank" rel="noopener">Health Policy Advocacy Project (Blackboard)</a>
+          Project guidelines:
+          <a href="https://blackboard.towson.edu"
+             target="_blank"
+             rel="noopener noreferrer"
+             aria-label="Health Policy Advocacy Project on Blackboard (opens in new tab)">
+            Health Policy Advocacy Project (opens in new tab)
+          </a>
         </span>
       </div>
 
@@ -349,39 +419,45 @@
         <button class="btn btn-outline" onclick="window.print()">Print Results</button>
       </div>
     </div>
-  </div>
+  </section>
 
 </main>
 
+<footer role="contentinfo" style="background:var(--navy);color:#C8D8DC;padding:1rem 1.5rem;font-family:var(--font-body);font-size:.875rem;text-align:center;">
+  HLTH 207: Public and Population Health &nbsp;&middot;&nbsp; Towson University &nbsp;&middot;&nbsp; Dr. Wendy Whitner
+</footer>
+
 <script>
+'use strict';
+
 var SCENARIOS = [
   {
     title: "Food Desert and Chronic Disease",
     domain: "SDOH Domain 4: Neighborhood and Built Environment",
     situation: "A rural county in West Virginia has the highest rate of type 2 diabetes in the state. The county has no full-service grocery store within 20 miles. Most residents shop at gas stations and dollar stores for food. Median household income is $28,000. The local health department wants to design a public health intervention.",
-    question: "Which SDOH domain is the PRIMARY structural driver of the diabetes burden in this community?",
+    question: "Which SDOH domain is the primary structural driver of the diabetes burden in this community?",
     choices: [
-      { letter: "A", text: "Health and Health Care — limited access to physicians and diabetes medication management." },
-      { letter: "B", text: "Neighborhood and Built Environment — no access to healthy foods within a reasonable distance makes healthy eating structurally impossible.", correct: true },
-      { letter: "C", text: "Social and Community Context — lack of social support networks for behavior change." }
+      { letter: "A", text: "Health and Health Care: limited access to physicians and diabetes medication management." },
+      { letter: "B", text: "Neighborhood and Built Environment: no access to healthy foods within a reasonable distance makes healthy eating structurally impossible.", correct: true },
+      { letter: "C", text: "Social and Community Context: lack of social support networks for behavior change." }
     ],
     explanation: "While healthcare access and social factors both contribute, the absence of a full-service grocery store is a classic food desert, a Neighborhood and Built Environment problem. It makes healthy eating structurally impossible regardless of individual knowledge or motivation. Healthy People 2030 includes food access as a leading health indicator precisely because the built environment shapes health outcomes before any individual choice is made. A Public Health 3.0 response would partner with transportation agencies, food distributors, and economic development offices to address the structural cause.",
     keyTerm: { term: "Neighborhood and Built Environment (SDOH Domain 4)", def: "Where people live shapes how healthy they can be. Food deserts, unsafe housing, pollution, and lack of transportation are built environment factors that determine health outcomes independently of individual behavior." },
-    context2026: "2026 Update: The CDC's Division of Nutrition, Physical Activity, and Obesity, which funded community-based food access programs, faced significant cuts in 2025. Many state health departments that relied on CDC grants to address food insecurity in rural communities received clawback notices in March 2025."
+    context2026: "The CDC's Division of Nutrition, Physical Activity, and Obesity, which funded community-based food access programs, faced significant cuts in 2025. Many state health departments that relied on CDC grants to address food insecurity in rural communities received funding clawback notices in March 2025."
   },
   {
     title: "Childhood Lead Poisoning",
-    domain: "SDOH Domains 4 and 1: Neighborhood and Built Environment + Economic Stability",
+    domain: "SDOH Domains 4 and 1: Neighborhood and Built Environment plus Economic Stability",
     situation: "A mid-sized city in Michigan has elevated blood lead levels in 14% of children under 5 in one zip code. The affected neighborhood has housing built before 1978 when lead paint was banned. Most homes are owned by absentee landlords. Median household income is $22,000. Lead exposure causes permanent cognitive damage and has no safe level.",
-    question: "Under the 3 core functions of public health, what is the FIRST step the local health department should take?",
+    question: "Under the 3 core functions of public health, what is the first step the local health department should take?",
     choices: [
-      { letter: "A", text: "Assurance — immediately fund a lead paint removal program for affected homes." },
-      { letter: "B", text: "Policy Development — draft legislation requiring landlords to remediate lead hazards." },
-      { letter: "C", text: "Assessment — collect and analyze data to confirm the scope of lead exposure, map affected households, and identify the source.", correct: true }
+      { letter: "A", text: "Assurance: immediately fund a lead paint removal program for affected homes." },
+      { letter: "B", text: "Policy Development: draft legislation requiring landlords to remediate lead hazards." },
+      { letter: "C", text: "Assessment: collect and analyze data to confirm the scope of lead exposure, map affected households, and identify the source.", correct: true }
     ],
     explanation: "Assessment is always the first core function. Before Assurance or Policy Development can be effective or defensible, the health department must confirm and characterize the problem through systematic data collection. Without assessment data, any intervention risks misallocating resources. The SDOH drivers here include Neighborhood and Built Environment (pre-1978 housing quality) and Economic Stability (low income preventing families from relocating or demanding repairs). Assessment informs which of the 10 Essential Services to deploy next.",
     keyTerm: { term: "Core Functions of Public Health", def: "Three functions defined by the IOM: Assessment (collecting health data), Assurance (ensuring health services exist), and Policy Development (evidence-based policy guidance). Assessment always comes first because it determines what Assurance and Policy Development should target." },
-    context2026: "2026 Update: The CDC's Childhood Lead Poisoning Prevention Program was eliminated in the 2025 DOGE workforce reductions. This program provided technical assistance, data analysis, and funding to state and local health departments for exactly this type of Assessment work. Without federal support, local health departments must conduct this critical first function with fewer resources."
+    context2026: "The CDC's Childhood Lead Poisoning Prevention Program was eliminated in the 2025 workforce reductions. This program provided technical assistance, data analysis, and funding to state and local health departments for exactly this type of Assessment work. Without federal support, local health departments must conduct this critical first function with fewer resources and no national coordination."
   },
   {
     title: "Education, Income, and Opioid Risk",
@@ -389,13 +465,13 @@ var SCENARIOS = [
     situation: "A rural Appalachian county has a high school graduation rate of 61%, well below the 87% national average. Research consistently shows that people without a high school diploma are significantly more likely to develop opioid use disorder than those with a college degree. The county's opioid overdose rate is three times the national average.",
     question: "Which Healthy People 2030 SDOH domain most directly addresses the connection between educational attainment and this health outcome?",
     choices: [
-      { letter: "A", text: "Social and Community Context — peer influence and community norms around substance use." },
-      { letter: "B", text: "Economic Stability — unemployment leading to despair and substance use." },
-      { letter: "C", text: "Education Access and Quality — educational attainment directly predicts health literacy, income, employment, and risk for substance use disorders.", correct: true }
+      { letter: "A", text: "Social and Community Context: peer influence and community norms around substance use." },
+      { letter: "B", text: "Economic Stability: unemployment leading to despair and substance use." },
+      { letter: "C", text: "Education Access and Quality: educational attainment directly predicts health literacy, income, employment, and risk for substance use disorders.", correct: true }
     ],
-    explanation: "Education Access and Quality is a foundational SDOH because it creates a cascade of downstream effects. Higher education is associated with better health literacy, higher income, better employment with health benefits, and significantly lower risk for substance use disorders. These are not correlations — they are causal pathways. Healthy People 2030 includes high school graduation and educational attainment as leading health indicators precisely because they predict so many health outcomes across the lifespan. Addressing this county's opioid crisis through education is an upstream, Public Health 3.0 approach.",
+    explanation: "Education Access and Quality is a foundational SDOH because it creates a cascade of downstream effects. Higher education is associated with better health literacy, higher income, better employment with health benefits, and significantly lower risk for substance use disorders. These are not correlations; they are causal pathways. Healthy People 2030 includes high school graduation and educational attainment as leading health indicators precisely because they predict so many health outcomes across the lifespan. Addressing this county's opioid crisis through education is an upstream, Public Health 3.0 approach.",
     keyTerm: { term: "Education Access and Quality (SDOH Domain 2)", def: "Educational attainment is one of the strongest predictors of health outcomes. It shapes income, employment, health literacy, and access to benefits. Improving educational attainment is one of the most powerful upstream public health interventions available." },
-    context2026: null
+    context2026: "The Substance Abuse and Mental Health Services Administration (SAMHSA), which funds opioid treatment grants, prevention education, and crisis services in communities like this one, was proposed for elimination in the March 2025 HHS restructuring. Its functions were to be absorbed into a new Administration for a Healthy America with reduced budget and independence. TFAH's Pain in the Nation 2025 report documented that alcohol, drug, and suicide deaths continue to devastate rural communities while federal support is being cut."
   },
   {
     title: "Racial Disparities in Maternal Mortality",
@@ -403,45 +479,45 @@ var SCENARIOS = [
     situation: "A hospital system in a major city finds that Black women die from pregnancy-related complications at nearly three times the rate of white women in their service area. The disparity persists even after controlling for income and insurance status. Interviews with Black patients reveal that their pain reports are routinely dismissed by providers, and many report feeling that their concerns are not taken seriously.",
     question: "Which SDOH domain most directly explains why the disparity persists even after controlling for income and insurance?",
     choices: [
-      { letter: "A", text: "Economic Stability — Black women have lower average household wealth than white women." },
-      { letter: "B", text: "Health and Health Care — inadequate prenatal care access in Black communities." },
-      { letter: "C", text: "Social and Community Context — structural racism and provider bias create differential quality of care that persists across income and insurance levels.", correct: true }
+      { letter: "A", text: "Economic Stability: Black women have lower average household wealth than white women." },
+      { letter: "B", text: "Health and Health Care: inadequate prenatal care access in Black communities." },
+      { letter: "C", text: "Social and Community Context: structural racism and provider bias create differential quality of care that persists across income and insurance levels.", correct: true }
     ],
     explanation: "This scenario illustrates that SDOH disparities cannot always be explained by income or insurance alone. Social and Community Context encompasses structural racism, discrimination, and differential treatment within healthcare settings. Research consistently shows that provider implicit bias contributes to under-treatment of Black patients' pain and symptoms. The fact that the disparity persists after controlling for income and insurance points to the Social and Community Context domain as the primary driver. Healthy People 2030 explicitly names the elimination of health disparities as an overarching goal, recognizing that equity cannot be achieved by addressing only economic factors.",
     keyTerm: { term: "Social and Community Context (SDOH Domain 5)", def: "Encompasses social cohesion, support systems, discrimination, incarceration, and community engagement. Structural racism is a measurable SDOH that affects health outcomes independently of income, insurance, or other factors." },
-    context2026: "2026 Update: The CDC Office of Minority Health, which tracked health disparities by race and funded programs to reduce maternal mortality in communities of color, was eliminated in the 2025 DOGE workforce reductions. Healthy People 2030's ability to track and report on racial disparities in maternal mortality depends on the data systems and staff that were cut."
+    context2026: "The CDC Office of Minority Health, which tracked health disparities by race and funded programs to reduce maternal mortality in communities of color, was eliminated in the 2025 workforce reductions. Healthy People 2030's ability to track and report on racial disparities in maternal mortality depends on the data systems and staff that were cut. The federal data collection infrastructure that makes these disparities visible is at risk."
   },
   {
     title: "Immigrant Community and Preventive Care",
     domain: "SDOH Domain 5: Social and Community Context",
     situation: "A federally qualified health center in a Texas border county serves a large mixed-status immigrant population. Patients increasingly avoid seeking care even for serious symptoms because they fear that visiting a health facility could lead to immigration enforcement. Preventable hospitalizations have increased 31% in one year. The health educator wants to design a community outreach program.",
-    question: "Which SDOH domain creates the PRIMARY structural barrier to preventive care in this community?",
+    question: "Which SDOH domain creates the primary structural barrier to preventive care in this community?",
     choices: [
-      { letter: "A", text: "Health and Health Care — lack of health insurance among undocumented immigrants limits access." },
-      { letter: "B", text: "Neighborhood and Built Environment — geographic distance from healthcare facilities in a rural border region." },
-      { letter: "C", text: "Social and Community Context — fear of discrimination and enforcement creates a structural barrier to accessing available care regardless of proximity or coverage.", correct: true }
+      { letter: "A", text: "Health and Health Care: lack of health insurance among undocumented immigrants limits access." },
+      { letter: "B", text: "Neighborhood and Built Environment: geographic distance from healthcare facilities in a rural border region." },
+      { letter: "C", text: "Social and Community Context: fear of discrimination and enforcement creates a structural barrier to accessing available care regardless of proximity or coverage.", correct: true }
     ],
-    explanation: "While insurance and geography are real factors, fear of discrimination and enforcement is an SDOH in the Social and Community Context domain. When people cannot safely access care they may be entitled to, the barrier is structural and social rather than geographic or financial. Public Health 3.0 explicitly calls for addressing these upstream, contextual factors rather than treating only downstream outcomes. Effective intervention requires community trust-building, partnership with community organizations, and policy advocacy — not just expanding clinic hours or increasing outreach materials.",
+    explanation: "While insurance and geography are real factors, fear of discrimination and enforcement is an SDOH in the Social and Community Context domain. When people cannot safely access care they may be entitled to, the barrier is structural and social rather than geographic or financial. Public Health 3.0 explicitly calls for addressing these upstream contextual factors rather than treating only downstream outcomes. Effective intervention requires community trust-building, partnership with community organizations, and policy advocacy, not just expanding clinic hours or increasing outreach materials.",
     keyTerm: { term: "Public Health 3.0", def: "A model emphasizing upstream, cross-sector interventions that address the social and structural determinants of health. Public Health 3.0 requires partnerships beyond the health sector, including housing, education, criminal justice, and community organizations." },
-    context2026: null
+    context2026: "The Health Resources and Services Administration (HRSA), which funds over 1,400 federally qualified health centers serving 30 million patients with limited access to care, was proposed for elimination in the March 2025 HHS restructuring. These health centers are the primary safety-net providers for immigrant and low-income communities in border regions. Eliminating HRSA would remove the funding infrastructure that makes centers like this one possible."
   },
   {
     title: "Environmental Hazard and Essential Services",
     domain: "SDOH Domain 4: Neighborhood and Built Environment",
     situation: "A county health department receives reports of elevated asthma rates in a neighborhood adjacent to an industrial facility. Air quality monitoring confirms particulate matter levels exceeding EPA standards on more than 40 days per year. Most residents are low-income renters who cannot afford to relocate. The health department has both the monitoring data and documented EPA standard violations.",
-    question: "Under the 10 Essential Public Health Services, which service is MOST immediately applicable once the data confirms an EPA violation?",
+    question: "Under the 10 Essential Public Health Services, which service is most immediately applicable once the data confirms an EPA violation?",
     choices: [
-      { letter: "A", text: "Essential Service 3 — Inform, educate, and empower people about health issues." },
-      { letter: "B", text: "Essential Service 6 — Enforce laws and regulations that protect health and ensure safety.", correct: true },
-      { letter: "C", text: "Essential Service 4 — Mobilize community partnerships to identify and solve health problems." }
+      { letter: "A", text: "Essential Service 3: Inform, educate, and empower people about health issues." },
+      { letter: "B", text: "Essential Service 6: Enforce laws and regulations that protect health and ensure safety.", correct: true },
+      { letter: "C", text: "Essential Service 4: Mobilize community partnerships to identify and solve health problems." }
     ],
     explanation: "When air quality monitoring confirms EPA standards are being violated, the most immediately applicable essential service is enforcement of laws and regulations. The health department has the evidence and the legal basis to act. Relying solely on education (Service 3) or community partnership building (Service 4) when a documented regulatory violation exists would be an inadequate response. The SDOH driver is Neighborhood and Built Environment (air quality and housing quality), compounded by Economic Stability since residents cannot afford to relocate. Enforcement directly addresses the root cause.",
     keyTerm: { term: "Essential Public Health Services", def: "Ten services organized under the 3 core functions: Monitor, Diagnose, Inform, Mobilize, Develop Policy, Enforce, Link, Assure Competency, Evaluate, and Research. Essential Service 6 (Enforce) is activated when documented violations of health-protective laws are confirmed." },
-    context2026: "2026 Update: The CDC's Division of Environmental Health Science and Practice was among the offices eliminated in the 2025 DOGE workforce reductions. This division provided technical assistance to state and local health departments on exactly this type of environmental enforcement work, including air quality monitoring and lead exposure surveillance."
+    context2026: "The CDC's Division of Environmental Health Science and Practice was among the offices eliminated in the 2025 workforce reductions. This division provided technical assistance to state and local health departments on environmental enforcement work, including air quality monitoring and lead exposure surveillance. The National Institute for Occupational Safety and Health (NIOSH), which enforces workplace safety standards for 160 million workers, was also proposed for elimination in the FY 2026 budget."
   },
   {
     title: "Public Health 3.0 in Action",
-    domain: "All Five SDOH Domains — Cross-Sector Response",
+    domain: "All Five SDOH Domains: Cross-Sector Response",
     situation: "A county health officer in rural North Carolina wants to address the county's high rate of cardiovascular disease. She could pursue traditional clinical interventions or propose a Public Health 3.0 approach. The county has high unemployment, limited grocery access, aging housing stock, and no public transportation system.",
     question: "Which response best describes a Public Health 3.0 approach to cardiovascular disease in this county?",
     choices: [
@@ -449,48 +525,68 @@ var SCENARIOS = [
       { letter: "B", text: "Hire more public health nurses to conduct home visits and blood pressure monitoring in high-risk neighborhoods." },
       { letter: "C", text: "Form cross-sector partnerships with employers, schools, transportation agencies, food distributors, and housing authorities to address the economic, built environment, and social factors driving cardiovascular disease in the county.", correct: true }
     ],
-    explanation: "Public Health 3.0 is defined by upstream, cross-sector approaches that address social determinants of health rather than focusing primarily on clinical interventions. Options A and B are valuable public health activities but they operate within the existing healthcare model, addressing downstream outcomes. Option C is Public Health 3.0 because it engages the conditions where people live, work, and learn. The county's cardiovascular disease burden has roots in all five SDOH domains: Economic Stability (unemployment), Neighborhood and Built Environment (food access, housing, no transportation), and beyond. Addressing root causes requires partners who control those conditions.",
+    explanation: "Public Health 3.0 is defined by upstream, cross-sector approaches that address social determinants of health rather than focusing primarily on clinical interventions. Options A and B are valuable public health activities but they operate within the existing healthcare model, addressing downstream outcomes. Option C is Public Health 3.0 because it engages the conditions where people live, work, and learn. The county's cardiovascular disease burden has roots in all five SDOH domains. Addressing root causes requires partners who control those conditions.",
     keyTerm: { term: "Public Health 3.0", def: "The vision that public health leaders should function as chief health strategists in their communities, building cross-sector partnerships to address upstream social, economic, and environmental determinants of health rather than solely managing downstream disease." },
-    context2026: "2026 Update: The Prevention and Public Health Fund, the primary federal funding mechanism for exactly this kind of cross-sector, community-based Public Health 3.0 work, is among the programs threatened by the proposed FY 2026 CDC budget cuts. Eliminating it would remove one of the few flexible funding streams that local health departments use to build the partnerships Public Health 3.0 requires."
+    context2026: "The Prevention and Public Health Fund, the primary federal funding mechanism for cross-sector, community-based Public Health 3.0 work, is among the programs threatened by the proposed FY 2026 CDC budget cuts. It is one of the few flexible funding streams that local health departments use to build the partnerships Public Health 3.0 requires. Eliminating it would leave rural health officers like this one without the infrastructure to pursue upstream solutions."
   },
   {
     title: "Healthy People 2030 and Health Equity",
-    domain: "SDOH Domain 1: Economic Stability + Health Equity Framework",
+    domain: "SDOH Domain 1: Economic Stability plus Health Equity Framework",
     situation: "A state health department reviews its Healthy People 2030 progress data. The state's overall childhood obesity rate declined by 6% over five years. However, the obesity rate among children in households below the federal poverty line increased by 19% over the same period. The state health officer must decide how to characterize this data in her annual report.",
     question: "Under Healthy People 2030's overarching goals, what does this data pattern indicate?",
     choices: [
       { letter: "A", text: "The state is making progress. The overall rate is declining, which meets the Healthy People 2030 direction-of-change target." },
-      { letter: "B", text: "The data shows worsening health disparities, which directly conflicts with Healthy People 2030's goal to eliminate disparities and achieve health equity — even though the overall rate improved.", correct: true },
+      { letter: "B", text: "The data shows worsening health disparities, which directly conflicts with Healthy People 2030's goal to eliminate disparities and achieve health equity, even though the overall rate improved.", correct: true },
       { letter: "C", text: "The data is inconclusive. Income-related variation in health outcomes is expected and does not necessarily constitute a disparity requiring action." }
     ],
     explanation: "Healthy People 2030 is explicit that aggregate improvement is not sufficient if disparities between population groups are widening. One of its five overarching goals is to eliminate health disparities, achieve health equity, and attain health literacy. When the overall childhood obesity rate declines while the rate among low-income children increases by 19%, the disparity is worsening. By Healthy People 2030's own framework this is a failure, regardless of the aggregate trend. Health equity requires that all groups improve, not just the average. The state health officer must report the disparity, not just the overall rate.",
-    keyTerm: { term: "Healthy People 2030", def: "Five overarching goals include: attain healthy lives free of preventable disease, eliminate health disparities and achieve health equity, create supportive environments, promote healthy development across all life stages, and engage leadership across multiple sectors. Equity is not optional — it is a core goal." },
-    context2026: "2026 Update: The federal data collection systems that track health disparities by income, race, and geography — the systems Healthy People 2030 relies on — depend on CDC staff and infrastructure. Cuts to CDC in 2025 included epidemiologists, data analysts, and surveillance program staff. Without disaggregated data tracked at the federal level, it becomes structurally impossible to identify or hold states accountable for widening health disparities."
+    keyTerm: { term: "Healthy People 2030", def: "Five overarching goals include: attain healthy lives free of preventable disease, eliminate health disparities and achieve health equity, create supportive environments, promote healthy development across all life stages, and engage leadership across multiple sectors. Equity is not optional. It is a core goal." },
+    context2026: "The federal data collection systems that track health disparities by income, race, and geography, the very systems Healthy People 2030 relies on, depend on CDC staff and infrastructure. Cuts to CDC in 2025 included epidemiologists, data analysts, and surveillance program staff. Without disaggregated data tracked at the federal level, it becomes structurally impossible to identify or hold states accountable for widening health disparities. U.S. life expectancy reached a record high of 79 years in 2024 (CDC, January 2026), but still trails comparable countries by 3.7 years, a gap that remains hidden if we only report aggregate numbers."
   }
 ];
 
 var idx = 0, selected = null, submitted = false, results = [], studentName = "";
 
+// ── LIVE REGION ─────────────────────────────────────────
+function announce(msg) {
+  var lr = document.getElementById("live-region");
+  lr.textContent = "";
+  setTimeout(function() { lr.textContent = msg; }, 60);
+}
+
+// ── GLOSSARY ─────────────────────────────────────────────
 function toggleGlossary(btn) {
   var panel = document.getElementById("glossary-panel");
-  var open = panel.classList.toggle("open");
+  var open  = panel.classList.toggle("open");
   btn.setAttribute("aria-expanded", open);
   btn.textContent = open ? "Key Terms \u25b4" : "Key Terms \u25be";
+  announce(open ? "Key Terms panel opened." : "Key Terms panel closed.");
 }
 
+// ── SHOW SCREEN + FOCUS MANAGEMENT ───────────────────────
 function show(id) {
   document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
-  document.getElementById(id).classList.add("active");
+  var target = document.getElementById(id);
+  target.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
+  // FIX: move focus to first heading in new screen
+  var heading = target.querySelector("h1[tabindex], h2[tabindex], h2");
+  if (heading) {
+    if (!heading.getAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
+    setTimeout(function() { heading.focus(); }, 80);
+  }
 }
 
+// ── START ─────────────────────────────────────────────────
 function startApp() {
   studentName = document.getElementById("student-name").value.trim();
   idx = 0; results = []; selected = null; submitted = false;
   loadScenario();
   show("screen-scenario");
+  announce("Starting case studies. Scenario 1 of 8.");
 }
 
+// ── LOAD SCENARIO ─────────────────────────────────────────
 function loadScenario() {
   var s = SCENARIOS[idx];
   selected = null; submitted = false;
@@ -507,15 +603,21 @@ function loadScenario() {
   document.getElementById("s-question").textContent = s.question;
 
   var domainEl = document.getElementById("s-domain-tag");
-  domainEl.innerHTML = "<span class=\"domain-tag\">&#127760; " + s.domain + "</span>";
+  domainEl.innerHTML = '<span class="domain-tag"><span aria-hidden="true">&#127760;</span> ' + s.domain + "</span>";
 
+  // FIX: use role="radio" + aria-checked instead of aria-pressed
   var container = document.getElementById("s-choices");
   container.innerHTML = "";
+
   s.choices.forEach(function(c) {
     var btn = document.createElement("button");
     btn.className = "choice-btn";
-    btn.setAttribute("aria-pressed", "false");
-    btn.innerHTML = "<span class=\"letter-badge\" aria-hidden=\"true\">" + c.letter + "</span><span>" + c.text + "</span>";
+    btn.setAttribute("role", "radio");
+    btn.setAttribute("aria-checked", "false");
+    btn.dataset.letter = c.letter;
+    btn.innerHTML =
+      '<span class="letter-badge" aria-hidden="true">' + c.letter + '</span>' +
+      '<span>' + c.text + '</span>';
     btn.onclick = function() { selectChoice(c.letter, btn); };
     container.appendChild(btn);
   });
@@ -523,66 +625,98 @@ function loadScenario() {
   document.getElementById("btn-submit").disabled = true;
   document.getElementById("submit-hint").textContent = "Select an answer above to continue.";
   document.getElementById("feedback-box").className = "feedback";
-  document.getElementById("btn-next").textContent = idx < SCENARIOS.length - 1 ? "Next Scenario \u203a" : "See My Results \u203a";
+  document.getElementById("fb-update").className = "";
+  document.getElementById("fb-update").innerHTML = "";
+  document.getElementById("btn-next").textContent =
+    idx < SCENARIOS.length - 1 ? "Next Scenario \u203a" : "See My Results \u203a";
 }
 
+// ── SELECT CHOICE ─────────────────────────────────────────
 function selectChoice(letter, btn) {
   if (submitted) return;
   selected = letter;
-  document.querySelectorAll(".choice-btn").forEach(function(b) { b.classList.remove("selected"); b.setAttribute("aria-pressed", "false"); });
-  btn.classList.add("selected");
-  btn.setAttribute("aria-pressed", "true");
+  document.querySelectorAll(".choice-btn").forEach(function(b) {
+    b.setAttribute("aria-checked", "false");
+  });
+  btn.setAttribute("aria-checked", "true");
   document.getElementById("btn-submit").disabled = false;
   document.getElementById("submit-hint").textContent = "";
 }
 
+// ── SUBMIT ────────────────────────────────────────────────
 function submitAnswer() {
   if (!selected || submitted) return;
   submitted = true;
 
-  var s = SCENARIOS[idx];
+  var s       = SCENARIOS[idx];
   var correct = s.choices.filter(function(c) { return c.correct; })[0];
   var isRight = selected === correct.letter;
   results.push({ correct: isRight, chosenLetter: selected, scenario: s });
 
-  document.querySelectorAll(".choice-btn").forEach(function(btn, i) {
+  document.querySelectorAll(".choice-btn").forEach(function(btn) {
+    var letter = btn.dataset.letter;
+    var choice = s.choices.filter(function(c) { return c.letter === letter; })[0];
     btn.disabled = true;
     btn.classList.add("revealed");
-    if (s.choices[i].correct) btn.classList.add("correct");
-    else if (s.choices[i].letter === selected) btn.classList.add("incorrect");
+    // FIX: add text icon to badge (not color-only feedback)
+    var badge = btn.querySelector(".letter-badge");
+    if (choice.correct) {
+      btn.classList.add("correct");
+      badge.textContent = "\u2713"; // checkmark
+      badge.setAttribute("aria-label", "Correct answer");
+    } else if (letter === selected) {
+      btn.classList.add("incorrect");
+      badge.textContent = "\u2717"; // X mark
+      badge.setAttribute("aria-label", "Your incorrect answer");
+    }
   });
 
   var fb = document.getElementById("feedback-box");
   fb.className = "feedback show " + (isRight ? "correct-fb" : "incorrect-fb");
 
+  // FIX: removed em dash from verdict text
   document.getElementById("fb-verdict").innerHTML = isRight
-    ? "<span class=\"verdict-icon\" aria-hidden=\"true\">&#10003;</span> Correct!"
-    : "<span class=\"verdict-icon\" aria-hidden=\"true\">&#10007;</span> Not quite &mdash; the correct answer is <strong>" + correct.letter + "</strong>.";
+    ? '<span aria-hidden="true">&#10003;</span> Correct!'
+    : '<span aria-hidden="true">&#10007;</span> Not quite. The correct answer is <strong>' + correct.letter + '</strong>.';
 
   document.getElementById("fb-explain").textContent = s.explanation;
-  document.getElementById("fb-term").innerHTML = "<span class=\"kt-label\">Key Concept: " + s.keyTerm.term + " &mdash; </span><span class=\"kt-def\">" + s.keyTerm.def + "</span>";
+  document.getElementById("fb-term").innerHTML =
+    '<span class="kt-label">Key Concept: ' + s.keyTerm.term + '. </span>' +
+    '<span class="kt-def">' + s.keyTerm.def + '</span>';
 
   var upd = document.getElementById("fb-update");
   if (s.context2026) {
     upd.className = "update-note";
-    upd.innerHTML = "<span class=\"update-label\">2026 Policy Context</span><span class=\"update-text\">" + s.context2026 + "</span>";
+    upd.innerHTML =
+      '<span class="update-label">2026 Policy Context</span>' +
+      '<span class="update-text">' + s.context2026 + '</span>';
   } else {
     upd.className = ""; upd.innerHTML = "";
   }
 
   document.getElementById("btn-submit").disabled = true;
   document.getElementById("submit-hint").textContent = "";
+  announce(isRight ? "Correct! Read the explanation below." : "Not quite. The correct answer is " + correct.letter + ". Read the explanation below.");
 }
 
+// ── NEXT ──────────────────────────────────────────────────
 function nextScenario() {
   idx++;
-  if (idx < SCENARIOS.length) { loadScenario(); } else { showResults(); }
+  if (idx < SCENARIOS.length) {
+    loadScenario();
+    announce("Scenario " + (idx + 1) + " of " + SCENARIOS.length + ".");
+  } else {
+    showResults();
+  }
 }
 
+// ── RESULTS ───────────────────────────────────────────────
 function showResults() {
   var score = results.filter(function(r) { return r.correct; }).length;
   document.getElementById("progress-fill").style.width = "100%";
+  document.querySelector(".progress-bar").setAttribute("aria-valuenow", 100);
   document.getElementById("score-num").textContent = score;
+  document.getElementById("score-ring-label").setAttribute("aria-label", "Score: " + score + " out of 8");
 
   var title, msg;
   if (score === 8)     { title = "Perfect Score!";  msg = "You can apply SDOH frameworks, core functions, and Healthy People 2030 goals to real community situations."; }
@@ -590,9 +724,11 @@ function showResults() {
   else if (score >= 4) { title = "Good Effort!";     msg = "You are building your understanding. Open the Key Terms panel, re-read the SDOH domain descriptions, and try again."; }
   else                 { title = "Keep Studying!";   msg = "SDOH thinking is a new skill. Review the Key Terms panel, focus on what distinguishes each domain, and try again."; }
 
-  document.getElementById("results-title").textContent = title;
-  document.getElementById("results-msg").textContent = msg;
-  document.getElementById("results-name").innerHTML = studentName ? "Completed by: <strong>" + studentName + "</strong>" : "";
+  var heading = document.getElementById("results-heading");
+  heading.textContent = title;
+  document.getElementById("results-msg").textContent  = msg;
+  document.getElementById("results-name").innerHTML   = studentName
+    ? "Completed by: <strong>" + studentName + "</strong>" : "";
 
   var list = document.getElementById("summary-list");
   list.innerHTML = "";
@@ -600,18 +736,31 @@ function showResults() {
     var correct = r.scenario.choices.filter(function(c) { return c.correct; })[0];
     var li = document.createElement("li");
     li.className = "summary-item";
-    li.innerHTML = "<span class=\"s-icon " + (r.correct ? "pass" : "fail") + "\" aria-label=\"" + (r.correct ? "Correct" : "Incorrect") + "\">" + (r.correct ? "&#10003;" : "&#10007;") + "</span><div class=\"s-body\"><div class=\"s-q\">" + (i + 1) + ". " + r.scenario.title + "</div>" + (r.correct ? "<div class=\"s-correct\">Correct &mdash; you chose " + r.chosenLetter + ".</div>" : "<div class=\"s-correct\">Correct answer: " + correct.letter + ". " + correct.text + "</div>") + "</div>";
+    // FIX: removed em dash from summary text
+    li.innerHTML =
+      '<span class="s-icon ' + (r.correct ? "pass" : "fail") + '" aria-label="' + (r.correct ? "Correct" : "Incorrect") + '">' +
+        (r.correct ? "&#10003;" : "&#10007;") +
+      '</span>' +
+      '<div class="s-body">' +
+        '<div class="s-q">' + (i + 1) + ". " + r.scenario.title + "</div>" +
+        (r.correct
+          ? '<div class="s-correct">Correct. You chose ' + r.chosenLetter + ".</div>"
+          : '<div class="s-correct">Correct answer: ' + correct.letter + ". " + correct.text + "</div>") +
+      "</div>";
     list.appendChild(li);
   });
 
   show("screen-results");
+  announce("Activity complete. You scored " + score + " out of 8. Review your results below.");
 }
 
+// ── RESTART ───────────────────────────────────────────────
 function restartApp() {
   idx = 0; results = []; selected = null; submitted = false;
-  document.getElementById("student-name").value = studentName;
+  document.getElementById("student-name").value  = studentName;
   document.getElementById("project-notes").value = "";
   show("screen-welcome");
+  announce("Activity restarted. Welcome screen.");
 }
 </script>
 </body>
