@@ -1031,7 +1031,7 @@ async function generateDocx(type){
             new TableCell({width:{size:600,type:WidthType.DXA},shading:{fill:i%2===0?WHITE:GRAY,type:ShadingType.CLEAR},borders:{top:hairline('DDDDDD'),bottom:hairline('DDDDDD'),left:hairline('DDDDDD'),right:hairline('DDDDDD')},margins:{top:80,bottom:80,left:0,right:0},verticalAlign:VerticalAlign.CENTER,children:[new Paragraph({alignment:AlignmentType.CENTER,children:[run('☐',{size:22,color:MUTED})]})]  }),
             new TableCell({width:{size:6560,type:WidthType.DXA},shading:{fill:i%2===0?WHITE:GRAY,type:ShadingType.CLEAR},borders:{top:hairline('DDDDDD'),bottom:hairline('DDDDDD'),left:hairline('DDDDDD'),right:hairline('DDDDDD')},margins:{top:80,bottom:80,left:120,right:120},children:[
               new Paragraph({spacing:{before:0,after:20},children:[run(label,{size:18,bold:true,color:NAVY})]}),
-              new Paragraph({spacing:{before:0,after:0},children:[run(text,{size:18,color:TEXT_SOFT||'4A4A6A'})]}),
+              new Paragraph({spacing:{before:0,after:0},children:[run(text,{size:18,color:'4A4A6A'})]}),
             ]}),
             new TableCell({width:{size:2200,type:WidthType.DXA},shading:{fill:i%2===0?WHITE:GRAY,type:ShadingType.CLEAR},borders:{top:hairline('DDDDDD'),bottom:hairline('DDDDDD'),left:hairline('DDDDDD'),right:hairline('DDDDDD')},margins:{top:80,bottom:80,left:120,right:120},verticalAlign:VerticalAlign.CENTER,children:[new Paragraph({alignment:AlignmentType.CENTER,children:[run(pts,{size:18,bold:true,color:pts?GREEN:MUTED})]})]})
           ]}))
@@ -1192,8 +1192,7 @@ async function generateDocx(type){
       }]
     });
 
-    const buffer = await Packer.toBuffer(doc);
-    const blob = new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const blob = await Packer.toBlob(doc);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     const safeName = v('f-name').toLowerCase().replace(/\s+/g,'-')||'student';
