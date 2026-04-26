@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Country Comparison Workspace | HLTH 207</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0D1B2A;
+  --ink-soft: #2C3E50;
+  --ink-muted: #5D6D7E;
+  --cream: #F8F6F1;
+  --white: #FFFFFF;
+  --gold: #C9A84C;
+  --gold-light: #F5EDD6;
+  --navy: #1B3A6B;
+  --navy-light: #2E5BA0;
+  --red: #9B2335;
+  --red-light: #F9EAEC;
+  --teal: #0D6E6E;
+  --teal-light: #E0F2F2;
+  --green: #1A5C30;
+  --green-light: #E8F5EE;
+  --border: #E2DDD4;
+  --shadow: 0 4px 32px rgba(13,27,42,0.10);
+  --shadow-lg: 0 12px 56px rgba(13,27,42,0.15);
+  --radius: 14px;
+  --focus: 3px solid #C9A84C;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+
+/* SKIP LINK */
+.skip-link { position: absolute; top: -100px; left: 16px; background: var(--gold); color: var(--ink); font-weight: 700; font-size: 14px; padding: 10px 18px; border-radius: 4px; text-decoration: none; z-index: 9999; transition: top 0.2s; }
+.skip-link:focus { top: 16px; }
+:focus-visible { outline: var(--focus); outline-offset: 3px; border-radius: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* HEADER */
+.site-header {
+  background: var(--ink);
+  padding: 0;
+}
+.header-top {
+  max-width: 1080px; margin: 0 auto;
+  padding: 20px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.header-brand { display: flex; flex-direction: column; gap: 2px; }
+.header-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.40); }
+.header-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; color: var(--white); line-height: 1.1; }
+.header-title em { color: var(--gold); font-style: normal; }
+.header-badge { background: var(--gold); color: var(--ink); font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 20px; letter-spacing: 0.5px; white-space: nowrap; }
+
+/* HERO BAND */
+.hero-band {
+  background: linear-gradient(135deg, #1B3A6B 0%, #0D1B2A 60%, #1A3A1A 100%);
+  padding: 56px 32px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(201,168,76,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(46,91,160,0.20) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-band-inner { max-width: 720px; margin: 0 auto; position: relative; }
+.hero-label { font-size: 10px; font-weight: 700; letter-spacing: 3.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+.hero-band h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; color: var(--white); line-height: 1.15; margin-bottom: 16px; }
+.hero-band h1 em { color: var(--gold); font-style: italic; }
+.hero-band p { font-size: 16px; color: rgba(255,255,255,0.68); line-height: 1.7; max-width: 580px; margin: 0 auto; }
+
+/* MAIN */
+.main { max-width: 1080px; margin: 0 auto; padding: 48px 32px 80px; }
+
+/* COUNTRY SELECTOR */
+.selector-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 36px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.selector-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--navy); margin-bottom: 8px;
+}
+.selector-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 700; color: var(--ink);
+  margin-bottom: 6px;
+}
+.selector-desc { font-size: 14px; color: var(--ink-muted); margin-bottom: 28px; line-height: 1.6; }
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  max-width: 760px; margin: 0 auto;
+}
+.country-btn {
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.country-btn:hover { border-color: var(--navy); background: #EEF3FF; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(27,58,107,0.12); }
+.country-btn.selected { border-color: var(--gold); background: var(--gold-light); box-shadow: 0 4px 20px rgba(201,168,76,0.20); }
+.country-btn:focus-visible { outline: var(--focus); }
+.country-flag { font-size: 28px; line-height: 1; }
+.country-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.country-system { font-size: 11px; color: var(--ink-muted); }
+
+/* WORKSPACE - hidden until country selected */
+.workspace { display: none; }
+.workspace.active { display: block; }
+
+/* COMPARISON HEADER */
+.comparison-header {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 24px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.comparison-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.country-block { position: relative; }
+.country-block.us { text-align: right; }
+.country-block.them { text-align: left; }
+.cb-flag { font-size: 40px; margin-bottom: 6px; display: block; }
+.cb-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--white); }
+.cb-system-type { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 2px; font-weight: 500; }
+.vs-badge {
+  background: var(--gold);
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* DATA COMPARISON TABLE */
+.section-heading {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px; margin-top: 36px;
+}
+.section-heading h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--ink);
+  white-space: nowrap;
+}
+.section-line { flex: 1; height: 1.5px; background: var(--border); }
+
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+.data-col-header {
+  padding: 14px 20px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  border-bottom: 1.5px solid var(--border);
+}
+.data-col-header.category { background: var(--ink); color: rgba(255,255,255,0.60); }
+.data-col-header.us-col { background: var(--red); color: var(--white); text-align: center; }
+.data-col-header.them-col { background: var(--navy); color: var(--white); text-align: center; }
+
+.data-row { display: contents; }
+.data-cell {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.data-row:last-child .data-cell { border-bottom: none; }
+.data-cell.category-cell {
+  background: #F9F7F4;
+  font-weight: 600; color: var(--ink);
+  font-size: 13px;
+}
+.data-cell.us-data { background: var(--red-light); text-align: center; color: var(--ink-soft); }
+.data-cell.them-data { background: #EEF3FF; text-align: center; color: var(--ink-soft); }
+.data-value { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--ink); display: block; margin-bottom: 2px; }
+.data-label { font-size: 11px; color: var(--ink-muted); }
+.data-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  margin-top: 4px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.badge-worse { background: #FDECEA; color: var(--red); }
+.badge-better { background: var(--green-light); color: var(--green); }
+.badge-neutral { background: var(--gold-light); color: #6B4800; }
+
+/* FINANCING EXPLAINER */
+.financing-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.financing-header {
+  background: var(--teal);
+  padding: 16px 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.financing-header h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--white); }
+.financing-body { padding: 24px; }
+.financing-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.financing-col h4 { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 10px; }
+.financing-col p { font-size: 14px; color: var(--ink-soft); line-height: 1.65; }
+.financing-col .system-tag {
+  display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; margin-bottom: 8px; letter-spacing: 0.5px;
+}
+.tag-us { background: var(--red-light); color: var(--red); }
+.tag-them { background: #EEF3FF; color: var(--navy); }
+.distinctive-feature {
+  background: var(--gold-light);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  margin-top: 16px;
+}
+.distinctive-feature strong { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #8B5C00; margin-bottom: 5px; }
+.distinctive-feature p { font-size: 14px; color: #5C3D00; line-height: 1.6; }
+
+/* ANALYSIS WORKSPACE */
+.analysis-section {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.analysis-header {
+  background: var(--ink);
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+.analysis-header h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--white); }
+.analysis-header .points { background: var(--gold); color: var(--ink); font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; }
+.analysis-body { padding: 24px; }
+.analysis-prompt {
+  background: #F0F4FF;
+  border-left: 4px solid var(--navy-light);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px; margin-bottom: 16px;
+  font-size: 13px; color: #1A2550; line-height: 1.6;
+}
+.analysis-prompt strong { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--navy); margin-bottom: 4px; }
+
+.form-group { margin-bottom: 18px; }
+.form-group:last-child { margin-bottom: 0; }
+label { display: block; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px; letter-spacing: 0.2px; }
+label .hint { display: block; font-size: 12px; font-weight: 400; color: var(--ink-muted); margin-top: 2px; font-style: italic; }
+textarea {
+  width: 100%;
+  background: #FDFCF9;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--ink);
+  line-height: 1.65; resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.18); }
+textarea::placeholder { color: var(--ink-muted); font-style: italic; }
+textarea.tall { min-height: 140px; }
+
+/* PROJECT CONNECTION */
+.project-section {
+  background: linear-gradient(135deg, #1B3A6B 0%, #0D2244 100%);
+  border-radius: var(--radius);
+  padding: 36px;
+  margin-bottom: 24px;
+  position: relative; overflow: hidden;
+}
+.project-section::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: rgba(201,168,76,0.12); pointer-events: none;
+}
+.project-section-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.project-section h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+.project-section p { font-size: 14px; color: rgba(255,255,255,0.68); line-height: 1.7; margin-bottom: 24px; max-width: 620px; }
+
+.letter-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.letter-block { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 10px; padding: 18px; }
+.letter-block-num { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 6px; }
+.letter-block h3 { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.70); margin-bottom: 8px; }
+.letter-block textarea {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.20);
+  color: var(--white);
+  font-size: 13px;
+  min-height: 80px;
+}
+.letter-block textarea::placeholder { color: rgba(255,255,255,0.40); }
+.letter-block textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+
+/* COPY BUTTON */
+.copy-btn {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+  margin-top: 20px;
+}
+.copy-btn:hover { background: #B8860B; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,168,76,0.30); }
+.copy-btn:focus-visible { outline: var(--focus); }
+
+/* DATA SOURCE NOTE */
+.source-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+/* FOOTER */
+.site-footer {
+  text-align: center;
+  padding: 24px 32px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .header-top { padding: 16px 20px; }
+  .hero-band { padding: 36px 20px 32px; }
+  .main { padding: 28px 20px 60px; }
+  .comparison-header { grid-template-columns: 1fr; text-align: center; gap: 16px; }
+  .country-block.us { text-align: center; }
+  .data-grid { grid-template-columns: 1fr; }
+  .data-col-header.category, .data-col-header.us-col, .data-col-header.them-col { display: none; }
+  .data-cell { border-bottom: 1px solid var(--border); }
+  .data-cell.category-cell { font-weight: 700; background: var(--ink); color: var(--white); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+  .data-cell.us-data::before { content: '🇺🇸 United States  '; font-size: 11px; color: var(--ink-muted); display: block; margin-bottom: 4px; }
+  .data-cell.them-data::before { content: attr(data-country); font-size: 11px; color: var(--ink-muted); display: block; margin-bottom: 4px; }
+  .financing-cols { grid-template-columns: 1fr; }
+  .letter-blocks { grid-template-columns: 1fr; }
+  .country-grid { grid-template-columns: repeat(2, 1fr); }
+  .selector-card { padding: 24px 20px; }
+  .analysis-body { padding: 18px; }
+  .project-section { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="announcer"></div>
+
+<header class="site-header">
+  <div class="header-top">
+    <div class="header-brand">
+      <span class="header-eyebrow">HLTH 207 · Towson University</span>
+      <span class="header-title">Country Comparison <em>Workspace</em></span>
+    </div>
+    <div class="header-badge">Health Systems Analysis</div>
+  </div>
+</header>
+
+<div class="hero-band">
+  <div class="hero-band-inner">
+    <div class="hero-label">Week 13 · Comparative Health Systems</div>
+    <h1>The U.S. Spends the Most.<br><em>So Why the Gap?</em></h1>
+    <p>Select your country below. You will get side by side data on spending, outcomes, access, and system design. Then you will fill in your analysis and build the content for your senator letter.</p>
+  </div>
+</div>
+
+<main class="main" id="main-content">
+
+  <!-- COUNTRY SELECTOR -->
+  <div class="selector-card" aria-labelledby="selector-heading">
+    <div class="selector-label">Step 1</div>
+    <h2 class="selector-title" id="selector-heading">Select Your Country</h2>
+    <p class="selector-desc">Choose the high-income country you are comparing to the United States. The workspace will load your data automatically.</p>
+
+    <div class="country-grid" role="list" aria-label="Select a country to compare">
+      <button class="country-btn" onclick="selectCountry('canada')" id="btn-canada" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇨🇦</span>
+        <span class="country-name">Canada</span>
+        <span class="country-system">Single-Payer</span>
+      </button>
+      <button class="country-btn" onclick="selectCountry('uk')" id="btn-uk" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇬🇧</span>
+        <span class="country-name">United Kingdom</span>
+        <span class="country-system">National Health Service</span>
+      </button>
+      <button class="country-btn" onclick="selectCountry('germany')" id="btn-germany" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇩🇪</span>
+        <span class="country-name">Germany</span>
+        <span class="country-system">Multi-Payer Regulated</span>
+      </button>
+      <button class="country-btn" onclick="selectCountry('australia')" id="btn-australia" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇦🇺</span>
+        <span class="country-name">Australia</span>
+        <span class="country-system">Medicare (Universal)</span>
+      </button>
+      <button class="country-btn" onclick="selectCountry('japan')" id="btn-japan" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇯🇵</span>
+        <span class="country-name">Japan</span>
+        <span class="country-system">Social Insurance</span>
+      </button>
+      <button class="country-btn" onclick="selectCountry('france')" id="btn-france" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇫🇷</span>
+        <span class="country-name">France</span>
+        <span class="country-system">Universal + Supplemental</span>
+      </button>
+      <button class="country-btn" onclick="selectCountry('netherlands')" id="btn-netherlands" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇳🇱</span>
+        <span class="country-name">Netherlands</span>
+        <span class="country-system">Managed Competition</span>
+      </button>
+      <button class="country-btn" onclick="selectCountry('sweden')" id="btn-sweden" role="listitem" aria-pressed="false">
+        <span class="country-flag" aria-hidden="true">🇸🇪</span>
+        <span class="country-name">Sweden</span>
+        <span class="country-system">Universal Public</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE (hidden until country selected) -->
+  <div class="workspace" id="workspace" aria-label="Country comparison workspace">
+
+    <!-- COMPARISON HEADER -->
+    <div class="comparison-header" role="region" aria-label="Country comparison overview">
+      <div class="country-block us">
+        <span class="cb-flag" aria-hidden="true">🇺🇸</span>
+        <div class="cb-name">United States</div>
+        <div class="cb-system-type">Multi-Payer, Market-Based</div>
+      </div>
+      <div class="vs-badge" aria-hidden="true">VS</div>
+      <div class="country-block them">
+        <span class="cb-flag" id="ws-flag" aria-hidden="true"></span>
+        <div class="cb-name" id="ws-name"></div>
+        <div class="cb-system-type" id="ws-system"></div>
+      </div>
+    </div>
+
+    <!-- KEY DATA COMPARISON -->
+    <div class="section-heading">
+      <h2>Key Data Comparison</h2>
+      <div class="section-line" aria-hidden="true"></div>
+    </div>
+
+    <div class="data-grid" role="table" aria-label="Side by side health system data comparison">
+      <!-- Headers -->
+      <div class="data-col-header category" role="columnheader">Category</div>
+      <div class="data-col-header us-col" role="columnheader">🇺🇸 United States</div>
+      <div class="data-col-header them-col" role="columnheader" id="dg-header"></div>
+
+      <!-- Row: Spending -->
+      <div class="data-cell category-cell" role="rowheader">💰 Health Spending Per Person (2024)</div>
+      <div class="data-cell us-data" role="cell">
+        <span class="data-value">$14,775</span>
+        <span class="data-label">per capita annually</span>
+        <span class="data-badge badge-worse">Highest in world</span>
+      </div>
+      <div class="data-cell them-data" id="d-spending" role="cell" data-country=""></div>
+
+      <!-- Row: Life Expectancy -->
+      <div class="data-cell category-cell" role="rowheader">❤️ Life Expectancy at Birth (2024)</div>
+      <div class="data-cell us-data" role="cell">
+        <span class="data-value">79.0 yrs</span>
+        <span class="data-label">2024 (CDC/NCHS)</span>
+        <span class="data-badge badge-worse">3.7 yrs below peer avg</span>
+      </div>
+      <div class="data-cell them-data" id="d-life" role="cell" data-country=""></div>
+
+      <!-- Row: Infant Mortality -->
+      <div class="data-cell category-cell" role="rowheader">👶 Infant Mortality Rate (per 1,000 live births)</div>
+      <div class="data-cell us-data" role="cell">
+        <span class="data-value">5.1</span>
+        <span class="data-label">per 1,000 live births (2024)</span>
+        <span class="data-badge badge-worse">Highest among peers</span>
+      </div>
+      <div class="data-cell them-data" id="d-infant" role="cell" data-country=""></div>
+
+      <!-- Row: Coverage -->
+      <div class="data-cell category-cell" role="rowheader">🏥 Health Coverage</div>
+      <div class="data-cell us-data" role="cell">
+        <span class="data-value">~92%</span>
+        <span class="data-label">insured (8% uninsured, 2023)</span>
+        <span class="data-badge badge-worse">Only peer without universal coverage</span>
+      </div>
+      <div class="data-cell them-data" id="d-coverage" role="cell" data-country=""></div>
+
+      <!-- Row: Government Role -->
+      <div class="data-cell category-cell" role="rowheader">🏛️ Government Role in Financing</div>
+      <div class="data-cell us-data" role="cell">
+        <span class="data-value">~48%</span>
+        <span class="data-label">public share of health spending</span>
+        <span class="data-badge badge-neutral">Mixed public/private</span>
+      </div>
+      <div class="data-cell them-data" id="d-govt" role="cell" data-country=""></div>
+    </div>
+
+    <p class="source-note">Sources: OECD Health at a Glance 2025, Peterson-KFF Health System Tracker 2024, Commonwealth Fund 2024, CDC National Center for Health Statistics 2024. Data represent most recent available year.</p>
+
+    <!-- FINANCING EXPLAINER -->
+    <div class="financing-card" aria-labelledby="financing-heading">
+      <div class="financing-header">
+        <span aria-hidden="true">⚙️</span>
+        <h3 id="financing-heading">How Each System Is Financed and Delivered</h3>
+      </div>
+      <div class="financing-body">
+        <div class="financing-cols">
+          <div class="financing-col">
+            <span class="system-tag tag-us">🇺🇸 United States</span>
+            <p>The U.S. relies on a fragmented multi-payer system combining employer-sponsored private insurance, Medicare for seniors, Medicaid for low-income populations, and the ACA marketplace. Approximately 8% of the population remains uninsured. High administrative costs, price variation, and lack of universal coverage contribute to the spending gap relative to peer nations. Primary care investment is lower than most OECD peers, with spending concentrated on acute and specialty care.</p>
+          </div>
+          <div class="financing-col" id="fin-them">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="distinctive-feature" id="fin-distinctive">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYSIS WORKSPACE -->
+    <div class="section-heading">
+      <h2>Your Analysis</h2>
+      <div class="section-line" aria-hidden="true"></div>
+    </div>
+
+    <div class="analysis-section" aria-labelledby="analysis-1-heading">
+      <div class="analysis-header">
+        <h3 id="analysis-1-heading">1. Spending and Outcomes Gap</h3>
+        <span class="points">Key concept</span>
+      </div>
+      <div class="analysis-body">
+        <div class="analysis-prompt" role="note">
+          <strong>Your task</strong>
+          Look at the spending data side by side. The U.S. spends significantly more per person than your selected country. Yet life expectancy and infant mortality tell a different story. In your own words, what does this gap tell you about the relationship between spending and outcomes?
+        </div>
+        <div class="form-group">
+          <label for="a-spending-gap">What the spending and outcomes gap tells you about system design
+            <span class="hint">Do not just state the numbers. Explain what they mean. Connect to the idea that the issue is not resources, it is how the system is designed.</span>
+          </label>
+          <textarea id="a-spending-gap" class="tall" placeholder="Example: The data shows that the United States spends nearly twice what [country] spends per person, yet [country] achieves a life expectancy of [X] years compared to 79.0 in the U.S. This tells me that..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="analysis-section" aria-labelledby="analysis-2-heading">
+      <div class="analysis-header">
+        <h3 id="analysis-2-heading">2. Access and Coverage</h3>
+        <span class="points">Key concept</span>
+      </div>
+      <div class="analysis-body">
+        <div class="analysis-prompt" role="note">
+          <strong>Your task</strong>
+          Compare how each system approaches access to care. Who is covered, how do people get in, and what barriers exist? Think about your own health policy topic. Does your population face access barriers that this country's system addresses differently?
+        </div>
+        <div class="form-group">
+          <label for="a-access">How access to care differs between the U.S. and your selected country
+            <span class="hint">Consider insurance coverage, cost barriers, primary care access, and whether your population would fare differently under the other system.</span>
+          </label>
+          <textarea id="a-access" class="tall" placeholder="In [country], access to care is structured through... In contrast, the U.S. system creates barriers such as... For my population ([your target population]), this means..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="analysis-section" aria-labelledby="analysis-3-heading">
+      <div class="analysis-header">
+        <h3 id="analysis-3-heading">3. The Distinctive Feature You Would Adopt</h3>
+        <span class="points">Senator letter content</span>
+      </div>
+      <div class="analysis-body">
+        <div class="analysis-prompt" role="note">
+          <strong>Your task</strong>
+          Every country has at least one policy feature or structural choice that helps explain its outcomes. Look at the distinctive feature highlighted in the financing section above. If you could advocate for one feature from this country to be adopted or adapted in the U.S., what would it be and why? This answer belongs in your senator letter conclusion.
+        </div>
+        <div class="form-group">
+          <label for="a-feature">The one feature you would advocate for and why
+            <span class="hint">Be specific. Name the feature, explain how it works in the other country, and connect it directly to your health policy issue and target population.</span>
+          </label>
+          <textarea id="a-feature" class="tall" placeholder="The feature I would advocate for is [specific policy or structural feature] from [country]. In [country], this works by... If adopted in the U.S., this could address [your issue] by... For my target population, this would mean..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="analysis-section" aria-labelledby="analysis-4-heading">
+      <div class="analysis-header">
+        <h3 id="analysis-4-heading">4. Systems Thinking Check</h3>
+        <span class="points">Critical thinking</span>
+      </div>
+      <div class="analysis-body">
+        <div class="analysis-prompt" role="note">
+          <strong>Your task</strong>
+          Researchers who study health systems know that changing one element always affects others. This is called systems thinking. If the U.S. adopted the feature you identified above, what else would need to change? Think about financing, provider incentives, insurance industry, political feasibility, and patient behavior.
+        </div>
+        <div class="form-group">
+          <label for="a-systems">What else would have to change if the U.S. adopted this feature
+            <span class="hint">A policy change never happens in isolation. Name at least two other elements of the U.S. system that would be affected and how you would address those in your recommendation.</span>
+          </label>
+          <textarea id="a-systems" placeholder="If the U.S. adopted [feature], several other elements of the system would also need to change. First... Second... These changes would require... This is why my policy recommendation addresses not just the feature itself but also..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT CONNECTION -->
+    <div class="project-section" role="region" aria-labelledby="project-heading">
+      <div class="project-section-label">Health Policy Advocacy Project Connection</div>
+      <h2 id="project-heading">Build Your Senator Letter Content</h2>
+      <p>Use your analysis above to fill in these four senator letter building blocks. These are the sentences that belong in your letter. When you are done, copy them directly into your draft.</p>
+
+      <div class="letter-blocks">
+        <div class="letter-block">
+          <div class="letter-block-num">1</div>
+          <h3>The Opening Comparison</h3>
+          <label for="lb-1" class="sr-only">Opening comparison sentence for your senator letter</label>
+          <textarea id="lb-1" placeholder="Senator, the United States spends [amount] per person on health care annually — nearly [X] times what [country] spends — yet [country] achieves [outcome]. This gap is not about resources. It is about system design."></textarea>
+        </div>
+        <div class="letter-block">
+          <div class="letter-block-num">2</div>
+          <h3>The Connection to Your Issue</h3>
+          <label for="lb-2" class="sr-only">How this connects to your specific health policy issue</label>
+          <textarea id="lb-2" placeholder="This matters directly for my health policy issue of [your issue] because [country]'s approach to [access/coverage/financing] demonstrates that [your population] could be better served if..."></textarea>
+        </div>
+        <div class="letter-block">
+          <div class="letter-block-num">3</div>
+          <h3>The Policy Evidence</h3>
+          <label for="lb-3" class="sr-only">The policy evidence from this country</label>
+          <textarea id="lb-3" placeholder="[Country]'s [distinctive feature] has resulted in [outcome data]. Researchers studying comparative health systems have found that this approach reduces [problem] by..."></textarea>
+        </div>
+        <div class="letter-block">
+          <div class="letter-block-num">4</div>
+          <h3>Your Ask</h3>
+          <label for="lb-4" class="sr-only">Your policy ask to the senator</label>
+          <textarea id="lb-4" placeholder="I am asking you to [specific action] so that [your target population] in [location] can access [what they need], similar to how [country] ensures that [equivalent population] receives [equivalent care]."></textarea>
+        </div>
+      </div>
+
+      <button class="copy-btn" onclick="copySentences()" aria-label="Copy all four senator letter sentences to clipboard">
+        📋 Copy Letter Content to Clipboard
+      </button>
+    </div>
+
+  </div><!-- end workspace -->
+
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <p>HLTH 207: Health Care USA · Towson University · Health Systems Analysis · Dr. Wendy Whitner · Spring 2026</p>
+  <p style="margin-top:4px;">Data sources: OECD Health at a Glance 2025, Peterson-KFF Health System Tracker 2024, Commonwealth Fund 2024, CDC NCHS 2024</p>
+</footer>
+
+<script>
+// ── COUNTRY DATA ─────────────────────────────────────────────
+const countries = {
+  canada: {
+    flag: '🇨🇦', name: 'Canada', system: 'Single-Payer (Medicare)',
+    spending: { value: '~$6,100', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '59% less than U.S.' },
+    life: { value: '82.3 yrs', label: '2024 (Statistics Canada)', badge: 'badge-better', badgeText: '3.3 yrs longer than U.S.' },
+    infant: { value: '4.5', label: 'per 1,000 live births (2023)', badge: 'badge-better', badgeText: 'Lower than U.S.' },
+    coverage: { value: '100%', label: 'Universal — all residents covered', badge: 'badge-better', badgeText: 'True universal' },
+    govt: { value: '~70%', label: 'public share of health spending', badge: 'badge-better', badgeText: 'Predominantly public' },
+    financing: `<span class="system-tag tag-them">🇨🇦 Canada</span><p>Canada operates a single-payer Medicare system administered by individual provinces. The federal government sets standards and transfers funds to provinces, which run their own programs. All residents are covered for hospital and physician services at no point of service. Private insurance covers supplemental benefits such as dental and prescription drugs, which are not universally covered. Canada ranks lower than most peers for physician supply and wait times for specialist care, but outperforms the U.S. on most outcomes measures despite lower spending.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: Provincial Single-Payer with Federal Standards</strong><p>Canada guarantees universal coverage for medically necessary services through public insurance, eliminating the financial barrier to basic care. The Canada Health Act requires that provincial plans be universal, comprehensive, portable, accessible, and publicly administered. This structure removes the administrative complexity of billing multiple insurers, reducing administrative costs significantly compared to the U.S. multi-payer system.</p>`
+  },
+  uk: {
+    flag: '🇬🇧', name: 'United Kingdom', system: 'National Health Service (NHS)',
+    spending: { value: '~$5,100', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '65% less than U.S.' },
+    life: { value: '81.7 yrs', label: '2024 (ONS)', badge: 'badge-better', badgeText: '2.7 yrs longer than U.S.' },
+    infant: { value: '3.7', label: 'per 1,000 live births (2023)', badge: 'badge-better', badgeText: 'Lower than U.S.' },
+    coverage: { value: '100%', label: 'Universal — NHS covers all residents', badge: 'badge-better', badgeText: 'True universal' },
+    govt: { value: '~79%', label: 'public share of health spending', badge: 'badge-better', badgeText: 'Predominantly public' },
+    financing: `<span class="system-tag tag-them">🇬🇧 United Kingdom</span><p>The UK's National Health Service is a publicly owned, publicly funded system providing comprehensive care to all residents free at the point of use. Funded primarily through general taxation, the NHS employs most physicians and owns most hospitals directly. A small private sector exists for those who choose to pay for faster access. The NHS emphasizes primary care as the foundation of the system, with general practitioners acting as gatekeepers to specialist care. The UK ranks very well on equity and access but faces capacity pressures particularly in specialist wait times.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: Fully Integrated Public System with Primary Care Foundation</strong><p>The NHS model integrates financing and delivery under public ownership, eliminating the profit motive from basic care provision. The strong primary care gatekeeper model ensures earlier intervention and chronic disease management. Every resident is registered with a GP, which creates longitudinal care relationships that reduce emergency utilization. The UK spends less than any other comparable peer nation per capita while maintaining universal access.</p>`
+  },
+  germany: {
+    flag: '🇩🇪', name: 'Germany', system: 'Statutory Health Insurance (SHI)',
+    spending: { value: '~$8,000', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '46% less than U.S.' },
+    life: { value: '81.2 yrs', label: '2024 (Destatis)', badge: 'badge-better', badgeText: '2.2 yrs longer than U.S.' },
+    infant: { value: '3.2', label: 'per 1,000 live births (2023)', badge: 'badge-better', badgeText: 'Lower than U.S.' },
+    coverage: { value: '~99.9%', label: 'Near-universal through SHI + PHI', badge: 'badge-better', badgeText: 'Near-universal' },
+    govt: { value: '~85%', label: 'public/regulated share', badge: 'badge-better', badgeText: 'Heavily regulated' },
+    financing: `<span class="system-tag tag-them">🇩🇪 Germany</span><p>Germany operates the world's oldest social health insurance system, established in 1883. About 90% of the population is covered by Statutory Health Insurance (SHI) through nonprofit Krankenkassen (sick funds). Higher earners may opt into private insurance. Employers and employees split premiums equally. The government tightly regulates the sick funds, which must accept all applicants, cannot profit, and must cover a standardized benefit package. Providers are private but operate within a regulated fee schedule. Germany consistently ranks among the top performers on access and quality while spending significantly less than the U.S.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: Regulated Multi-Payer with Mandatory Participation and Community Rating</strong><p>Germany demonstrates that competition among insurers can coexist with universal coverage when the government mandates community rating (no discrimination by health status), guaranteed issue (no one can be denied), standardized benefits, and nonprofit operation. Administrative costs are lower than the U.S. multi-payer system because the rules are standardized. The employer-employee premium split creates shared financial responsibility without leaving anyone uninsured. This is the most directly applicable model for U.S. reformers because it preserves insurance markets while guaranteeing universal access.</p>`
+  },
+  australia: {
+    flag: '🇦🇺', name: 'Australia', system: 'Medicare (Universal Public + Private)',
+    spending: { value: '~$6,600', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '55% less than U.S.' },
+    life: { value: '83.5 yrs', label: '2022–2024 avg (ABS)', badge: 'badge-better', badgeText: '4.5 yrs longer than U.S.' },
+    infant: { value: '2.9', label: 'per 1,000 live births (2023)', badge: 'badge-better', badgeText: 'Well below U.S.' },
+    coverage: { value: '100%', label: 'Universal through Medicare', badge: 'badge-better', badgeText: 'True universal' },
+    govt: { value: '~68%', label: 'public share of health spending', badge: 'badge-better', badgeText: 'Predominantly public' },
+    financing: `<span class="system-tag tag-them">🇦🇺 Australia</span><p>Australia operates a two-tier system: Medicare provides universal public coverage funded through a 2% Medicare levy on taxable income plus general revenue, while a private insurance sector allows those who choose to pay for additional services such as private hospital rooms and extras. Medicare covers GP visits, hospital treatment, and most specialist care. A "Medicare rebate" system means patients can see private doctors and be reimbursed for a portion of the cost. Australia's strong primary care investment and public health system produce life expectancy among the highest of any OECD nation.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: Medicare Levy — Universal Funding Through Transparent Contribution</strong><p>Australia funds universal coverage through a visible, progressive Medicare levy of 2% of taxable income. This transparent financing mechanism creates broad public ownership of the system and clear accountability for how funds are used. The blended public-private model allows consumer choice while guaranteeing a universal floor of coverage. Australia consistently achieves among the highest life expectancy in the OECD while spending significantly less than the U.S., demonstrating that high outcomes do not require high spending when the system is well designed.</p>`
+  },
+  japan: {
+    flag: '🇯🇵', name: 'Japan', system: 'Social Health Insurance (Universal)',
+    spending: { value: '~$5,300', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '64% less than U.S.' },
+    life: { value: '84.3 yrs', label: '2023 (Ministry of Health)', badge: 'badge-better', badgeText: '5.3 yrs longer than U.S.' },
+    infant: { value: '1.9', label: 'per 1,000 live births (2024)', badge: 'badge-better', badgeText: 'Among world\'s lowest' },
+    coverage: { value: '100%', label: 'Universal — all residents required to enroll', badge: 'badge-better', badgeText: 'True universal' },
+    govt: { value: '~84%', label: 'public/social insurance share', badge: 'badge-better', badgeText: 'Predominantly public' },
+    financing: `<span class="system-tag tag-them">🇯🇵 Japan</span><p>Japan requires all residents to enroll in one of about 3,500 health insurance societies, organized by employer, occupation, or residence. Premiums and copayments are income-based. The government subsidizes low-income individuals and the elderly. Fee schedules for all procedures are set nationally by the government, creating standardized pricing that eliminates the price variation seen in the U.S. Japan consistently achieves the highest life expectancy of any large economy in the world while spending among the least of comparable nations, a remarkable efficiency achievement attributed to strong primary care, preventive culture, low obesity rates, and universal coverage.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: National Fee Schedule — Standardized Pricing Across All Payers</strong><p>Japan sets a single national fee schedule that all payers must follow, eliminating the price variation and billing complexity that drives U.S. administrative costs. A hospital procedure costs the same regardless of which insurer the patient uses. This dramatically reduces administrative burden, prevents price gouging, and makes costs predictable. Combined with universal enrollment and income-based cost sharing, Japan achieves outcomes that no other nation matches at a per capita spending level far below the U.S.</p>`
+  },
+  france: {
+    flag: '🇫🇷', name: 'France', system: 'Universal Health Insurance (Assurance Maladie)',
+    spending: { value: '~$6,700', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '55% less than U.S.' },
+    life: { value: '82.9 yrs', label: '2024 est. (INSEE)', badge: 'badge-better', badgeText: '3.9 yrs longer than U.S.' },
+    infant: { value: '3.6', label: 'per 1,000 live births (2023)', badge: 'badge-better', badgeText: 'Lower than U.S.' },
+    coverage: { value: '100%', label: 'Universal — Assurance Maladie + CMU', badge: 'badge-better', badgeText: 'True universal' },
+    govt: { value: '~77%', label: 'public share of health spending', badge: 'badge-better', badgeText: 'Predominantly public' },
+    financing: `<span class="system-tag tag-them">🇫🇷</span><p>France operates a mandatory public health insurance system called Assurance Maladie, funded through payroll taxes on employers and employees. The government covers approximately 70% of most health costs directly, with voluntary complementary insurance (mutuelles) covering most of the remainder. France was rated number one in the world by the WHO in 2000 for its balanced approach of equity, quality, and responsiveness. A unique feature is France's long-standing tradition of strong pharmaceutical price negotiation, preventive care investment, and generous maternity and mental health coverage. The Couverture Maladie Universelle (CMU) ensures free coverage for the lowest-income residents.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: Tiered Reimbursement with Complementary Insurance — Quality with Choice</strong><p>France balances universal guaranteed coverage with freedom of choice by reimbursing a standard share of costs through the public system while allowing supplemental private coverage for the remainder. This hybrid model means patients have genuine choice of providers and services while no one faces catastrophic out-of-pocket costs. France's strong investment in maternal care, mental health, and preventive services produces consistently strong outcomes across the income spectrum, making it one of the most equitable systems among peer nations.</p>`
+  },
+  netherlands: {
+    flag: '🇳🇱', name: 'Netherlands', system: 'Regulated Private Insurance (Universal)',
+    spending: { value: '~$7,400', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '50% less than U.S.' },
+    life: { value: '82.4 yrs', label: '2024 est. (CBS)', badge: 'badge-better', badgeText: '3.4 yrs longer than U.S.' },
+    infant: { value: '3.4', label: 'per 1,000 live births (2023)', badge: 'badge-better', badgeText: 'Lower than U.S.' },
+    coverage: { value: '100%', label: 'Mandatory private insurance + government subsidy', badge: 'badge-better', badgeText: 'True universal' },
+    govt: { value: '~70%', label: 'public/regulated share', badge: 'badge-better', badgeText: 'Heavily subsidized' },
+    financing: `<span class="system-tag tag-them">🇳🇱</span><p>The Netherlands requires all residents to purchase basic health insurance from competing private insurers, but the government tightly regulates what must be covered, mandates community rating, and subsidizes premiums for lower-income individuals. Insurers cannot deny coverage or vary premiums by health status. A risk equalization fund transfers money between insurers based on the health risk of their enrollees, preventing adverse selection. This model is often cited as a successful example of managed competition: private insurers compete on quality and efficiency, but universal coverage is guaranteed by law. The Netherlands ranks among the top performers on access, quality, and patient satisfaction.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: Managed Competition with Risk Equalization — The Market That Works</strong><p>The Netherlands proves that private insurers can deliver universal coverage when government rules are strong enough. Risk equalization prevents insurers from cherry-picking healthy customers. Community rating prevents discrimination by health status. Government subsidies ensure affordability for low-income residents. The result is genuine competition on quality and efficiency while maintaining universal access. This model is the most directly relevant to U.S. policymakers who want to preserve private insurance markets while achieving universal coverage.</p>`
+  },
+  sweden: {
+    flag: '🇸🇪', name: 'Sweden', system: 'Universal Public (County-Based)',
+    spending: { value: '~$7,000', label: 'per capita (2024 est.)', badge: 'badge-better', badgeText: '53% less than U.S.' },
+    life: { value: '83.4 yrs', label: '2024 est. (Statistics Sweden)', badge: 'badge-better', badgeText: '4.4 yrs longer than U.S.' },
+    infant: { value: '2.3', label: 'per 1,000 live births (2024)', badge: 'badge-better', badgeText: 'Among world\'s lowest' },
+    coverage: { value: '100%', label: 'Universal — county councils cover all residents', badge: 'badge-better', badgeText: 'True universal' },
+    govt: { value: '~85%', label: 'public share of health spending', badge: 'badge-better', badgeText: 'Predominantly public' },
+    financing: `<span class="system-tag tag-them">🇸🇪</span><p>Sweden's health care system is decentralized to 21 county councils (regions), which are responsible for funding and providing health services to their residents. Care is financed primarily through local and national taxes. Sweden invests heavily in primary care, preventive services, mental health, and maternal health. Out-of-pocket costs are capped nationally to protect lower-income residents from catastrophic spending. Sweden consistently ranks at or near the top of global health system performance measures, particularly on equity, with very small differences in health outcomes across income groups compared to the U.S.</p>`,
+    distinctive: `<strong>🌟 Distinctive Feature: Out-of-Pocket Cost Capping and Strong Equity Focus</strong><p>Sweden caps annual out-of-pocket costs for health care and prescription drugs, ensuring that no resident faces catastrophic financial exposure from illness. This is combined with universal coverage and a strong equity mandate in the national health policy framework. The result is one of the most equitable health systems in the world: the gap in health outcomes between the richest and poorest Swedes is among the smallest of any OECD nation. Sweden's infant mortality rate of 2.3 per 1,000 live births is less than half the U.S. rate, driven largely by universal access to prenatal and maternal care.</p>`
+  }
+};
+
+// ── SELECT COUNTRY ───────────────────────────────────────────
+function selectCountry(id) {
+  // Deselect all
+  document.querySelectorAll('.country-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.setAttribute('aria-pressed', 'false');
+  });
+
+  // Select chosen
+  const btn = document.getElementById('btn-'+id);
+  btn.classList.add('selected');
+  btn.setAttribute('aria-pressed', 'true');
+
+  const c = countries[id];
+
+  // Update comparison header
+  document.getElementById('ws-flag').textContent = c.flag;
+  document.getElementById('ws-name').textContent = c.name;
+  document.getElementById('ws-system').textContent = c.system;
+  document.getElementById('dg-header').textContent = c.flag + ' ' + c.name;
+
+  // Update data cells
+  const fields = ['spending','life','infant','coverage','govt'];
+  fields.forEach(f => {
+    const d = c[f];
+    const cell = document.getElementById('d-'+f);
+    cell.setAttribute('data-country', c.flag + ' ' + c.name);
+    cell.innerHTML = `
+      <span class="data-value">${d.value}</span>
+      <span class="data-label">${d.label}</span>
+      <span class="data-badge ${d.badge}">${d.badgeText}</span>
+    `;
+  });
+
+  // Update financing
+  document.getElementById('fin-them').innerHTML = c.financing;
+  document.getElementById('fin-distinctive').innerHTML = c.distinctive;
+
+  // Show workspace
+  const ws = document.getElementById('workspace');
+  ws.classList.add('active');
+
+  // Announce
+  document.getElementById('announcer').textContent =
+    'Workspace loaded for ' + c.name + '. Scroll down to view the comparison data and begin your analysis.';
+
+  // Smooth scroll to workspace
+  setTimeout(() => {
+    ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// ── COPY LETTER CONTENT ──────────────────────────────────────
+function copySentences() {
+  const parts = ['lb-1','lb-2','lb-3','lb-4'].map(id => {
+    const el = document.getElementById(id);
+    const label = el.closest('.letter-block').querySelector('h4').textContent;
+    const val = el.value.trim();
+    return val ? label + ':\n' + val : null;
+  }).filter(Boolean);
+
+  if (parts.length === 0) {
+    document.getElementById('announcer').textContent = 'No letter content to copy yet. Fill in the building blocks first.';
+    return;
+  }
+
+  const text = 'SENATOR LETTER CONTENT — HLTH 207\n' +
+    '================================\n\n' +
+    parts.join('\n\n');
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      document.getElementById('announcer').textContent = 'Letter content copied to clipboard. Paste it into your senator letter draft.';
+      const btn = document.querySelector('.copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = '✅ Copied to Clipboard!';
+      setTimeout(() => { btn.textContent = orig; }, 2500);
+    });
+  } else {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('announcer').textContent = 'Letter content copied.';
+  }
+}
+</script>
+</body>
+</html>
