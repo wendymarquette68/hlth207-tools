@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentation Planning Builder | HLTH 207 Health Policy Advocacy Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A6B;
+  --navy-mid: #2A5298;
+  --gold: #C9A84C;
+  --gold-light: #FDF6E3;
+  --cream: #FAF9F6;
+  --white: #FFFFFF;
+  --accent: #B03020;
+  --teal: #0E6E6E;
+  --teal-light: #E8F5F5;
+  --green: #145C30;
+  --green-light: #E8F5EE;
+  --text: #1A1A2E;
+  --text-soft: #4A4A6A;
+  --text-muted: #5E5E82;
+  --border: #DDD8CC;
+  --input-bg: #FDFCF9;
+  --shadow: 0 4px 28px rgba(27,58,107,0.10);
+  --shadow-lg: 0 12px 48px rgba(27,58,107,0.16);
+  --radius: 12px;
+  --focus: 3px solid #C9A84C;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Source Sans 3', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; line-height: 1.6; }
+
+.skip-link { position: absolute; top: -100px; left: 16px; background: var(--gold); color: var(--navy); font-weight: 700; font-size: 14px; padding: 10px 18px; border-radius: 4px; text-decoration: none; z-index: 9999; transition: top 0.2s; }
+.skip-link:focus { top: 16px; }
+:focus-visible { outline: var(--focus); outline-offset: 3px; border-radius: 3px; }
+
+/* HEADER */
+.site-header { background: var(--navy); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(0,0,0,0.30); }
+.header-inner { max-width: 860px; margin: 0 auto; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.header-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 3px; }
+.header-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--white); line-height: 1.2; }
+.header-title span { color: var(--gold); }
+.header-badge { background: var(--gold); color: var(--navy); font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 20px; white-space: nowrap; }
+.progress-bar-wrap { background: rgba(255,255,255,0.10); height: 3px; }
+.progress-bar-fill { background: var(--gold); height: 100%; width: 0%; transition: width 0.4s ease; }
+
+/* STEP NAV */
+.step-nav { background: var(--white); border-bottom: 1.5px solid var(--border); position: sticky; top: 65px; z-index: 99; }
+.step-nav-inner { max-width: 860px; margin: 0 auto; padding: 0 28px; display: flex; overflow-x: auto; scrollbar-width: none; }
+.step-nav-inner::-webkit-scrollbar { display: none; }
+.step-dot-btn { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border: none; background: none; cursor: pointer; white-space: nowrap; font-family: 'Source Sans 3', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-muted); border-bottom: 3px solid transparent; position: relative; top: 1.5px; transition: color 0.15s, border-color 0.15s; flex-shrink: 0; }
+.step-dot-btn:hover { color: var(--navy); }
+.step-dot-btn.active { color: var(--navy); border-bottom-color: var(--gold); }
+.step-dot-btn.done { color: var(--green); }
+.step-dot-btn.done .step-num { background: var(--green); }
+.step-dot-btn.active .step-num { background: var(--gold); color: var(--navy); }
+.step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--text-muted); color: var(--white); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+
+/* MAIN */
+.main { max-width: 860px; margin: 0 auto; padding: 40px 28px 80px; }
+.step-panel { display: none; }
+.step-panel.active { display: block; }
+
+/* STEP HERO */
+.step-hero { background: var(--navy); border-radius: var(--radius); padding: 36px 40px; margin-bottom: 32px; position: relative; overflow: hidden; }
+.step-hero::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(201,168,76,0.12); pointer-events: none; }
+.step-hero-num { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.step-hero h2 { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--white); margin-bottom: 10px; line-height: 1.2; }
+.step-hero h2 span { color: var(--gold); }
+.step-hero p { font-size: 15px; color: rgba(255,255,255,0.72); line-height: 1.65; max-width: 600px; }
+
+/* FORM ELEMENTS */
+.form-section { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--border); box-shadow: var(--shadow); padding: 28px; margin-bottom: 20px; }
+.form-section-heading { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.form-section-desc { font-size: 14px; color: var(--text-soft); margin-bottom: 22px; line-height: 1.6; padding-left: 30px; }
+.form-group { margin-bottom: 20px; }
+.form-group:last-child { margin-bottom: 0; }
+label { display: block; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px; letter-spacing: 0.3px; }
+label .req { color: var(--accent); margin-left: 2px; }
+label .hint { display: block; font-size: 12px; font-weight: 400; color: var(--text-muted); margin-top: 2px; font-style: italic; }
+input[type="text"], textarea { width: 100%; background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 11px 14px; font-family: 'Source Sans 3', sans-serif; font-size: 15px; color: var(--text); transition: border-color 0.15s, box-shadow 0.15s; resize: vertical; }
+input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.20); }
+input[type="text"]::placeholder, textarea::placeholder { color: var(--text-muted); font-style: italic; }
+textarea { min-height: 120px; line-height: 1.65; }
+textarea.tall { min-height: 160px; }
+textarea.short { min-height: 80px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pillar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 6px; }
+.pillar-card { background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; }
+.pillar-card-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.stat-cols { display: grid; grid-template-columns: 110px 1fr 1fr; gap: 10px; align-items: start; }
+.stat-col-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+
+/* CALLOUTS */
+.tip-box { background: var(--gold-light); border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 13px; color: #5C3D00; line-height: 1.6; }
+.tip-box strong { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #8B5C00; margin-bottom: 4px; }
+.ev-tip { background: var(--teal-light); border-left: 4px solid var(--teal); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 13px; color: #0A4040; line-height: 1.6; }
+.ev-tip strong { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #0E5555; margin-bottom: 4px; }
+.what-goes-in { background: #F0F4FF; border-left: 4px solid var(--navy-mid); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 0 0 16px; font-size: 13px; color: #1A2550; line-height: 1.6; }
+.what-goes-in strong { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--navy); margin-bottom: 4px; }
+
+/* BUTTONS */
+.step-nav-btns { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+.btn:focus-visible { outline: var(--focus); outline-offset: 3px; }
+.btn-primary { background: var(--navy); color: var(--white); }
+.btn-primary:hover { background: var(--navy-mid); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-secondary { background: var(--white); color: var(--navy); border: 1.5px solid var(--border); }
+.btn-secondary:hover { border-color: var(--navy); }
+.btn-download { background: var(--green); color: var(--white); font-size: 16px; padding: 14px 36px; }
+.btn-download:hover:not(:disabled) { background: #0D4A26; transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+.btn-download:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+.btn-handout { background: var(--navy); color: var(--white); font-size: 15px; padding: 12px 28px; }
+.btn-handout:hover:not(:disabled) { background: var(--navy-mid); transform: translateY(-1px); }
+.btn-handout:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* VALIDATION */
+.field-error { font-size: 12px; color: var(--accent); margin-top: 5px; display: none; font-weight: 600; }
+.field-error.show { display: block; }
+input.error, textarea.error { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(176,48,32,0.12); }
+
+/* DOWNLOAD STEP */
+.download-box { background: var(--green-light); border: 2px solid var(--green); border-radius: var(--radius); padding: 32px; text-align: center; margin-bottom: 20px; }
+.download-box h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--green); margin-bottom: 10px; font-weight: 700; }
+.download-box p { font-size: 15px; color: var(--text-soft); margin-bottom: 22px; line-height: 1.6; max-width: 560px; margin-left: auto; margin-right: auto; }
+.download-btn-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.download-note { font-size: 13px; color: var(--text-muted); margin-top: 14px; line-height: 1.6; }
+.download-note strong { color: var(--navy); }
+
+.option-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.option-card { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--border); padding: 20px; box-shadow: var(--shadow); }
+.option-card h3 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.option-card p { font-size: 13px; color: var(--text-soft); line-height: 1.55; margin-bottom: 14px; }
+
+.preview-card { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--border); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; }
+.preview-header { background: var(--navy); padding: 18px 24px; }
+.preview-header h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.preview-header p { font-size: 12px; color: rgba(255,255,255,0.55); }
+.preview-body { padding: 16px 24px; }
+.preview-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.preview-row:last-child { border-bottom: none; }
+.preview-key { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); min-width: 140px; flex-shrink: 0; padding-top: 2px; }
+.preview-val { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+/* LOADING */
+.loading-overlay { display: none; position: fixed; inset: 0; background: rgba(27,58,107,0.55); z-index: 1000; align-items: center; justify-content: center; }
+.loading-overlay.show { display: flex; }
+.loading-card { background: var(--white); border-radius: var(--radius); padding: 36px 48px; text-align: center; box-shadow: var(--shadow-lg); max-width: 340px; }
+.loading-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); margin-bottom: 8px; }
+.loading-card p { font-size: 14px; color: var(--text-muted); }
+.spinner { width: 36px; height: 36px; border: 4px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@media (max-width: 600px) {
+  .main { padding: 24px 16px 60px; }
+  .step-hero { padding: 24px 20px; }
+  .step-hero h2 { font-size: 21px; }
+  .two-col, .pillar-grid, .stat-cols, .option-cards { grid-template-columns: 1fr; }
+  .header-inner { padding: 12px 16px; }
+  .download-btn-row { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="announcer"></div>
+
+<div class="loading-overlay" id="loading-overlay" role="dialog" aria-modal="true" aria-labelledby="loading-title">
+  <div class="loading-card">
+    <div class="spinner" aria-hidden="true"></div>
+    <h3 id="loading-title">Building Your Planning Worksheet...</h3>
+    <p>This takes just a moment.</p>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-eyebrow">HLTH 207 · Towson University · Part 4</div>
+      <div class="header-title">Presentation Planning <span>Builder</span></div>
+    </div>
+    <div class="header-badge" aria-label="Assignment due May 14">📅 Due May 14</div>
+  </div>
+  <div class="progress-bar-wrap" role="progressbar" aria-label="Form completion" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="prog-wrap">
+    <div class="progress-bar-fill" id="prog-fill"></div>
+  </div>
+</header>
+
+<nav class="step-nav" aria-label="Form steps">
+  <div class="step-nav-inner" role="tablist" aria-label="Planning builder steps">
+    <button class="step-dot-btn active" role="tab" aria-selected="true"  aria-controls="step-1" id="nav-1" tabindex="0"  onclick="goToStep(1)"><span class="step-num" aria-hidden="true">1</span> Your Info</button>
+    <button class="step-dot-btn" role="tab" aria-selected="false" aria-controls="step-2" id="nav-2" tabindex="-1" onclick="goToStep(2)"><span class="step-num" aria-hidden="true">2</span> The Problem</button>
+    <button class="step-dot-btn" role="tab" aria-selected="false" aria-controls="step-3" id="nav-3" tabindex="-1" onclick="goToStep(3)"><span class="step-num" aria-hidden="true">3</span> Who Is Affected</button>
+    <button class="step-dot-btn" role="tab" aria-selected="false" aria-controls="step-4" id="nav-4" tabindex="-1" onclick="goToStep(4)"><span class="step-num" aria-hidden="true">4</span> The Research</button>
+    <button class="step-dot-btn" role="tab" aria-selected="false" aria-controls="step-5" id="nav-5" tabindex="-1" onclick="goToStep(5)"><span class="step-num" aria-hidden="true">5</span> Recommendation</button>
+    <button class="step-dot-btn" role="tab" aria-selected="false" aria-controls="step-6" id="nav-6" tabindex="-1" onclick="goToStep(6)"><span class="step-num" aria-hidden="true">6</span> Data &amp; References</button>
+    <button class="step-dot-btn" role="tab" aria-selected="false" aria-controls="step-7" id="nav-7" tabindex="-1" onclick="goToStep(7)"><span class="step-num" aria-hidden="true">7</span> Download</button>
+  </div>
+</nav>
+
+<main class="main" id="main-content">
+
+<!-- ═══════════════════════════════════════════════
+     STEP 1 · YOUR INFO
+════════════════════════════════════════════════ -->
+<section id="step-1" class="step-panel active" role="tabpanel" aria-labelledby="nav-1" tabindex="0">
+  <div class="step-hero">
+    <div class="step-hero-num">Step 1 of 7</div>
+    <h2>Plan Your <span>Senator Presentation.</span></h2>
+    <p>This builder walks you through your presentation content step by step. When you finish, you will download a Word document that organizes everything you need, whether you are building slides, a video script, or a handout. This planning document is your required submission.</p>
+  </div>
+
+  <div class="form-section" aria-labelledby="s1h">
+    <h2 class="form-section-heading" id="s1h"><span aria-hidden="true">👤</span> About You and Your Topic</h2>
+    <p class="form-section-desc">This appears at the top of your planning worksheet.</p>
+    <div class="two-col">
+      <div class="form-group">
+        <label for="f-name">Full Name <span class="req" aria-label="required">*</span></label>
+        <input type="text" id="f-name" placeholder="First Last" autocomplete="name" aria-required="true" aria-describedby="e-name">
+        <div class="field-error" id="e-name" role="alert">Please enter your full name.</div>
+      </div>
+      <div class="form-group">
+        <label for="f-major">Major <span class="req" aria-label="required">*</span></label>
+        <input type="text" id="f-major" placeholder="e.g. Health Science" aria-required="true" aria-describedby="e-major">
+        <div class="field-error" id="e-major" role="alert">Please enter your major.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="f-format">Which presentation format are you creating? <span class="req" aria-label="required">*</span></label>
+      <select id="f-format" style="width:100%;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;font-family:'Source Sans 3',sans-serif;font-size:15px;color:var(--text);" aria-required="true" aria-describedby="e-format">
+        <option value="">— Select your format —</option>
+        <option value="Digital Presentation (6–10 slides)">Digital Presentation (6–10 slides)</option>
+        <option value="FAQ Document or Resource Handout (750 words)">FAQ Document or Resource Handout (750 words)</option>
+        <option value="Video or Podcast (3–5 minutes)">Video or Podcast (3–5 minutes)</option>
+      </select>
+      <div class="field-error" id="e-format" role="alert">Please select your presentation format.</div>
+    </div>
+    <div class="form-group">
+      <label for="f-topic">Policy Topic Title <span class="req" aria-label="required">*</span><span class="hint">Short and specific. This is the headline of your presentation.</span></label>
+      <input type="text" id="f-topic" placeholder="e.g. Mental Health Access for Low-Income Adolescents in Maryland" aria-required="true" aria-describedby="e-topic">
+      <div class="field-error" id="e-topic" role="alert">Please enter your policy topic title.</div>
+      <div class="tip-box" role="note"><strong>💡 Tip</strong>Name your population and location. "Mental health in Maryland" is too broad. "Mental health access for low-income adolescents in Maryland Title I schools" is specific enough to earn full points.</div>
+    </div>
+    <div class="form-group">
+      <label for="f-subtitle">One-Sentence Problem Statement <span class="req" aria-label="required">*</span><span class="hint">The core problem in one sentence. This opens your presentation.</span></label>
+      <input type="text" id="f-subtitle" placeholder="e.g. A policy brief addressing the shortage of licensed mental health providers in Maryland's Title I schools." aria-required="true" aria-describedby="e-subtitle">
+      <div class="field-error" id="e-subtitle" role="alert">Please enter a one-sentence problem statement.</div>
+    </div>
+  </div>
+
+  <div class="form-section" aria-labelledby="s1ph">
+    <h2 class="form-section-heading" id="s1ph"><span aria-hidden="true">🎯</span> Your Target Population</h2>
+    <p class="form-section-desc">Be specific. Vague terms like "youth" or "patients" will cost you 20 points.</p>
+    <div class="tip-box" role="note"><strong>💡 Why specificity matters</strong>A senator cannot allocate funding to "young people." You need to describe exactly who you are advocating for: their age, where they live, their income or insurance status, and the specific health risk they face.</div>
+    <div class="two-col">
+      <div class="form-group">
+        <label for="f-who">Who <span class="req" aria-label="required">*</span><span class="hint">Age group and description</span></label>
+        <input type="text" id="f-who" placeholder="e.g. Adolescents ages 13–17" aria-required="true">
+      </div>
+      <div class="form-group">
+        <label for="f-where">Where <span class="req" aria-label="required">*</span><span class="hint">Location or setting</span></label>
+        <input type="text" id="f-where" placeholder="e.g. Maryland Title I public schools" aria-required="true">
+      </div>
+      <div class="form-group">
+        <label for="f-status">Status <span class="req" aria-label="required">*</span><span class="hint">Income, insurance, or social status</span></label>
+        <input type="text" id="f-status" placeholder="e.g. Medicaid-enrolled, low-income" aria-required="true">
+      </div>
+      <div class="form-group">
+        <label for="f-risk">Risk or Barrier <span class="req" aria-label="required">*</span><span class="hint">The specific health risk they face</span></label>
+        <input type="text" id="f-risk" placeholder="e.g. Undiagnosed mental health conditions" aria-required="true">
+      </div>
+    </div>
+  </div>
+  <div class="step-nav-btns"><span></span><button class="btn btn-primary" onclick="nextStep(1)">Continue →</button></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STEP 2 · THE PROBLEM
+════════════════════════════════════════════════ -->
+<section id="step-2" class="step-panel" role="tabpanel" aria-labelledby="nav-2" tabindex="0" hidden>
+  <div class="step-hero">
+    <div class="step-hero-num">Step 2 of 7</div>
+    <h2>Section 1: <span>What Is the Problem?</span></h2>
+    <p>This becomes the opening of your presentation. Describe the healthcare problem, explain why it exists at a system level, and connect your first research finding. This is where your senator decides whether to keep listening.</p>
+  </div>
+  <div class="form-section" aria-labelledby="s2h">
+    <h2 class="form-section-heading" id="s2h"><span aria-hidden="true">❓</span> The Problem — Opening Section</h2>
+    <div class="what-goes-in" role="note"><strong>📋 What goes into your presentation from this section</strong>Slides: Use this as your Introduction slide and your Problem slide. Video/Podcast: This is your opening 60 seconds. Handout: This becomes your first FAQ answer.</div>
+
+    <div class="form-group">
+      <label for="q1-hook">Opening Hook: How Will You Grab Their Attention? <span class="req" aria-label="required">*</span><span class="hint">One or two sentences that open your presentation with impact. A statistic, a patient scenario, or a striking fact.</span></label>
+      <textarea id="q1-hook" placeholder="Example: In Maryland, 1 in 5 adolescents has a diagnosable mental health condition — yet only 23% of those who qualify for Medicaid ever receive a screening. This is not a coverage problem. It is a system design problem." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q1-problem">Describe the Problem <span class="req" aria-label="required">*</span><span class="hint">What is happening? Who is affected? Be specific about your target population.</span></label>
+      <textarea id="q1-problem" class="tall" placeholder="Describe the healthcare problem clearly and specifically. Name your population and explain what is happening to them and why it matters..." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q1-why">Why Does This Problem Exist? <span class="req" aria-label="required">*</span><span class="hint">Systemic barriers, policy gaps, or structural failures — not individual choices. Connect to how the healthcare system is organized.</span></label>
+      <textarea id="q1-why" class="tall" placeholder="Explain the systemic reasons. What barriers or gaps in the healthcare system are responsible? Who benefits from the current system staying broken?..." aria-required="true"></textarea>
+    </div>
+    <div class="ev-tip" role="note"><strong>📊 Evidence Requirement</strong>Every section must include at least one piece of evidence from your article reviews, followed by an explanation of what it means. Use this formula: State the finding. Then write "This demonstrates that..." and connect it directly to your argument.</div>
+    <div class="form-group">
+      <label for="q1-evidence">Evidence from Article Review 1 <span class="req" aria-label="required">*</span><span class="hint">State the finding. Then explain what it means and why it matters to your argument.</span></label>
+      <textarea id="q1-evidence" placeholder="Example: According to Williams et al. (2023), only 23% of Medicaid-enrolled adolescents in Maryland received a mental health screening in the past year. This demonstrates that even when coverage exists, delivery barriers prevent youth from receiving care — meaning the problem is not insurance, it is system design." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q1-cite">APA Citation for This Evidence <span class="req" aria-label="required">*</span></label>
+      <input type="text" id="q1-cite" placeholder="Author, A. A., & Author, B. B. (Year). Title. Journal, Volume(Issue), pages. https://doi.org/xxxxx" aria-required="true">
+    </div>
+  </div>
+  <div class="step-nav-btns"><button class="btn btn-secondary" onclick="prevStep(2)">← Back</button><button class="btn btn-primary" onclick="nextStep(2)">Continue →</button></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STEP 3 · WHO IS AFFECTED
+════════════════════════════════════════════════ -->
+<section id="step-3" class="step-panel" role="tabpanel" aria-labelledby="nav-3" tabindex="0" hidden>
+  <div class="step-hero">
+    <div class="step-hero-num">Step 3 of 7</div>
+    <h2>Section 2: <span>Who Is Affected?</span></h2>
+    <p>This is where your senator sees the human cost. Describe your target population in specific detail and explain what this problem means for their real lives. Use evidence from your second article review.</p>
+  </div>
+  <div class="form-section" aria-labelledby="s3h">
+    <h2 class="form-section-heading" id="s3h"><span aria-hidden="true">👥</span> Who Is Affected — Population Section</h2>
+    <div class="what-goes-in" role="note"><strong>📋 What goes into your presentation from this section</strong>Slides: This is your Population slide and your Impact slide. Video/Podcast: This is your 60-to-90 second population segment. Handout: This becomes your second FAQ answer.</div>
+
+    <div class="form-group">
+      <label for="q2-population">Describe Your Target Population in Detail <span class="req" aria-label="required">*</span><span class="hint">Name their age group, location, income or insurance status, and specific risk. Do not use vague terms.</span></label>
+      <textarea id="q2-population" class="tall" placeholder="Describe your target population with specific detail. Who are they exactly? Where do they live? What is their income or insurance status? What specific health risk or barrier do they face?..." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q2-impact">What Does This Problem Mean for Their Lives? <span class="req" aria-label="required">*</span><span class="hint">Short-term and long-term health consequences. What happens when they cannot get care?</span></label>
+      <textarea id="q2-impact" class="tall" placeholder="Describe the real-world consequences. What happens to their health, their education, their families, their futures when this problem goes unaddressed?..." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q2-evidence">Evidence from Article Review 2 <span class="req" aria-label="required">*</span><span class="hint">State the finding. Then explain what it means for your target population.</span></label>
+      <textarea id="q2-evidence" placeholder="State your evidence, then write: 'This demonstrates that...' and connect it to the impact on your population..." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q2-cite">APA Citation <span class="req" aria-label="required">*</span></label>
+      <input type="text" id="q2-cite" placeholder="Full APA 7th Edition citation..." aria-required="true">
+    </div>
+    <div class="form-group">
+      <label for="q2-sdoh">Social Determinants Connection <span class="req" aria-label="required">*</span><span class="hint">Connect to social determinants of health. Why is this a policy problem, not an individual problem?</span></label>
+      <textarea id="q2-sdoh" placeholder="Connect this impact to the social determinants of health. Explain why systemic factors — not individual choices — are responsible for this disparity..." aria-required="true"></textarea>
+    </div>
+  </div>
+  <div class="step-nav-btns"><button class="btn btn-secondary" onclick="prevStep(3)">← Back</button><button class="btn btn-primary" onclick="nextStep(3)">Continue →</button></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STEP 4 · THE RESEARCH
+════════════════════════════════════════════════ -->
+<section id="step-4" class="step-panel" role="tabpanel" aria-labelledby="nav-4" tabindex="0" hidden>
+  <div class="step-hero">
+    <div class="step-hero-num">Step 4 of 7</div>
+    <h2>Section 3: <span>What Does the Research Show?</span></h2>
+    <p>This is where you establish your credibility. Synthesize all three article reviews. Show the senator that the evidence is clear and that inaction is not acceptable.</p>
+  </div>
+  <div class="form-section" aria-labelledby="s4h">
+    <h2 class="form-section-heading" id="s4h"><span aria-hidden="true">🔬</span> The Research — Evidence Section</h2>
+    <div class="what-goes-in" role="note"><strong>📋 What goes into your presentation from this section</strong>Slides: This is your Evidence slide or slides. Video/Podcast: This is your research segment. Handout: This becomes your third FAQ answer. All three of your article reviews must appear somewhere across your evidence sections.</div>
+
+    <div class="form-group">
+      <label for="q3-scope">What the Research Shows About the Scope of the Problem <span class="req" aria-label="required">*</span><span class="hint">What patterns have researchers documented? Why does this problem persist at a systems level?</span></label>
+      <textarea id="q3-scope" class="tall" placeholder="Describe what researchers have found about how widespread and systemic this problem is. What patterns have been documented across populations or regions?..." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q3-solutions">What the Research Shows About Solutions <span class="req" aria-label="required">*</span><span class="hint">Have any interventions been studied? What does the evidence suggest could work?</span></label>
+      <textarea id="q3-solutions" class="tall" placeholder="Describe what the research says about approaches that have worked or could work. What does the evidence suggest policymakers should consider?..." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q3-evidence">Evidence from Article Review 3 <span class="req" aria-label="required">*</span><span class="hint">Your third article review finding with interpretation.</span></label>
+      <textarea id="q3-evidence" placeholder="State your evidence, then write: 'This demonstrates that...' and connect it to what policymakers should understand..." aria-required="true"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="q3-cite">APA Citation <span class="req" aria-label="required">*</span></label>
+      <input type="text" id="q3-cite" placeholder="Full APA 7th Edition citation..." aria-required="true">
+    </div>
+    <div class="form-group">
+      <label for="q3-cost-of-inaction">Cost of Inaction <span class="req" aria-label="required">*</span><span class="hint">What happens if nothing is done? This sentence belongs near the end of your research section.</span></label>
+      <textarea id="q3-cost-of-inaction" class="short" placeholder="Example: If Congress fails to act, an estimated 42,000 Maryland adolescents will enter adulthood without ever receiving a mental health screening, compounding long-term costs to the healthcare system and workforce..." aria-required="true"></textarea>
+    </div>
+  </div>
+  <div class="step-nav-btns"><button class="btn btn-secondary" onclick="prevStep(4)">← Back</button><button class="btn btn-primary" onclick="nextStep(4)">Continue →</button></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STEP 5 · RECOMMENDATION
+════════════════════════════════════════════════ -->
+<section id="step-5" class="step-panel" role="tabpanel" aria-labelledby="nav-5" tabindex="0" hidden>
+  <div class="step-hero">
+    <div class="step-hero-num">Step 5 of 7</div>
+    <h2>Section 4: <span>Your Policy Recommendation.</span></h2>
+    <p>This is the most important section of your presentation. Worth 25 points. A strong recommendation answers four questions. If any one is missing, the recommendation is not actionable and senators cannot act on it.</p>
+  </div>
+  <div class="form-section" aria-labelledby="s5ah">
+    <h2 class="form-section-heading" id="s5ah"><span aria-hidden="true">🏛️</span> Who Has the Authority to Act?</h2>
+    <p class="form-section-desc">Before you write your recommendation, identify the correct level of government and the right agency. This determines everything else.</p>
+    <div class="what-goes-in" role="note"><strong>📋 What goes into your presentation from this section</strong>Slides: This is your Policy Gap slide. Video/Podcast: Transition from evidence to solution. Handout: Opening of your fourth FAQ answer.</div>
+    <div class="form-group">
+      <label for="q4-authority">Level of Government and Agency <span class="req" aria-label="required">*</span><span class="hint">Federal (Congress, HHS, CMS) or state (Maryland legislature, Maryland Dept. of Health)? Name it specifically and explain why.</span></label>
+      <textarea id="q4-authority" placeholder="Identify who has the authority to act on this issue. Name the level of government and the specific agency. Explain why this is their responsibility and not someone else's..." aria-required="true"></textarea>
+    </div>
+  </div>
+
+  <div class="form-section" aria-labelledby="s5rh">
+    <h2 class="form-section-heading" id="s5rh"><span aria-hidden="true">⚖️</span> Your Policy Recommendation</h2>
+    <p class="form-section-desc">Fill in all four pillars. Every one must be specific. This is the core of your senator presentation.</p>
+    <div class="tip-box" role="note"><strong>✅ Strong vs. Weak</strong>Weak: "Increase funding for mental health." — This scores near zero. Strong: "Congress should allocate funding through HHS to require standardized mental health screening protocols in Maryland Title I schools, with compliance monitored through annual federal reporting tied to Title I funding eligibility." — This scores full points.</div>
+
+    <div class="form-group">
+      <label for="rec-title">Recommendation Headline <span class="req" aria-label="required">*</span><span class="hint">One bold sentence that names your recommendation. This is your slide title or handout heading.</span></label>
+      <input type="text" id="rec-title" placeholder="e.g. A Federal Mandate for Standardized Mental Health Screening in Maryland Title I Schools" aria-required="true">
+    </div>
+    <div class="form-group">
+      <label for="rec-full">Full Recommendation Statement <span class="req" aria-label="required">*</span><span class="hint">One or two complete sentences. Must name who acts, what they do, and how it is enforced. This is your most important sentence.</span></label>
+      <textarea id="rec-full" placeholder="Write your complete policy recommendation here. Name who will act, what exactly they will do, and how the action will be monitored or enforced..." aria-required="true"></textarea>
+    </div>
+
+    <div class="pillar-grid" role="group" aria-label="Four pillars of your policy recommendation">
+      <div class="pillar-card">
+        <div class="pillar-card-label">🏛️ Pillar 1 — Who Acts</div>
+        <label for="p-who" class="sr-only">Pillar 1: Who acts, specific agency or government body</label>
+        <textarea id="p-who" class="short" placeholder="Name the specific agency or government body.&#10;Example: United States Congress and the Department of Health and Human Services (HHS)" aria-required="true"></textarea>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-card-label">📌 Pillar 2 — What They Do</div>
+        <label for="p-what" class="sr-only">Pillar 2: What they do, the exact action</label>
+        <textarea id="p-what" class="short" placeholder="Describe the exact action.&#10;Example: Allocate federal funding to mandate standardized mental health screening in all Title I schools" aria-required="true"></textarea>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-card-label">🔒 Pillar 3 — How It Is Enforced</div>
+        <label for="p-enforce" class="sr-only">Pillar 3: How it is enforced or monitored</label>
+        <textarea id="p-enforce" class="short" placeholder="Describe enforcement or monitoring.&#10;Example: Compliance monitored through annual federal reporting requirements tied to Title I funding eligibility" aria-required="true"></textarea>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-card-label">💰 Pillar 4 — How It Is Funded</div>
+        <label for="p-fund" class="sr-only">Pillar 4: How it is funded</label>
+        <textarea id="p-fund" class="short" placeholder="Describe the funding source.&#10;Example: Funded through reallocation of existing HHS mental health block grant dollars" aria-required="true"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section" aria-labelledby="s5ch">
+    <h2 class="form-section-heading" id="s5ch"><span aria-hidden="true">📣</span> Your Call to Action</h2>
+    <p class="form-section-desc">This closes your presentation. Tell the senator exactly what you are asking them to do. Be direct and specific. This is not a summary. It is your ask.</p>
+    <div class="what-goes-in" role="note"><strong>📋 What goes into your presentation from this section</strong>Slides: This is your final slide. Video/Podcast: Your closing 30 seconds. Handout: Your call to action box.</div>
+    <div class="form-group">
+      <label for="f-cta">Your Call to Action <span class="req" aria-label="required">*</span><span class="hint">2 to 3 sentences. Name the specific action you want the senator to take. Co-sponsor a bill, request a hearing, allocate funding, introduce legislation.</span></label>
+      <textarea id="f-cta" placeholder="Example: Senator, we are asking you to co-sponsor the Mental Health in Schools Act and to request a committee hearing on mental health provider shortages in Maryland Title I districts within the next legislative session. Every day without action means another Maryland student going unscreened." aria-required="true"></textarea>
+    </div>
+  </div>
+  <div class="step-nav-btns"><button class="btn btn-secondary" onclick="prevStep(5)">← Back</button><button class="btn btn-primary" onclick="nextStep(5)">Continue →</button></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STEP 6 · DATA & REFERENCES
+════════════════════════════════════════════════ -->
+<section id="step-6" class="step-panel" role="tabpanel" aria-labelledby="nav-6" tabindex="0" hidden>
+  <div class="step-hero">
+    <div class="step-hero-num">Step 6 of 7</div>
+    <h2>Key Statistics <span>&amp; References.</span></h2>
+    <p>Add your strongest statistics and all APA references. These appear in your planning worksheet as a ready-to-use data section. Every source you cited across all your answers must appear here.</p>
+  </div>
+
+  <div class="form-section" aria-labelledby="s6sh">
+    <h2 class="form-section-heading" id="s6sh"><span aria-hidden="true">📊</span> Key Statistics for Your Presentation</h2>
+    <p class="form-section-desc">Add 2 to 3 statistics that best illustrate your policy issue. These will appear as a highlighted data block in your planning worksheet, ready to drop into slides, a script, or a handout.</p>
+    <fieldset style="border:none;padding:0;margin-bottom:18px;" aria-label="Statistic 1">
+      <legend style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">Statistic 1 <span class="req" aria-label="required">*</span></legend>
+      <div class="stat-cols">
+        <div><div class="stat-col-label">Number</div><input type="text" id="s1n" placeholder="e.g. 23%" aria-label="Statistic 1 number" aria-required="true"></div>
+        <div><div class="stat-col-label">What It Means</div><input type="text" id="s1l" placeholder="e.g. of Medicaid teens never received a mental health screening" aria-label="Statistic 1 meaning" aria-required="true"></div>
+        <div><div class="stat-col-label">Source</div><input type="text" id="s1s" placeholder="e.g. Williams et al., 2023" aria-label="Statistic 1 source" aria-required="true"></div>
+      </div>
+    </fieldset>
+    <fieldset style="border:none;padding:0;margin-bottom:18px;" aria-label="Statistic 2">
+      <legend style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">Statistic 2 <span class="req" aria-label="required">*</span></legend>
+      <div class="stat-cols">
+        <div><div class="stat-col-label">Number</div><input type="text" id="s2n" placeholder="e.g. 1 in 5" aria-label="Statistic 2 number" aria-required="true"></div>
+        <div><div class="stat-col-label">What It Means</div><input type="text" id="s2l" placeholder="e.g. adolescents in Maryland has a diagnosable mental health condition" aria-label="Statistic 2 meaning" aria-required="true"></div>
+        <div><div class="stat-col-label">Source</div><input type="text" id="s2s" placeholder="e.g. SAMHSA, 2023" aria-label="Statistic 2 source" aria-required="true"></div>
+      </div>
+    </fieldset>
+    <fieldset style="border:none;padding:0;" aria-label="Statistic 3, optional">
+      <legend style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;">Statistic 3 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">(optional)</span></legend>
+      <div class="stat-cols">
+        <div><div class="stat-col-label">Number</div><input type="text" id="s3n" placeholder="e.g. 60%" aria-label="Statistic 3 number"></div>
+        <div><div class="stat-col-label">What It Means</div><input type="text" id="s3l" placeholder="e.g. of rural Maryland counties lack a licensed mental health provider" aria-label="Statistic 3 meaning"></div>
+        <div><div class="stat-col-label">Source</div><input type="text" id="s3s" placeholder="e.g. HRSA, 2024" aria-label="Statistic 3 source"></div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="form-section" aria-labelledby="s6rh">
+    <h2 class="form-section-heading" id="s6rh"><span aria-hidden="true">📚</span> APA References</h2>
+    <p class="form-section-desc">Every source you cited in any of your answers must appear here. Minimum three references (your three article reviews).</p>
+    <div class="tip-box" role="note"><strong>📌 APA 7th Edition Format</strong>Author, A. A., &amp; Author, B. B. (Year). Title of article. Journal Name, Volume(Issue), pages. https://doi.org/xxxxx</div>
+    <div class="form-group"><label for="r1">Reference 1 <span class="req" aria-label="required">*</span></label><input type="text" id="r1" placeholder="Author, A. A. (Year). Title. Journal, Volume(Issue), pages. https://doi.org/xxxxx" aria-required="true"></div>
+    <div class="form-group"><label for="r2">Reference 2 <span class="req" aria-label="required">*</span></label><input type="text" id="r2" placeholder="Author, A. A. (Year). Title. Journal, Volume(Issue), pages. https://doi.org/xxxxx" aria-required="true"></div>
+    <div class="form-group"><label for="r3">Reference 3 <span class="req" aria-label="required">*</span></label><input type="text" id="r3" placeholder="Author, A. A. (Year). Title. Journal, Volume(Issue), pages. https://doi.org/xxxxx" aria-required="true"></div>
+    <div class="form-group"><label for="r4">Reference 4 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">(optional)</span></label><input type="text" id="r4" placeholder="Add additional reference if needed..."></div>
+    <div class="form-group"><label for="r5">Reference 5 <span style="font-size:11px;font-weight:400;color:var(--text-muted);">(optional)</span></label><input type="text" id="r5" placeholder="Add additional reference if needed..."></div>
+  </div>
+  <div class="step-nav-btns"><button class="btn btn-secondary" onclick="prevStep(6)">← Back</button><button class="btn btn-primary" onclick="nextStep(6)">Review &amp; Download →</button></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     STEP 7 · DOWNLOAD
+════════════════════════════════════════════════ -->
+<section id="step-7" class="step-panel" role="tabpanel" aria-labelledby="nav-7" tabindex="0" hidden>
+  <div class="step-hero">
+    <div class="step-hero-num">Step 7 of 7</div>
+    <h2>You Are Ready to <span>Download.</span></h2>
+    <p>Your planning worksheet organizes everything you just built, section by section, so you can use it to create whichever presentation format you chose. Submit your planning worksheet to Blackboard. Then use it to build your final presentation.</p>
+  </div>
+
+  <div class="option-cards" role="list" aria-label="Download options">
+    <div class="option-card" role="listitem">
+      <h3>📋 Planning Worksheet</h3>
+      <p>A structured Word document with all your content organized by section. Submit this to Blackboard. Use it to build your slides, script, or handout.</p>
+      <button class="btn btn-download" id="dl-worksheet-btn" onclick="generateDocx('worksheet')" aria-label="Download your planning worksheet as a Word document" style="width:100%;justify-content:center;">
+        ⬇ Download Planning Worksheet
+      </button>
+    </div>
+    <div class="option-card" role="listitem">
+      <h3>📄 Formatted Handout</h3>
+      <p>A polished, presentation-ready Word document. Use this if your chosen format is the FAQ Resource Handout, or as a reference document alongside your slides or video.</p>
+      <button class="btn btn-handout" id="dl-handout-btn" onclick="generateDocx('handout')" aria-label="Download a formatted handout as a Word document" style="width:100%;justify-content:center;">
+        ⬇ Download Formatted Handout
+      </button>
+    </div>
+  </div>
+
+  <div class="download-box" id="download-success" style="display:none;" role="alert">
+    <h2 id="dl-success-title">Downloaded!</h2>
+    <p id="dl-success-msg"></p>
+  </div>
+
+  <p class="download-note" style="text-align:center;margin-bottom:24px;"><strong>Where is my file?</strong> Check your Downloads folder. On a phone, check your Files app. The file opens in Microsoft Word or Google Docs.</p>
+
+  <div class="preview-card" aria-labelledby="prev-h">
+    <div class="preview-header">
+      <h3 id="prev-h">Your Content Summary</h3>
+      <p>Review before downloading. Use the back button or the step tabs to make changes.</p>
+    </div>
+    <div class="preview-body" id="prev-body"></div>
+  </div>
+
+  <div class="step-nav-btns"><button class="btn btn-secondary" onclick="prevStep(7)">← Back to Edit</button><span></span></div>
+</section>
+
+</main>
+
+<script src="docx.iife.js"></script>
+<script>
+// ── HELPERS ─────────────────────────────────────────────────
+const v = id => (document.getElementById(id)||{value:''}).value.trim();
+
+// ── NAVIGATION ──────────────────────────────────────────────
+let cur = 1;
+const TOTAL = 7;
+
+function goToStep(n) {
+  document.getElementById('step-'+cur).classList.remove('active');
+  document.getElementById('step-'+cur).hidden = true;
+  const oldNav = document.getElementById('nav-'+cur);
+  oldNav.classList.remove('active');
+  oldNav.setAttribute('aria-selected','false');
+  oldNav.setAttribute('tabindex','-1');
+  if (n > cur) { oldNav.classList.add('done'); oldNav.querySelector('.step-num').textContent = '✓'; }
+  cur = n;
+  const panel = document.getElementById('step-'+n);
+  panel.classList.add('active');
+  panel.hidden = false;
+  const newNav = document.getElementById('nav-'+n);
+  newNav.classList.add('active');
+  newNav.setAttribute('aria-selected','true');
+  newNav.setAttribute('tabindex','0');
+  const pct = Math.round(((n-1)/(TOTAL-1))*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-wrap').setAttribute('aria-valuenow',pct);
+  document.getElementById('announcer').textContent = 'Step '+n+' of '+TOTAL+': '+newNav.textContent.trim();
+  if (n===7) buildPreview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function nextStep(from){ if(validateStep(from)) goToStep(from+1); }
+function prevStep(from){ goToStep(from-1); }
+
+// ── VALIDATION ───────────────────────────────────────────────
+function validateStep(step){
+  const panel = document.getElementById('step-'+step);
+  let ok = true;
+  panel.querySelectorAll('[aria-required="true"]').forEach(field=>{
+    const desc = field.getAttribute('aria-describedby');
+    const errEl = desc ? document.getElementById(desc.split(' ')[0]) : null;
+    if(!field.value.trim()){
+      field.classList.add('error');
+      if(errEl) errEl.classList.add('show');
+      ok = false;
+    } else {
+      field.classList.remove('error');
+      if(errEl) errEl.classList.remove('show');
+    }
+  });
+  if(!ok){ const first=panel.querySelector('.error'); if(first) first.focus(); document.getElementById('announcer').textContent='Please fill in all required fields before continuing.'; }
+  return ok;
+}
+document.addEventListener('input', e=>{
+  if(e.target.matches('input,textarea,select')){
+    e.target.classList.remove('error');
+    const desc=e.target.getAttribute('aria-describedby');
+    if(desc){const el=document.getElementById(desc.split(' ')[0]); if(el) el.classList.remove('show');}
+  }
+});
+document.querySelector('.step-nav-inner').addEventListener('keydown',e=>{
+  const btns=Array.from(document.querySelectorAll('.step-dot-btn'));
+  const i=btns.indexOf(document.activeElement);
+  if(i===-1) return;
+  const map={ArrowRight:(i+1)%btns.length,ArrowLeft:(i-1+btns.length)%btns.length,Home:0,End:btns.length-1};
+  if(map[e.key]!==undefined){e.preventDefault();btns[map[e.key]].focus();}
+});
+
+// ── PREVIEW ──────────────────────────────────────────────────
+function buildPreview(){
+  const rows=[
+    ['Student', v('f-name')+' · '+v('f-major')],
+    ['Format', v('f-format')],
+    ['Topic', v('f-topic')],
+    ['Population', [v('f-who'),v('f-where'),v('f-status'),v('f-risk')].filter(Boolean).join(' · ')],
+    ['Opening Hook', v('q1-hook')],
+    ['The Problem', v('q1-problem').substring(0,120)+(v('q1-problem').length>120?'…':'')],
+    ['Evidence 1', v('q1-evidence').substring(0,100)+(v('q1-evidence').length>100?'…':'')],
+    ['Population Detail', v('q2-population').substring(0,100)+(v('q2-population').length>100?'…':'')],
+    ['Evidence 2', v('q2-evidence').substring(0,100)+(v('q2-evidence').length>100?'…':'')],
+    ['Evidence 3', v('q3-evidence').substring(0,100)+(v('q3-evidence').length>100?'…':'')],
+    ['Recommendation', v('rec-title')],
+    ['Who Acts', v('p-who')],
+    ['What They Do', v('p-what')],
+    ['Enforcement', v('p-enforce')],
+    ['Funding', v('p-fund')],
+    ['Call to Action', v('f-cta').substring(0,120)+(v('f-cta').length>120?'…':'')],
+    ['References', [v('r1'),v('r2'),v('r3')].filter(Boolean).length+' entered'],
+  ];
+  document.getElementById('prev-body').innerHTML = rows.filter(([,val])=>val&&val.trim()&&val!=='0 entered').map(([k,val])=>`<div class="preview-row"><div class="preview-key">${k}</div><div class="preview-val">${val.replace(/</g,'&lt;')}</div></div>`).join('');
+}
+
+// ── DOCX GENERATOR ────────────────────────────────────────────
+async function generateDocx(type){
+  const overlay = document.getElementById('loading-overlay');
+  const wsBtn = document.getElementById('dl-worksheet-btn');
+  const hdBtn = document.getElementById('dl-handout-btn');
+  wsBtn.disabled = true; hdBtn.disabled = true;
+  overlay.classList.add('show');
+  document.getElementById('announcer').textContent = 'Building your Word document. Please wait.';
+
+  try {
+    const {Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,
+      AlignmentType,BorderStyle,WidthType,ShadingType,VerticalAlign,LevelFormat} = docx;
+
+    // Colors
+    const NAVY='1B3A6B', GOLD='C9A84C', TEAL='0E6E6E', TEAL_L='D6EEEE',
+          ACCENT='B03020', ACCENT_L='FDECEA', GREEN='145C30', GREEN_L='E8F5EE',
+          GRAY='F4F4F2', WHITE='FFFFFF', TEXT='1A1A2E', MUTED='5E5E82',
+          NAVY_DARK='0D2244', WARM='FDF6E3';
+
+    const noBdr={style:BorderStyle.NONE,size:0,color:'FFFFFF'};
+    const noBdrs={top:noBdr,bottom:noBdr,left:noBdr,right:noBdr};
+    const bdr=c=>({style:BorderStyle.SINGLE,size:4,color:c});
+    const hairline=c=>({style:BorderStyle.SINGLE,size:1,color:c});
+
+    // ── SHARED HELPERS ──
+    const run=(text,opts={})=>new TextRun({text,font:'Calibri',size:22,color:TEXT,lang:'en-US',...opts});
+    const p=(text,opts={},pOpts={})=>new Paragraph({children:[run(text,opts)],spacing:{before:60,after:60},...pOpts});
+    const blank=()=>new Paragraph({children:[],spacing:{before:60,after:60}});
+
+    // Section heading with colored left bar via table
+    const sectionHead=(title,color=NAVY)=>new Table({
+      width:{size:9360,type:WidthType.DXA},columnWidths:[180,9180],
+      borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+      rows:[new TableRow({children:[
+        new TableCell({width:{size:180,type:WidthType.DXA},shading:{fill:color,type:ShadingType.CLEAR},borders:noBdrs,margins:{top:0,bottom:0,left:0,right:0},children:[blank()]}),
+        new TableCell({width:{size:9180,type:WidthType.DXA},shading:{fill:'F0F4FF',type:ShadingType.CLEAR},borders:noBdrs,margins:{top:100,bottom:100,left:160,right:120},
+          children:[new Paragraph({children:[run(title,{bold:true,size:26,color:color})],spacing:{before:0,after:0}})]
+        })
+      ]})]
+    });
+
+    // Label + content block (worksheet style)
+    const wsBlock=(label,content,labelColor=NAVY,bgColor='FFFFFF')=>[
+      new Paragraph({spacing:{before:160,after:30},children:[run(label.toUpperCase(),{size:17,bold:true,color:labelColor,characterSpacing:40})]}),
+      new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},
+          shading:{fill:bgColor,type:ShadingType.CLEAR},
+          borders:{top:hairline('CCCCCC'),bottom:hairline('CCCCCC'),left:{style:BorderStyle.SINGLE,size:8,color:labelColor},right:hairline('CCCCCC')},
+          margins:{top:120,bottom:120,left:160,right:160},
+          children:[new Paragraph({children:[run(content||'[Not completed]',{color:content?TEXT:MUTED,italics:!content})],spacing:{before:0,after:0}})]
+        })]})],
+      })
+    ];
+
+    // Evidence callout box
+    const evBox=(text,cite)=>new Table({
+      width:{size:9360,type:WidthType.DXA},columnWidths:[160,9200],
+      borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+      rows:[new TableRow({children:[
+        new TableCell({width:{size:160,type:WidthType.DXA},shading:{fill:TEAL,type:ShadingType.CLEAR},borders:noBdrs,margins:{top:0,bottom:0,left:0,right:0},children:[blank()]}),
+        new TableCell({width:{size:9200,type:WidthType.DXA},shading:{fill:TEAL_L,type:ShadingType.CLEAR},borders:noBdrs,margins:{top:120,bottom:120,left:160,right:120},
+          children:[
+            new Paragraph({spacing:{before:0,after:40},children:[run('EVIDENCE FROM RESEARCH',{size:16,bold:true,color:TEAL,characterSpacing:40})]}),
+            new Paragraph({spacing:{before:0,after:40},children:[run(text,{size:20,color:'0A4040'})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run('Source: '+cite,{size:18,color:'3A6060',italics:true})]})
+          ]
+        })
+      ]})]
+    });
+
+    // Pillar box
+    const pillarBox=(icon,label,text)=>new TableCell({
+      width:{size:4680,type:WidthType.DXA},
+      shading:{fill:'1E2E50',type:ShadingType.CLEAR},
+      borders:{top:bdr('2A3A6B'),bottom:bdr('2A3A6B'),left:bdr('2A3A6B'),right:bdr('2A3A6B')},
+      margins:{top:120,bottom:120,left:160,right:160},
+      children:[
+        new Paragraph({spacing:{before:0,after:40},children:[run((icon+' '+label).toUpperCase(),{size:16,bold:true,color:'F0A070',characterSpacing:30})]}),
+        new Paragraph({spacing:{before:0,after:0},children:[run(text||'[Not completed]',{size:20,color:text?'D8D8E8':MUTED,italics:!text})]})
+      ]
+    });
+
+    const stats=[[v('s1n'),v('s1l'),v('s1s')],[v('s2n'),v('s2l'),v('s2s')],[v('s3n'),v('s3l'),v('s3s')]].filter(r=>r[0]);
+    const refs=[v('r1'),v('r2'),v('r3'),v('r4'),v('r5')].filter(Boolean);
+
+    // ── WORKSHEET BUILD ──────────────────────────────────────
+    const buildWorksheet=()=>{
+      const children=[];
+
+      // Title block
+      children.push(new Table({
+        width:{size:10080,type:WidthType.DXA},columnWidths:[10080],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:10080,type:WidthType.DXA},shading:{fill:NAVY,type:ShadingType.CLEAR},borders:noBdrs,
+          margins:{top:200,bottom:200,left:240,right:240},
+          children:[
+            new Paragraph({spacing:{before:0,after:60},children:[run('HLTH 207 · HEALTH POLICY ADVOCACY PROJECT · PART 4',{size:16,bold:true,color:'8AADCC',characterSpacing:30})]}),
+            new Paragraph({spacing:{before:0,after:60},children:[run('PRESENTATION PLANNING WORKSHEET',{size:34,bold:true,color:WHITE})]}),
+            new Paragraph({spacing:{before:0,after:80},children:[run(v('f-topic')||'[Topic not entered]',{size:26,color:GOLD,bold:true})]}),
+            new Paragraph({spacing:{before:0,after:80},children:[
+              run('Student: ',{size:20,bold:true,color:'F0A070'}),run(v('f-name'),{size:20,color:'D8D8E8'}),
+              run('   Major: ',{size:20,bold:true,color:'F0A070'}),run(v('f-major'),{size:20,color:'D8D8E8'}),
+            ]}),
+            new Paragraph({spacing:{before:0,after:0},children:[
+              run('Presentation Format: ',{size:20,bold:true,color:'F0A070'}),run(v('f-format'),{size:20,color:'D8D8E8'}),
+              run('   Due: ',{size:20,bold:true,color:'F0A070'}),run('May 14, 2026',{size:20,color:'D8D8E8'}),
+            ]}),
+          ]
+        })]})],
+      }));
+
+      children.push(new Table({
+        width:{size:10080,type:WidthType.DXA},columnWidths:[10080],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:10080,type:WidthType.DXA},shading:{fill:ACCENT,type:ShadingType.CLEAR},borders:noBdrs,
+          margins:{top:100,bottom:100,left:240,right:240},
+          children:[new Paragraph({spacing:{before:0,after:0},children:[
+            run('Submitted to: Dr. Wendy Whitner · HLTH 207 · Towson University · Spring 2026',{size:18,bold:true,color:WHITE})
+          ]})]
+        })]})],
+      }));
+
+      children.push(blank());
+
+      // Purpose note
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:WARM,type:ShadingType.CLEAR},
+          borders:{top:bdr('C9A84C'),bottom:bdr('C9A84C'),left:{style:BorderStyle.SINGLE,size:12,color:'C9A84C'},right:bdr('C9A84C')},
+          margins:{top:120,bottom:120,left:180,right:160},
+          children:[
+            new Paragraph({spacing:{before:0,after:40},children:[run('HOW TO USE THIS WORKSHEET',{size:17,bold:true,color:'8B5C00',characterSpacing:40})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run('This worksheet contains all the content you planned for your senator presentation. Use it as your guide to build your chosen format: copy sections into your slides, use it as your video script, or refine it into your FAQ handout. Submit this worksheet to Blackboard by May 14 as your required planning document.',{size:20,color:'5C3D00'})]}),
+          ]
+        })]})],
+      }));
+
+      children.push(blank());
+
+      // ── SECTION A: YOUR TOPIC ──
+      children.push(sectionHead('SECTION A: YOUR TOPIC AND POPULATION', NAVY));
+      children.push(blank());
+      children.push(...wsBlock('Topic Title', v('f-topic'), NAVY));
+      children.push(...wsBlock('Problem Statement', v('f-subtitle'), NAVY));
+      children.push(blank());
+      children.push(new Paragraph({spacing:{before:80,after:30},children:[run('TARGET POPULATION',{size:17,bold:true,color:NAVY,characterSpacing:40})]}));
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[2340,2340,2340,2340],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:hairline('DDDDDD')},
+        rows:[
+          new TableRow({children:[
+            ...['WHO','WHERE','STATUS','RISK/BARRIER'].map(lbl=>new TableCell({
+              width:{size:2340,type:WidthType.DXA},shading:{fill:NAVY,type:ShadingType.CLEAR},borders:noBdrs,margins:{top:80,bottom:80,left:120,right:120},
+              children:[new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[run(lbl,{size:16,bold:true,color:WHITE,characterSpacing:30})]})]
+            }))
+          ]}),
+          new TableRow({children:[
+            ...[v('f-who'),v('f-where'),v('f-status'),v('f-risk')].map(val=>new TableCell({
+              width:{size:2340,type:WidthType.DXA},shading:{fill:GRAY,type:ShadingType.CLEAR},
+              borders:{top:hairline('CCCCCC'),bottom:hairline('CCCCCC'),left:hairline('CCCCCC'),right:hairline('CCCCCC')},
+              margins:{top:100,bottom:100,left:120,right:120},
+              children:[new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[run(val||'—',{size:20,color:val?TEXT:MUTED,italics:!val})]})]
+            }))
+          ]})
+        ]
+      }));
+
+      children.push(blank());
+
+      // ── SECTION B: THE PROBLEM ──
+      children.push(sectionHead('SECTION B: THE PROBLEM — OPENING SECTION', ACCENT));
+      children.push(blank());
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:'F0F4FF',type:ShadingType.CLEAR},
+          borders:{top:hairline('CCCCCC'),bottom:hairline('CCCCCC'),left:hairline('CCCCCC'),right:hairline('CCCCCC')},
+          margins:{top:100,bottom:100,left:160,right:160},
+          children:[
+            new Paragraph({spacing:{before:0,after:30},children:[run('FOR YOUR PRESENTATION:',{size:16,bold:true,color:NAVY,characterSpacing:30})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run('Slides: Introduction slide + Problem slide.   Video/Podcast: Opening 60 seconds.   Handout: First FAQ answer.',{size:18,color:MUTED})]})
+          ]
+        })]})],
+      }));
+      children.push(blank());
+      children.push(...wsBlock('Opening Hook', v('q1-hook'), ACCENT, ACCENT_L));
+      children.push(...wsBlock('The Problem', v('q1-problem'), ACCENT));
+      children.push(...wsBlock('Why Does This Problem Exist?', v('q1-why'), ACCENT));
+      children.push(blank());
+      children.push(evBox(v('q1-evidence')||'[Evidence not entered]', v('q1-cite')||'[Citation not entered]'));
+
+      children.push(blank());
+
+      // ── SECTION C: WHO IS AFFECTED ──
+      children.push(sectionHead('SECTION C: WHO IS AFFECTED — POPULATION SECTION', TEAL));
+      children.push(blank());
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:'F0F4FF',type:ShadingType.CLEAR},
+          borders:{top:hairline('CCCCCC'),bottom:hairline('CCCCCC'),left:hairline('CCCCCC'),right:hairline('CCCCCC')},
+          margins:{top:100,bottom:100,left:160,right:160},
+          children:[
+            new Paragraph({spacing:{before:0,after:30},children:[run('FOR YOUR PRESENTATION:',{size:16,bold:true,color:NAVY,characterSpacing:30})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run('Slides: Population slide + Impact slide.   Video/Podcast: 60–90 second population segment.   Handout: Second FAQ answer.',{size:18,color:MUTED})]})
+          ]
+        })]})],
+      }));
+      children.push(blank());
+      children.push(...wsBlock('Your Target Population in Detail', v('q2-population'), TEAL));
+      children.push(...wsBlock('What This Problem Means for Their Lives', v('q2-impact'), TEAL));
+      children.push(...wsBlock('Social Determinants Connection', v('q2-sdoh'), TEAL));
+      children.push(blank());
+      children.push(evBox(v('q2-evidence')||'[Evidence not entered]', v('q2-cite')||'[Citation not entered]'));
+
+      children.push(blank());
+
+      // ── SECTION D: THE RESEARCH ──
+      children.push(sectionHead('SECTION D: THE RESEARCH — EVIDENCE SECTION', '2A5298'));
+      children.push(blank());
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:'F0F4FF',type:ShadingType.CLEAR},
+          borders:{top:hairline('CCCCCC'),bottom:hairline('CCCCCC'),left:hairline('CCCCCC'),right:hairline('CCCCCC')},
+          margins:{top:100,bottom:100,left:160,right:160},
+          children:[
+            new Paragraph({spacing:{before:0,after:30},children:[run('FOR YOUR PRESENTATION:',{size:16,bold:true,color:NAVY,characterSpacing:30})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run('Slides: Evidence slide(s).   Video/Podcast: Research segment.   Handout: Third FAQ answer. All three article reviews must appear across your evidence sections.',{size:18,color:MUTED})]})
+          ]
+        })]})],
+      }));
+      children.push(blank());
+      children.push(...wsBlock('What the Research Shows About the Scope of the Problem', v('q3-scope'), '2A5298'));
+      children.push(...wsBlock('What the Research Shows About Solutions', v('q3-solutions'), '2A5298'));
+      children.push(...wsBlock('Cost of Inaction', v('q3-cost-of-inaction'), '2A5298', ACCENT_L));
+      children.push(blank());
+      children.push(evBox(v('q3-evidence')||'[Evidence not entered]', v('q3-cite')||'[Citation not entered]'));
+
+      children.push(blank());
+
+      // ── SECTION E: RECOMMENDATION ──
+      children.push(sectionHead('SECTION E: YOUR POLICY RECOMMENDATION', NAVY_DARK));
+      children.push(blank());
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:'F0F4FF',type:ShadingType.CLEAR},
+          borders:{top:hairline('CCCCCC'),bottom:hairline('CCCCCC'),left:hairline('CCCCCC'),right:hairline('CCCCCC')},
+          margins:{top:100,bottom:100,left:160,right:160},
+          children:[
+            new Paragraph({spacing:{before:0,after:30},children:[run('FOR YOUR PRESENTATION:',{size:16,bold:true,color:NAVY,characterSpacing:30})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run('Slides: Policy Gap slide + Recommendation slide.   Video/Podcast: Solution segment.   Handout: Fourth FAQ answer. Worth 25 points — every pillar must be specific.',{size:18,color:MUTED})]})
+          ]
+        })]})],
+      }));
+      children.push(blank());
+      children.push(...wsBlock('Who Has the Authority to Act?', v('q4-authority'), NAVY_DARK));
+      children.push(...wsBlock('Recommendation Headline', v('rec-title'), NAVY_DARK));
+      children.push(...wsBlock('Full Recommendation Statement', v('rec-full'), NAVY_DARK));
+      children.push(blank());
+
+      // Four pillars
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[4680,4680],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[
+          new TableRow({children:[pillarBox('🏛','Who Acts',v('p-who')),pillarBox('📌','What They Do',v('p-what'))]}),
+          new TableRow({children:[pillarBox('🔒','How It Is Enforced',v('p-enforce')),pillarBox('💰','How It Is Funded',v('p-fund'))]})
+        ]
+      }));
+
+      children.push(blank());
+
+      // ── SECTION F: CALL TO ACTION ──
+      children.push(sectionHead('SECTION F: YOUR CALL TO ACTION — CLOSING SECTION', ACCENT));
+      children.push(blank());
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:'F0F4FF',type:ShadingType.CLEAR},
+          borders:{top:hairline('CCCCCC'),bottom:hairline('CCCCCC'),left:hairline('CCCCCC'),right:hairline('CCCCCC')},
+          margins:{top:100,bottom:100,left:160,right:160},
+          children:[
+            new Paragraph({spacing:{before:0,after:30},children:[run('FOR YOUR PRESENTATION:',{size:16,bold:true,color:NAVY,characterSpacing:30})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run('Slides: Final slide. This is your last impression.   Video/Podcast: Closing 30 seconds.   Handout: Call to action box.',{size:18,color:MUTED})]})
+          ]
+        })]})],
+      }));
+      children.push(blank());
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:ACCENT_L,type:ShadingType.CLEAR},
+          borders:{top:bdr(ACCENT),bottom:bdr(ACCENT),left:{style:BorderStyle.SINGLE,size:12,color:ACCENT},right:bdr(ACCENT)},
+          margins:{top:160,bottom:160,left:200,right:200},
+          children:[
+            new Paragraph({spacing:{before:0,after:60},children:[run('YOUR CALL TO ACTION',{size:17,bold:true,color:ACCENT,characterSpacing:40})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run(v('f-cta')||'[Not entered]',{size:22,color:v('f-cta')?TEXT:MUTED,bold:!!v('f-cta')})]})
+          ]
+        })]})],
+      }));
+
+      children.push(blank());
+
+      // ── SECTION G: KEY DATA ──
+      if(stats.length>0){
+        children.push(sectionHead('SECTION G: KEY STATISTICS FOR YOUR PRESENTATION', '0E6E6E'));
+        children.push(blank());
+        const colW=Math.floor(9360/stats.length);
+        children.push(new Table({
+          width:{size:9360,type:WidthType.DXA},columnWidths:stats.map(()=>colW),
+          rows:[new TableRow({children:stats.map(([num,lbl,src])=>new TableCell({
+            width:{size:colW,type:WidthType.DXA},
+            shading:{fill:TEAL_L,type:ShadingType.CLEAR},
+            borders:{top:bdr(TEAL),bottom:bdr(TEAL),left:bdr(TEAL),right:bdr(TEAL)},
+            margins:{top:120,bottom:120,left:160,right:160},
+            verticalAlign:VerticalAlign.CENTER,
+            children:[
+              new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:40},children:[run(num,{size:52,bold:true,color:TEAL})]}),
+              new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:40},children:[run(lbl,{size:18,color:TEXT})]}),
+              new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[run('Source: '+src,{size:16,italics:true,color:MUTED})]}),
+            ]
+          }))})]
+        }));
+        children.push(blank());
+      }
+
+      // ── SECTION H: REFERENCES ──
+      children.push(sectionHead('SECTION H: APA REFERENCES', NAVY));
+      children.push(blank());
+      refs.forEach(r=>children.push(new Paragraph({
+        children:[run(r,{size:20})],spacing:{before:60,after:60},indent:{left:720,hanging:720}
+      })));
+
+      children.push(blank());
+
+      // ── SELF-ASSESSMENT CHECKLIST ──
+      children.push(sectionHead('PRESENTATION READINESS CHECKLIST', GREEN));
+      children.push(blank());
+      const checks=[
+        ['Target Population','My target population is named with at least two specific characteristics (age, location, income, risk status).','20 pts'],
+        ['Evidence 1','I cited evidence from Article Review 1 and explained what it means for my argument.','20 pts'],
+        ['Evidence 2','I cited evidence from Article Review 2 and explained what it means for my population.','20 pts'],
+        ['Evidence 3','I cited evidence from Article Review 3 and explained what it means for policy action.','20 pts'],
+        ['Policy Authority','I identified the correct level of government and named the specific agency responsible for my issue.','15 pts'],
+        ['Recommendation — Who Acts','I named the specific agency or government body that will take action.','25 pts'],
+        ['Recommendation — What They Do','I described exactly what that actor will do.','25 pts'],
+        ['Recommendation — Enforcement','I explained how the action will be monitored or enforced.','25 pts'],
+        ['Recommendation — Funding','I identified the funding source or mechanism.','25 pts'],
+        ['Call to Action','My call to action names the specific action I am asking the senator to take.',''],
+        ['Professional Tone','I read my content aloud and revised any informal or vague language.','10 pts'],
+        ['APA References','Every in-text citation has a matching entry in my reference list. All formatted correctly.','10 pts'],
+      ];
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[600,6560,2200],
+        rows:[
+          new TableRow({children:[
+            new TableCell({width:{size:600,type:WidthType.DXA},shading:{fill:GREEN,type:ShadingType.CLEAR},borders:noBdrs,margins:{top:80,bottom:80,left:120,right:120},children:[new Paragraph({alignment:AlignmentType.CENTER,children:[run('✓',{size:18,bold:true,color:WHITE})]})]}),
+            new TableCell({width:{size:6560,type:WidthType.DXA},shading:{fill:GREEN,type:ShadingType.CLEAR},borders:noBdrs,margins:{top:80,bottom:80,left:120,right:120},children:[new Paragraph({children:[run('BEFORE YOU PRESENT, CHECK EACH ITEM',{size:17,bold:true,color:WHITE,characterSpacing:30})]}),]}),
+            new TableCell({width:{size:2200,type:WidthType.DXA},shading:{fill:GREEN,type:ShadingType.CLEAR},borders:noBdrs,margins:{top:80,bottom:80,left:120,right:120},children:[new Paragraph({alignment:AlignmentType.CENTER,children:[run('RUBRIC',{size:17,bold:true,color:WHITE,characterSpacing:30})]})]})
+          ]}),
+          ...checks.map(([label,text,pts],i)=>new TableRow({children:[
+            new TableCell({width:{size:600,type:WidthType.DXA},shading:{fill:i%2===0?WHITE:GRAY,type:ShadingType.CLEAR},borders:{top:hairline('DDDDDD'),bottom:hairline('DDDDDD'),left:hairline('DDDDDD'),right:hairline('DDDDDD')},margins:{top:80,bottom:80,left:0,right:0},verticalAlign:VerticalAlign.CENTER,children:[new Paragraph({alignment:AlignmentType.CENTER,children:[run('☐',{size:22,color:MUTED})]})]  }),
+            new TableCell({width:{size:6560,type:WidthType.DXA},shading:{fill:i%2===0?WHITE:GRAY,type:ShadingType.CLEAR},borders:{top:hairline('DDDDDD'),bottom:hairline('DDDDDD'),left:hairline('DDDDDD'),right:hairline('DDDDDD')},margins:{top:80,bottom:80,left:120,right:120},children:[
+              new Paragraph({spacing:{before:0,after:20},children:[run(label,{size:18,bold:true,color:NAVY})]}),
+              new Paragraph({spacing:{before:0,after:0},children:[run(text,{size:18,color:TEXT_SOFT||'4A4A6A'})]}),
+            ]}),
+            new TableCell({width:{size:2200,type:WidthType.DXA},shading:{fill:i%2===0?WHITE:GRAY,type:ShadingType.CLEAR},borders:{top:hairline('DDDDDD'),bottom:hairline('DDDDDD'),left:hairline('DDDDDD'),right:hairline('DDDDDD')},margins:{top:80,bottom:80,left:120,right:120},verticalAlign:VerticalAlign.CENTER,children:[new Paragraph({alignment:AlignmentType.CENTER,children:[run(pts,{size:18,bold:true,color:pts?GREEN:MUTED})]})]})
+          ]}))
+        ]
+      }));
+
+      children.push(blank());
+      children.push(new Paragraph({alignment:AlignmentType.CENTER,children:[run('HLTH 207: Health Care USA  ·  Health Policy Advocacy Project  ·  Part 4  ·  '+v('f-name')+'  ·  Towson University  ·  Spring 2026',{size:16,color:MUTED})]}));
+
+      return children;
+    };
+
+    // ── HANDOUT BUILD ────────────────────────────────────────
+    const buildHandout=()=>{
+      const children=[];
+
+      // Header
+      children.push(new Table({
+        width:{size:10080,type:WidthType.DXA},columnWidths:[10080],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:10080,type:WidthType.DXA},shading:{fill:NAVY,type:ShadingType.CLEAR},borders:noBdrs,
+          margins:{top:200,bottom:200,left:240,right:240},
+          children:[
+            new Paragraph({spacing:{before:0,after:60},children:[run('HLTH 207 · HEALTH POLICY ADVOCACY PROJECT · PART 4 · LEGISLATIVE RESOURCE HANDOUT',{size:16,bold:true,color:'8AADCC',characterSpacing:30})]}),
+            new Paragraph({spacing:{before:0,after:80},children:[run(v('f-topic')||'[Topic]',{size:40,bold:true,color:WHITE})]}),
+            new Paragraph({spacing:{before:0,after:80},children:[run(v('f-subtitle')||'',{size:22,color:'8AADCC'})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[
+              run('WHO: ',{size:18,bold:true,color:'F0A070'}),run(v('f-who')+'   ',{size:18,color:'D8D8E8'}),
+              run('WHERE: ',{size:18,bold:true,color:'F0A070'}),run(v('f-where')+'   ',{size:18,color:'D8D8E8'}),
+              run('STATUS: ',{size:18,bold:true,color:'F0A070'}),run(v('f-status')+'   ',{size:18,color:'D8D8E8'}),
+              run('RISK: ',{size:18,bold:true,color:'F0A070'}),run(v('f-risk'),{size:18,color:'D8D8E8'}),
+            ]}),
+          ]
+        })]})],
+      }));
+      children.push(new Table({
+        width:{size:10080,type:WidthType.DXA},columnWidths:[10080],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:10080,type:WidthType.DXA},shading:{fill:ACCENT,type:ShadingType.CLEAR},borders:noBdrs,
+          margins:{top:100,bottom:100,left:240,right:240},
+          children:[new Paragraph({spacing:{before:0,after:0},children:[
+            run('Prepared by: '+v('f-name')+' · '+v('f-major')+' · Towson University',{size:18,bold:true,color:WHITE}),
+            run('     Submitted to: Dr. Wendy Whitner · HLTH 207 · May 14, 2026',{size:18,color:'FDDDD8'}),
+          ]})]
+        })]})],
+      }));
+      children.push(blank());
+
+      // FAQ 1
+      children.push(p('Q1: '+v('q1-hook'),{bold:true,size:24,color:NAVY},{spacing:{before:160,after:80}}));
+      children.push(p(v('q1-problem'),{},{spacing:{before:0,after:60}}));
+      children.push(p(v('q1-why'),{},{spacing:{before:0,after:60}}));
+      children.push(evBox(v('q1-evidence'),v('q1-cite')));
+      children.push(blank());
+
+      // FAQ 2
+      children.push(p('Q2: '+v('q2-population').substring(0,80)+'...',{bold:true,size:24,color:NAVY},{spacing:{before:160,after:80}}));
+      children.push(p(v('q2-population'),{},{spacing:{before:0,after:60}}));
+      children.push(p(v('q2-impact'),{},{spacing:{before:0,after:60}}));
+      children.push(evBox(v('q2-evidence'),v('q2-cite')));
+      children.push(p(v('q2-sdoh'),{},{spacing:{before:60,after:60}}));
+      children.push(blank());
+
+      // FAQ 3
+      children.push(p('Q3: '+v('q3-scope').substring(0,80)+'...',{bold:true,size:24,color:NAVY},{spacing:{before:160,after:80}}));
+      children.push(p(v('q3-scope'),{},{spacing:{before:0,after:60}}));
+      children.push(p(v('q3-solutions'),{},{spacing:{before:0,after:60}}));
+      children.push(evBox(v('q3-evidence'),v('q3-cite')));
+      children.push(p(v('q3-cost-of-inaction'),{bold:true},{spacing:{before:60,after:60}}));
+      children.push(blank());
+
+      // FAQ 4 + Recommendation
+      children.push(p('Q4: '+v('q4-authority').substring(0,80)+'...',{bold:true,size:24,color:NAVY},{spacing:{before:160,after:80}}));
+      children.push(p(v('q4-authority'),{},{spacing:{before:0,after:60}}));
+      children.push(blank());
+
+      // Rec banner
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:NAVY,type:ShadingType.CLEAR},borders:noBdrs,
+          margins:{top:180,bottom:180,left:240,right:240},
+          children:[
+            new Paragraph({spacing:{before:0,after:60},children:[run('POLICY RECOMMENDATION',{size:16,bold:true,color:'F0A070',characterSpacing:40})]}),
+            new Paragraph({spacing:{before:0,after:100},children:[run(v('rec-title'),{size:28,bold:true,color:WHITE})]}),
+            new Paragraph({spacing:{before:0,after:0},children:[run(v('rec-full'),{size:22,color:'C8D8E8'})]})
+          ]
+        })]})],
+      }));
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[4680,4680],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[
+          new TableRow({children:[pillarBox('🏛','Who Acts',v('p-who')),pillarBox('📌','What They Do',v('p-what'))]}),
+          new TableRow({children:[pillarBox('🔒','How It Is Enforced',v('p-enforce')),pillarBox('💰','How It Is Funded',v('p-fund'))]})
+        ]
+      }));
+      children.push(blank());
+
+      // CTA
+      children.push(new Table({
+        width:{size:9360,type:WidthType.DXA},columnWidths:[9360],
+        borders:{top:noBdr,bottom:noBdr,left:noBdr,right:noBdr,insideH:noBdr,insideV:noBdr},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:9360,type:WidthType.DXA},shading:{fill:ACCENT_L,type:ShadingType.CLEAR},
+          borders:{top:bdr(ACCENT),bottom:bdr(ACCENT),left:{style:BorderStyle.SINGLE,size:12,color:ACCENT},right:bdr(ACCENT)},
+          margins:{top:160,bottom:160,left:240,right:240},
+          children:[
+            new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:60},children:[run('Senator, Here Is What We Are Asking You to Do',{size:26,bold:true,color:ACCENT})]}),
+            new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[run(v('f-cta'),{size:22,color:TEXT})]})
+          ]
+        })]})],
+      }));
+
+      children.push(blank());
+
+      // Stats
+      if(stats.length>0){
+        children.push(p('Key Data',{bold:true,size:26,color:NAVY},{spacing:{before:160,after:80}}));
+        const colW=Math.floor(9360/stats.length);
+        children.push(new Table({
+          width:{size:9360,type:WidthType.DXA},columnWidths:stats.map(()=>colW),
+          rows:[new TableRow({children:stats.map(([num,lbl,src])=>new TableCell({
+            width:{size:colW,type:WidthType.DXA},shading:{fill:GRAY,type:ShadingType.CLEAR},
+            borders:{top:bdr('DDDDDD'),bottom:bdr('DDDDDD'),left:bdr('DDDDDD'),right:bdr('DDDDDD')},
+            margins:{top:120,bottom:120,left:160,right:160},verticalAlign:VerticalAlign.CENTER,
+            children:[
+              new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:40},children:[run(num,{size:52,bold:true,color:ACCENT})]}),
+              new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:40},children:[run(lbl,{size:18,color:TEXT})]}),
+              new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[run('Source: '+src,{size:16,italics:true,color:MUTED})]}),
+            ]
+          }))})]
+        }));
+        children.push(blank());
+      }
+
+      // References
+      children.push(p('References',{bold:true,size:26,color:NAVY},{spacing:{before:160,after:80},border:{bottom:{style:BorderStyle.SINGLE,size:6,color:NAVY,space:1}}}));
+      refs.forEach(r=>children.push(new Paragraph({children:[run(r,{size:20})],spacing:{before:60,after:60},indent:{left:720,hanging:720}})));
+      children.push(blank());
+      children.push(new Paragraph({alignment:AlignmentType.CENTER,children:[run('HLTH 207: Health Care USA  ·  Health Policy Advocacy Project  ·  Part 4  ·  '+v('f-name')+'  ·  Towson University  ·  Spring 2026',{size:16,color:MUTED})]}));
+
+      return children;
+    };
+
+    const docChildren = type==='worksheet' ? buildWorksheet() : buildHandout();
+
+    const doc = new Document({
+      creator: v('f-name'),
+      title: type==='worksheet' ? 'Presentation Planning Worksheet — '+v('f-topic') : 'Policy Handout — '+v('f-topic'),
+      description: 'HLTH 207 Health Policy Advocacy Project Part 4',
+      sections:[{
+        properties:{page:{size:{width:12240,height:15840},margin:{top:1080,right:1080,bottom:1080,left:1080}}},
+        children: docChildren
+      }]
+    });
+
+    const buffer = await Packer.toBuffer(doc);
+    const blob = new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const safeName = v('f-name').toLowerCase().replace(/\s+/g,'-')||'student';
+    const suffix = type==='worksheet' ? 'planning-worksheet' : 'handout';
+    a.href = url;
+    a.download = 'hlth207-'+suffix+'-'+safeName+'.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    overlay.classList.remove('show');
+    wsBtn.disabled = false; hdBtn.disabled = false;
+
+    const successBox = document.getElementById('download-success');
+    successBox.style.display = 'block';
+    document.getElementById('dl-success-title').textContent = type==='worksheet' ? '✅ Planning Worksheet Downloaded!' : '✅ Formatted Handout Downloaded!';
+    document.getElementById('dl-success-msg').textContent = type==='worksheet'
+      ? 'Your planning worksheet is in your Downloads folder. Open it in Microsoft Word or Google Docs. Submit it to Blackboard, then use it to build your presentation.'
+      : 'Your formatted handout is in your Downloads folder. Open it in Microsoft Word or Google Docs to review and refine before submitting.';
+    document.getElementById('announcer').textContent = 'Your document has been downloaded. Check your Downloads folder.';
+
+  } catch(err){
+    document.getElementById('loading-overlay').classList.remove('show');
+    document.getElementById('dl-worksheet-btn').disabled = false;
+    document.getElementById('dl-handout-btn').disabled = false;
+    alert('Something went wrong building the document. Please make sure all fields are filled in and try again.\n\nError: '+err.message);
+    console.error(err);
+  }
+}
+</script>
+</body>
+</html>
